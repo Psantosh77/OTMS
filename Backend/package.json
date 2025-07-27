@@ -5,8 +5,11 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "build": "echo 'No build step required'"
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "dev:prod": "cross-env NODE_ENV=production nodemon src/index.js",
+    "build": "echo 'No build step required'",
+    "test": "echo 'No tests specified'",
+    "lint": "echo 'No linting configured'"
   },
   "engines": {
     "node": ">=16.0.0"

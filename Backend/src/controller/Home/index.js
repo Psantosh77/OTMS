@@ -15,7 +15,7 @@ async function getConfig(req, res) {
   if (latitude && longitude) {
     try {
       const geoRes = await axios.get(
-        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+        `${process.env.NOMINATIM_API_URL || 'https://nominatim.openstreetmap.org'}/reverse?lat=${latitude}&lon=${longitude}&format=json`
       );
       if (geoRes.data && geoRes.data.address) {
         location = {

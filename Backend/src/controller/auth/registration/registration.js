@@ -85,12 +85,12 @@ const getAllCarBrandsWithModels = async (req, res) => {
   try {
     // Example: MyCarSpecs free API for car brands and models
     // Replace with another API if needed
-    const brandsRes = await axios.get("https://mycar.specsapi.com/api/v2/brands");
+    const brandsRes = await axios.get(`${process.env.CAR_SPECS_API_URL || 'https://mycar.specsapi.com/api/v2'}/brands`);
     const brands = brandsRes.data.data || [];
 
     // For each brand, fetch models (limit to first 5 brands for demo)
     const brandModelsPromises = brands.slice(0, 5).map(async (brand) => {
-      const modelsRes = await axios.get(`https://mycar.specsapi.com/api/v2/models?brand_id=${brand.id}`);
+      const modelsRes = await axios.get(`${process.env.CAR_SPECS_API_URL || 'https://mycar.specsapi.com/api/v2'}/models?brand_id=${brand.id}`);
       const models = (modelsRes.data.data || []).map(model => ({
         modelNo: model.name,
         image: model.image_url || null
