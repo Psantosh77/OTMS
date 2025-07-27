@@ -1,5 +1,6 @@
 // src/components/Hero.jsx
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -154,12 +155,12 @@ const Hero = () => {
               <p className="hero-description fade-in-up stagger-1">
                 Book trusted garages, compare prices, and get remote assistance. OTGMS brings convenience and transparency to your vehicle care.
               </p>
-              <a
-                href="#services"
+              <Link
+                to="#services"
                 className="btn btn-explore fade-in-up stagger-2"
               >
                 Explore Services
-              </a>
+              </Link>
             </div>
 
             {/* Image Section */}

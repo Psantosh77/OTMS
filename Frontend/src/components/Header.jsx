@@ -1,6 +1,6 @@
 // src/components/Header.jsx
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { apiService } from "../utils/apiService";
 
 const Header = () => {
@@ -13,6 +13,7 @@ const Header = () => {
   const [countdown, setCountdown] = useState(0);
   const [successMessage, setSuccessMessage] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
   // Check for access token in cookies on component mount
   useEffect(() => {
@@ -86,7 +87,7 @@ const Header = () => {
           // Clear any local storage if needed
           localStorage.clear();
           // Redirect to home page
-          window.location.href = '/';
+          navigate('/');
         },
         (error, status) => {
           // Error callback - still logout locally even if API fails
@@ -98,7 +99,7 @@ const Header = () => {
           document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
           localStorage.clear();
           // Redirect to home page
-          window.location.href = '/';
+          navigate('/');
         }
       );
     } catch (error) {
@@ -110,7 +111,7 @@ const Header = () => {
       document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       localStorage.clear();
       // Redirect to home page
-      window.location.href = '/';
+      navigate('/');
     }
   };
 
@@ -151,7 +152,6 @@ const Header = () => {
 
   const handleVerifyOTP = async () => {
     setIsVerifying(true);
-    
     await apiService.post(
       '/auth/verifyOpt',
       { email, otp },
@@ -169,7 +169,7 @@ const Header = () => {
         setTimeout(() => {
           handleCloseModal();
           // Redirect to services page
-          window.location.href = '/services';
+          navigate('/services');
         }, 1000);
       },
       (error, status) => {
@@ -396,11 +396,19 @@ const Header = () => {
 
           <nav className="d-none d-md-flex gap-4">
             {isAuthenticated && (
-              <a href="/services" className="text-dark text-decoration-none nav-link-modern">Services</a>
+              <Link to="/services" className="nav-link-modern text-dark">
+                Services
+              </Link>
             )}
-            <a href="/about" className="text-dark text-decoration-none nav-link-modern">About</a>
-            <a href="/blog" className="text-dark text-decoration-none nav-link-modern">Blog</a>
-            <a href="/contact" className="text-dark text-decoration-none nav-link-modern">Contact</a>
+            <Link to="/about" className="nav-link-modern text-dark">
+              About
+            </Link>
+            <Link to="/blog" className="nav-link-modern text-dark">
+              Blog
+            </Link>
+            <Link to="/contact" className="nav-link-modern text-dark">
+              Contact
+            </Link>
           </nav>
 
           {isAuthenticated ? (
