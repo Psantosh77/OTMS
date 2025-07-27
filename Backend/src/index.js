@@ -29,9 +29,10 @@ app.use((req, res, next) => {
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL || true 
-    : true, // Allow all origins in development
+  // origin: process.env.NODE_ENV === 'production' 
+  //   ? process.env.FRONTEND_URL || true 
+  //   : true, // Allow all origins in development
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']

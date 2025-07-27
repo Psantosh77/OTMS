@@ -1,9 +1,21 @@
 import axios from "axios";
 
+// Get environment variables with fallbacks
+const getApiBaseUrl = () => {
+  // Check if we're in production mode
+  const isProd = import.meta.env.MODE === 'production' || import.meta.env.PROD;
+  
+  if (isProd) {
+    return import.meta.env.VITE_API_BASE_URL || 'https://otms.onrender.com/api';
+  }
+  
+  return import.meta.env.VITE_API_BASE_URL || 'http://localhost:9000/api';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:9000/api',
+  baseURL: getApiBaseUrl(),
   withCredentials: true, // send cookies
-  timeout: import.meta.env.VITE_API_TIMEOUT || 10000,
+  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT) || 10000,
 });
 
 // Request interceptor
@@ -14,6 +26,11 @@ api.interceptors.request.use(
       ...config.params,
       _t: Date.now(),
     };
+
+    // Log the base URL in development
+    if (import.meta.env.DEV) {
+      console.log('API Base URL:', config.baseURL);
+    }
 
     return config;
   },
@@ -59,6 +76,7 @@ class ApiService {
       if (onSuccess && typeof onSuccess === 'function') {
         onSuccess(response);
       }
+      return response;
     } catch (error) {
       if (onError && typeof onError === 'function') {
         onError(
@@ -66,6 +84,7 @@ class ApiService {
           error.response?.status
         );
       }
+      throw error;
     }
   }
 
@@ -76,8 +95,12 @@ class ApiService {
   setDefaultHeader(key, value) {
     this.api.defaults.headers.common[key] = value;
   }
-}
 
+  // Method to get current API base URL
+  getBaseUrl() {
+    return this.api.defaults.baseURL;
+  }
+}
 
 export const apiService = new ApiService();
 export default api;
