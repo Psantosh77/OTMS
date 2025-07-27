@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const winston = require('winston');
+const path = require('path');
 const { sendResponse } = require('./utils/response');
 const connectDB = require('./database/mongodb');
 const authRoutes = require('./routes/auth/login');
@@ -12,6 +14,33 @@ const dashboardRoutes = require('./routes/Home/index');
 
 const app = express();
 const port = process.env.PORT || 9000;
+
+// Configure Winston logger for development
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(({ timestamp, level, message }) => {
+      return `${timestamp} [${level.toUpperCase()}]: ${message}`;
+    })
+  ),
+  transports: []
+});
+
+// Add file transport in development
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.File({
+    filename: path.join(__dirname, '../logs/app.log'),
+    level: 'info'
+  }));
+  logger.add(new winston.transports.File({
+    filename: path.join(__dirname, '../logs/error.log'),
+    level: 'error'
+  }));
+}
+
+// Always add console transport
+logger.add(new winston.transports.Console());
 
 // Allowed IPs (comma separated in .env, e.g. ALLOWED_IPS=127.0.0.1,192.168.1.10)
 const allowedIps = (process.env.ALLOWED_IPS || '').split(',').map(ip => ip.trim()).filter(ip => ip);
@@ -65,10 +94,10 @@ app.get('/', (req, res) => {
 connectDB()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+      logger.info(`Server is running on port ${port}`);
     });
   })
   .catch((err) => {
-    console.error('Failed to connect to MongoDB:', err);
+    logger.error('Failed to connect to MongoDB:', err);
     process.exit(1);
   });
