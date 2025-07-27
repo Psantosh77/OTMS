@@ -7,7 +7,7 @@ const About = () => {
     
     <section className="py-5 bg-white" id="about">
       <div className="container">
-        <h2 className="text-center fw-bold mb-4">About OTGMS</h2>
+        <h2 className="text-center fw-bold mb-4">About OTGMS Bhanu</h2>
         <p className="text-center text-muted mb-5">
           Revolutionizing car care and rental experiences across India.
         </p>
