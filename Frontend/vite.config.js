@@ -28,6 +28,7 @@ export default defineConfig(({ command, mode }) => {
           },
         },
       },
+      copyPublicDir: true,
     },
     preview: {
       port: 3000,
