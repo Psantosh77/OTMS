@@ -32,7 +32,7 @@ app.use(cors({
   // origin: process.env.NODE_ENV === 'production' 
   //   ? process.env.FRONTEND_URL || true 
   //   : true, // Allow all origins in development
-  origin: '*',
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
