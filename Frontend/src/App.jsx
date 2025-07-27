@@ -4,13 +4,9 @@ import Home from "./pages/Client/Home";
 import About from "./pages/Client/About";
 import Contact from "./pages/Client/Contact";
 import Services from "./pages/Client/Services";
-
-import SelectUserType from "./pages/Auth/SelectUserType";
-import ClientLogin from "./pages/Auth/ClientLogin";
-import VendorLogin from "./pages/Auth/VendorLogin";
-import AdminLogin from "./pages/Auth/AdminLogin";
-
+import Blog from "./pages/Client/Blog";
 import MainLayout from "./layouts/MainLayout";
+import UnifiedLogin from './pages/Auth/UnifiedLogin';
 
 import "./index.css";
 
@@ -24,13 +20,14 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/auth/login" element={<UnifiedLogin />} />
+
         </Route>
 
         {/* Auth Pages - optionally without header/footer, or add layout if needed */}
-        <Route path="/auth/select-role" element={<SelectUserType />} />
-        <Route path="/auth/client-login" element={<ClientLogin />} />
-        <Route path="/auth/vendor-login" element={<VendorLogin />} />
-        <Route path="/auth/admin-login" element={<AdminLogin />} />
+       
+       
       </Routes>
     </BrowserRouter>
   );

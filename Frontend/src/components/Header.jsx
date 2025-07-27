@@ -219,6 +219,8 @@ const Header = () => {
         .nav-link-modern {
           position: relative;
           transition: all 0.3s ease;
+           text-decoration: none;
+          
         }
         
         .nav-link-modern::after {
@@ -387,7 +389,7 @@ const Header = () => {
       `}</style>
 
       <header className="bg-white shadow-lg sticky-top">
-        <div className="container d-flex justify-content-between align-items-center py-4">
+        <div className="container d-flex justify-content-between align-items-center py-3">
           <Link to="/" className="text-decoration-none">
             <h1 className="h3 fw-bold m-0" style={{ background: 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               OTGMS
