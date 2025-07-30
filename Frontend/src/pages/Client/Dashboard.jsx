@@ -132,7 +132,7 @@ const Dashboard = () => {
             </Typography>
             <Grid container spacing={3}>
               {TOP_VENDORS.map((vendor) => (
-                <Grid item xs={12} key={vendor.id}>
+                <Grid item xs={12} key={vendor.id} sx={{ px: 0 }}>
                   <Card
                     sx={{
                       borderRadius: 3,
@@ -143,21 +143,23 @@ const Dashboard = () => {
                       display: "flex",
                       flexDirection: { xs: "column", md: "row" },
                       alignItems: "center",
-                      p: 3,
+                      p: 4,
                       width: "100%",
-                      minHeight: 160,
+                      maxWidth: "100%",
+                      minWidth: "100%",
+                      margin: 0,
                     }}
                   >
-                    <CardMedia
+                    <CardMedia  
                       component="img"
                       image={vendor.image}
                       alt={vendor.name}
                       sx={{
-                        width: 120,
-                        height: 120,
+                        width: 180,
+                        height: 180,
                         borderRadius: "16px",
                         objectFit: "cover",
-                        mr: { md: 4, xs: 0 },
+                        mr: { md: 6, xs: 0 },
                         mb: { xs: 2, md: 0 },
                         border: "3px solid #1976d2",
                       }}
@@ -170,16 +172,17 @@ const Dashboard = () => {
                       }}
                     >
                       <Typography
-                        variant="h6"
+                        variant="h5"
                         fontWeight={700}
                         color="text.primary"
+                        mb={1}
                       >
                         {vendor.name}
                       </Typography>
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         color="text.secondary"
-                        mb={1}
+                        mb={2}
                       >
                         {vendor.address}
                       </Typography>
@@ -189,9 +192,12 @@ const Dashboard = () => {
                       color="warning"
                       sx={{
                         position: "absolute",
-                        top: 16,
-                        right: 16,
+                        top: 24,
+                        right: 24,
                         fontWeight: 700,
+                        fontSize: 18,
+                        px: 2,
+                        py: 1,
                       }}
                     />
                     <Button
@@ -203,8 +209,11 @@ const Dashboard = () => {
                         "&:hover": {
                           bgcolor: "primary.dark",
                         },
-                        ml: { md: 4, xs: 0 },
+                        ml: { md: 6, xs: 0 },
                         mt: { xs: 2, md: 0 },
+                        px: 4,
+                        py: 1.5,
+                        fontSize: 16,
                       }}
                       color="primary"
                     >
