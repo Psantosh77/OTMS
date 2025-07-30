@@ -20,7 +20,7 @@ const Hero = () => {
           width: 100vw;
           height: 100%;
           z-index: 0;
-          background: url('https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1600&q=80') center center/cover no-repeat;
+          background: url('https://images.unsplash.com/photo-1711386689622-1cda23e10217?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center center/cover no-repeat;
         }
         .hero-section-overlay {
           position: absolute;
@@ -28,7 +28,7 @@ const Hero = () => {
           width: 100vw;
           height: 100%;
           z-index: 1;
-          background: linear-gradient(90deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.32) 100%);
+         //  background: linear-gradient(90deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.32) 100%);
         }
 
         .hero-title {
@@ -44,7 +44,7 @@ const Hero = () => {
 
         .hero-description {
           font-size: 1.3rem;
-          color: #fff;
+          color: #f5f5f5;
           margin-bottom: 2.5rem;
           line-height: 1.6;
         }
@@ -155,9 +155,9 @@ const Hero = () => {
         <div className="hero-section-overlay"></div>
         <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <div className="row align-items-center flex-column-reverse flex-md-row">
+            
             {/* Text Content */}
             <div className="col-md-6 text-center text-md-start mt-4 mt-md-0">
-              {/* ...existing code for revolution section... */}
               <h2 className="hero-title fade-in-up">
                 Revolutionize Your Car Service Experience with OTGMS
               </h2>

@@ -173,7 +173,7 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
       <style jsx>{`
         .modal-modern {
           /* backdrop-filter: blur(10px); */ /* removed blur */
-          background-color: rgba(0, 0, 0, 0.4);
+          // background-color: rgba(0, 0, 0, 0.4);
           z-index: 1050;
         }
         .modal-content-modern {
@@ -299,7 +299,7 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
       <div className="modal-dialog" style={{ position: 'fixed', right: '30px', top: '30px', margin: '0', maxWidth: '500px', width: '500px' }}>
         <div className="modal-content modal-content-modern">
           <div className="modal-header modal-header-modern d-flex justify-content-between align-items-center">
-            <h5 className="modal-title modal-title-modern m-0">Welcome Back</h5>
+            <h5 className="modal-title modal-title-modern m-0">To take care of your car please enter <span className="text-primary"></span></h5>
             {/* Close button removed */}
           </div>
           <div className="modal-body" style={{ padding: '30px' }}>
