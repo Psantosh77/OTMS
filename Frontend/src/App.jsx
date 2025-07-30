@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { Provider } from "react-redux";
 
 import Home from "./pages/Client/Home";
@@ -16,11 +16,16 @@ import MainLayout from "./layouts/MainLayout";
 import store from "./redux/store";
 
 import "./index.css";
+import React from "react";
+
+// Add redirect logic
+
 
 function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
+       
         <Routes>
           {/* Layout Routes - all these pages will include header/footer */}
           <Route element={<MainLayout />}>

@@ -170,11 +170,137 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
 
   return (
     <div className="modal fade show d-block modal-modern">
+      <style jsx>{`
+        .modal-modern {
+          /* backdrop-filter: blur(10px); */ /* removed blur */
+          background-color: rgba(0, 0, 0, 0.4);
+          z-index: 1050;
+        }
+        .modal-content-modern {
+          border: none;
+          border-radius: 20px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+          background: linear-gradient(145deg, #fff 0%, #f8f9fa 100%);
+          animation: slideInRight 0.4s ease-out;
+          width: 500px;
+          max-width: 95vw;
+        }
+        @media (max-width: 600px) {
+          .modal-dialog {
+            max-width: 100vw !important;
+            width: 100vw !important;
+            right: 0 !important;
+            left: 0 !important;
+            top: 0 !important;
+            margin: 0 !important;
+          }
+          .modal-content-modern {
+            border-radius: 0;
+            width: 100vw !important;
+            min-height: 100vh;
+            box-shadow: none;
+            padding: 0;
+          }
+          .modal-header-modern {
+            padding: 18px 16px 12px;
+          }
+          .modal-body {
+            padding: 18px 16px;
+          }
+        }
+        .modal-header-modern {
+          border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+          padding: 25px 30px 20px;
+          background: linear-gradient(90deg, #fff7ed 0%, #ffe0b2 100%);
+        }
+        .modal-title-modern {
+          color: #ff6b35;
+          font-weight: 700;
+          font-size: 24px;
+        }
+        .btn-close-modern {
+          background: none;
+          border: none;
+          font-size: 24px;
+          color: #ff6b35;
+          opacity: 0.7;
+          transition: all 0.3s ease;
+        }
+        .btn-close-modern:hover {
+          opacity: 1;
+          transform: rotate(90deg);
+        }
+        .form-control-modern {
+          border: 2px solid #e9ecef;
+          border-radius: 15px;
+          padding: 15px 20px;
+          font-size: 16px;
+          transition: all 0.3s ease;
+          background: rgba(255, 255, 255, 0.9);
+          box-shadow: 0 2px 8px rgba(255,107,53,0.06);
+        }
+        .form-control-modern:focus {
+          border-color: #ff6b35;
+          box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.15);
+          background: white;
+        }
+        .btn-send-otp {
+          background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+          border: none;
+          border-radius: 15px;
+          padding: 15px;
+          color: white;
+          font-weight: 600;
+          font-size: 18px;
+          transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 2px 12px rgba(255,107,53,0.12);
+        }
+        .btn-send-otp:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px rgba(255, 107, 53, 0.18);
+        }
+        .btn-send-otp:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+        .success-message {
+          color: #28a745;
+          font-size: 15px;
+          margin-bottom: 15px;
+          padding: 10px;
+          background: rgba(40, 167, 69, 0.08);
+          border-radius: 8px;
+          text-align: center;
+        }
+        .error-message {
+          color: #dc3545;
+          font-size: 15px;
+          margin-bottom: 15px;
+          padding: 10px;
+          background: rgba(220, 53, 69, 0.08);
+          border-radius: 8px;
+          text-align: center;
+        }
+        .loading-spinner {
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 50%;
+          border-top-color: white;
+          animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
       <div className="modal-dialog" style={{ position: 'fixed', right: '30px', top: '30px', margin: '0', maxWidth: '500px', width: '500px' }}>
         <div className="modal-content modal-content-modern">
           <div className="modal-header modal-header-modern d-flex justify-content-between align-items-center">
             <h5 className="modal-title modal-title-modern m-0">Welcome Back</h5>
-            <button type="button" className="btn-close-modern" onClick={handleCloseModal}>×</button>
+            {/* Close button removed */}
           </div>
           <div className="modal-body" style={{ padding: '30px' }}>
             {successMessage && (

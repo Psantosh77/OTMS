@@ -1,6 +1,7 @@
 // src/components/Hero.jsx
 import React from "react";
 import { Link } from "react-router-dom";
+import LoginModal from "./LoginModal";
 
 const Hero = () => {
   return (
@@ -11,17 +12,23 @@ const Hero = () => {
           position: relative;
           overflow: hidden;
           padding: 100px 0;
+          min-height: 900px; /* increased section height */
         }
-
-        .hero-section::before {
-          content: '';
+        .hero-section-bg {
           position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(45deg, transparent 30%, rgba(255, 107, 53, 0.05) 50%, transparent 70%);
+          top: 0; left: 0; right: 0; bottom: 0;
+          width: 100vw;
+          height: 100%;
           z-index: 0;
+          background: url('https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1600&q=80') center center/cover no-repeat;
+        }
+        .hero-section-overlay {
+          position: absolute;
+          top: 0; left: 0; right: 0; bottom: 0;
+          width: 100vw;
+          height: 100%;
+          z-index: 1;
+          background: linear-gradient(90deg, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.32) 100%);
         }
 
         .hero-title {
@@ -37,7 +44,7 @@ const Hero = () => {
 
         .hero-description {
           font-size: 1.3rem;
-          color: #6c757d;
+          color: #fff;
           margin-bottom: 2.5rem;
           line-height: 1.6;
         }
@@ -144,11 +151,13 @@ const Hero = () => {
       `}</style>
 
       <section className="hero-section" id="hero">
-        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+        <div className="hero-section-bg"></div>
+        <div className="hero-section-overlay"></div>
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <div className="row align-items-center flex-column-reverse flex-md-row">
-            
             {/* Text Content */}
             <div className="col-md-6 text-center text-md-start mt-4 mt-md-0">
+              {/* ...existing code for revolution section... */}
               <h2 className="hero-title fade-in-up">
                 Revolutionize Your Car Service Experience with OTGMS
               </h2>
@@ -162,14 +171,9 @@ const Hero = () => {
                 Explore Services
               </Link>
             </div>
-
-            {/* Image Section */}
-            <div className="col-md-6 text-center fade-in-right stagger-3">
-              <img
-                src="https://cdn.pixabay.com/photo/2021/02/09/10/10/car-service-5997153_1280.png"
-                alt="Car Service"
-                className="img-fluid mx-auto hero-image floating"
-              />
+            {/* LoginModal placed to the right of revolution section */}
+            <div className="col-md-6 d-flex justify-content-center align-items-center">
+              <LoginModal showModal={true} handleCloseModal={() => {}} />
             </div>
           </div>
         </div>

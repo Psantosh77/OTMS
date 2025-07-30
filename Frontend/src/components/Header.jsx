@@ -87,240 +87,147 @@ const Header = () => {
     <>
       <style jsx>{`
         .header-gradient {
-          background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+          background: linear-gradient(90deg, #fff7ed 0%, #ffe0b2 100%);
         }
-        
-        .btn-modern {
-          background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-          border: none;
-          border-radius: 25px;
-          padding: 10px 25px;
-          color: white;
-          font-weight: 600;
-          transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
-        }
-        
-        .btn-modern:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
-          background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%);
-        }
-        
-        .nav-link-modern {
+        .header-modern {
+          background: linear-gradient(90deg, #fff7ed 0%, #ffe0b2 100%);
+          box-shadow: 0 12px 32px rgba(255,167,38,0.13);
+          border-radius: 0 0 40px 40px;
+          border-bottom: 3px solid #ffd180;
           position: relative;
-          transition: all 0.3s ease;
         }
-        
+        .header-modern::after {
+          content: '';
+          position: absolute;
+          left: 0; right: 0; bottom: -10px;
+          height: 18px;
+          background: radial-gradient(circle, #ffd180 0%, transparent 70%);
+          opacity: 0.5;
+          z-index: 0;
+        }
+        .logo-modern {
+          font-size: 2.6rem;
+          font-weight: 900;
+          letter-spacing: 2.5px;
+          background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-shadow: 0 2px 12px #ffd18044;
+        }
+        .nav-modern {
+          display: flex;
+          gap: 2.8rem;
+          align-items: center;
+        }
+        .nav-link-modern {
+          color: #222 !important;
+          font-weight: 700;
+          font-size: 1.18rem;
+          position: relative;
+          padding: 12px 26px;
+          border-radius: 26px;
+          background: transparent; // removed white background
+          transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+          cursor: pointer;
+          letter-spacing: 0.7px;
+          box-shadow: none; // removed box-shadow
+        }
+        .nav-link-modern:hover, .nav-link-modern.active {
+          background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+          color: #fff !important;
+          box-shadow: 0 6px 18px rgba(255,107,53,0.22);
+          transform: translateY(-3px) scale(1.06);
+        }
         .nav-link-modern::after {
           content: '';
           position: absolute;
-          bottom: -5px;
-          left: 0;
+          left: 26px;
+          bottom: 10px;
           width: 0;
-          height: 2px;
-          background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-          transition: width 0.3s ease;
+          height: 3px;
+          background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+          border-radius: 2px;
+          transition: width 0.3s;
         }
-        
-        .nav-link-modern:hover::after {
-          width: 100%;
+        .nav-link-modern:hover::after, .nav-link-modern.active::after {
+          width: calc(100% - 52px);
         }
-        
-        .nav-link-modern:hover {
-          color: #ff6b35 !important;
-        }
-        
-        .modal-modern {
-          backdrop-filter: blur(10px);
-          background-color: rgba(0, 0, 0, 0.4);
-        }
-        
-        .modal-content-modern {
+        .btn-modern {
+          background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
           border: none;
-          border-radius: 20px;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-          background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-          animation: slideInRight 0.4s ease-out;
+          border-radius: 30px;
+          padding: 14px 36px;
+          color: #fff;
+          font-weight: 800;
+          font-size: 1.15rem;
+          box-shadow: 0 6px 20px rgba(255,107,53,0.22);
+          transition: all 0.3s;
+          letter-spacing: 1px;
         }
-        
-        @keyframes slideInRight {
-          from {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
+        .btn-modern:hover {
+          transform: translateY(-3px) scale(1.07);
+          box-shadow: 0 12px 32px rgba(255,107,53,0.32);
+          background: linear-gradient(90deg, #f7931e 0%, #ff6b35 100%);
         }
-        
-        .form-control-modern {
-          border: 2px solid #e9ecef;
-          border-radius: 15px;
-          padding: 15px 20px;
-          font-size: 16px;
-          transition: all 0.3s ease;
-          background: rgba(255, 255, 255, 0.9);
-        }
-        
-        .form-control-modern:focus {
-          border-color: #ff6b35;
-          box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
-          background: white;
-        }
-        
-        .btn-send-otp {
-          background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-          border: none;
-          border-radius: 15px;
-          padding: 15px;
-          color: white;
-          font-weight: 600;
-          font-size: 18px;
-          transition: all 0.3s ease;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .btn-send-otp:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 25px rgba(255, 107, 53, 0.4);
-        }
-        
-        .btn-send-otp:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-        }
-        
-        .loading-spinner {
-          display: inline-block;
-          width: 20px;
-          height: 20px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          border-radius: 50%;
-          border-top-color: white;
-          animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        
-        .modal-header-modern {
-          border-bottom: 1px solid rgba(255, 107, 53, 0.1);
-          padding: 25px 30px 20px;
-        }
-        
-        .modal-title-modern {
-          color: #ff6b35;
-          font-weight: 700;
-          font-size: 24px;
-        }
-        
-        .btn-close-modern {
-          background: none;
-          border: none;
-          font-size: 24px;
-          color: #ff6b35;
-          opacity: 0.7;
-          transition: all 0.3s ease;
-        }
-        
-        .btn-close-modern:hover {
-          opacity: 1;
-          transform: rotate(90deg);
-        }
-        
-        .success-message {
-          color: #28a745;
-          font-size: 14px;
-          margin-bottom: 15px;
-          padding: 10px;
-          background: rgba(40, 167, 69, 0.1);
-          border-radius: 8px;
-          text-align: center;
-        }
-        
-        .error-message {
-          color: #dc3545;
-          font-size: 14px;
-          margin-bottom: 15px;
-          padding: 10px;
-          background: rgba(220, 53, 69, 0.1);
-          border-radius: 8px;
-          text-align: center;
-        }
-        
-        .countdown-text {
-          font-size: 14px;
-          color: #6c757d;
-          text-align: center;
-          margin-top: 10px;
-        }
-        
         .btn-logout {
-          background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+          background: linear-gradient(90deg, #d32f2f 0%, #b71c1c 100%);
           border: none;
-          border-radius: 25px;
-          padding: 10px 25px;
-          color: white;
-          font-weight: 600;
-          transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+          border-radius: 30px;
+          padding: 14px 36px;
+          color: #fff;
+          font-weight: 800;
+          font-size: 1.15rem;
+          box-shadow: 0 6px 20px rgba(211,47,47,0.22);
+          transition: all 0.3s;
+          letter-spacing: 1px;
         }
-        
         .btn-logout:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
-          background: linear-gradient(135deg, #c82333 0%, #dc3545 100%);
+          transform: translateY(-3px) scale(1.07);
+          box-shadow: 0 12px 32px rgba(211,47,47,0.32);
+          background: linear-gradient(90deg, #b71c1c 0%, #d32f2f 100%);
+        }
+        .welcome-email {
+          color: #222;
+          font-weight: 700;
+          margin-right: 1.2rem;
+          font-size: 1.12rem;
+          letter-spacing: 0.5px;
         }
       `}</style>
 
-      <header className="bg-white shadow-lg sticky-top">
-        <div className="container d-flex justify-content-between align-items-center py-4">
-          <Link to="/" className="text-decoration-none">
-            <div className="flex items-center gap-2">
-              <h1
-                className="h3 fw-bold m-0"
-                style={{
-                  background: 'linear-gradient(135deg, #ff6b35 0%, #f7931e 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}
-              >
-                OTGMS
-              </h1>
-            </div>
-          </Link>
-
-          <nav className="d-none d-md-flex gap-4">
-            {isAuthenticated && (
-              <Link to="/services" className="nav-link-modern text-dark">
-                Services
+      <header className="header-modern sticky-top py-3 px-0">
+        <div className="container d-flex align-items-center" style={{ minHeight: 70 }}>
+          {/* Section 1: Logo */}
+          <div style={{ flex: "0 0 auto" }}>
+            <Link to="/" className="text-decoration-none">
+              <span className="logo-modern">OTGMS</span>
+            </Link>
+          </div>
+          {/* Section 2: Menu */}
+          <div style={{ flex: "1 1 auto", display: "flex", justifyContent: "center" }}>
+            <nav className="nav-modern">
+              {isAuthenticated && (
+                <Link to="/services" className="nav-link-modern">
+                  Services
+                </Link>
+              )}
+              <Link to="/about" className="nav-link-modern">
+                About
               </Link>
-            )}
-            <Link to="/about" className="nav-link-modern text-dark">
-              About
-            </Link>
-            <Link to="/blog" className="nav-link-modern text-dark">
-              Blog
-            </Link>
-            <Link to="/contact" className="nav-link-modern text-dark">
-              Contact
-            </Link>
-          </nav>
-
-          {loggedInEmail ? (
-            <>
+              <Link to="/blog" className="nav-link-modern">
+                Blog
+              </Link>
+              <Link to="/contact" className="nav-link-modern">
+                Contact
+              </Link>
+            </nav>
+          </div>
+          {/* Section 3: User Details */}
+          <div style={{ flex: "0 0 auto", display: "flex", alignItems: "center" }}>
+            {loggedInEmail ? (
               <span className="welcome-email">Welcome, <b>{loggedInEmail}</b></span>
-              <button className="btn btn-logout" onClick={handleLogout}>Logout</button>
-            </>
-          ) : (
-            <button onClick={handleLoginClick} className="btn btn-modern">
-              Login
-            </button>
-          )}
+            ) : null}
+          </div>
         </div>
       </header>
 
@@ -339,3 +246,4 @@ const Header = () => {
 };
 
 export default Header;
+
