@@ -26,7 +26,9 @@ function setTokens(res, payload) {
 
 // Middleware to get JWT token from cookies and verify
 function verifyAccessToken(req, res, next) {
-  const token = req.cookies.accessToken;
+  // Ensure cookies are available (require cookie-parser in your app)
+  const cookies = req.cookies || {};
+  const token = cookies.accessToken;
   if (!token) {
     return res.status(401).json({ success: false, message: 'Access token missing', status: 401 });
   }
@@ -40,7 +42,7 @@ function verifyAccessToken(req, res, next) {
 
 // Refresh token controller
 function refreshTokenController(req, res) {
-  const refreshToken = req.cookies.refreshToken;
+  const refreshToken = req?.cookies?.refreshToken;
   if (!refreshToken) {
     return res.status(401).json({ success: false, message: 'Refresh token missing', status: 401 });
   }

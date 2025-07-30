@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    required: true,
+    required: false,
     trim: true
   },
   email: {
@@ -12,14 +12,31 @@ const userSchema = new mongoose.Schema({
     unique: true,
     lowercase: true
   },
+  brand: {
+    type: String,
+    required: true
+  },
+  brand_id: {
+    type: Number,
+    required: true
+  },
+  model: {
+    type: String,
+    required: true
+  },
+  model_id: {
+    type: Number,
+    required: true
+   
+  },
   mobileNo: {
     type: String,
-    required: true,
-    unique: true
+    required: false,
+    
   },
   password: {
     type: String,
-    required: true
+    required: false
   },
   isActive: {
     type: Boolean,
@@ -32,21 +49,11 @@ const userSchema = new mongoose.Schema({
   signupDate: {
     type: Date,
     default: Date.now
-  },
-  vehicleNo: {
-    type: String,
-    required: true
-  },
-  vehicleName: {
-    type: String,
-    required: true
-  },
-  vehicleBrand: {
-    type: String,
-    required: true
   }
 }, {
   timestamps: true
 });
+
+
 
 module.exports = mongoose.model("User", userSchema);

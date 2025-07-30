@@ -1,61 +1,74 @@
-const { sendError, sendResponse } = require("../../../utils/response");
-const User = require("../../../models/User");
+const User = require("../../model/userModels/userMode");
+const Manufacturer = require("../../model/carDataModel/manufacturerModel");
+const CarModel = require("../../model/carDataModel/carModelListModel");
 const yup = require("yup");
+const { sendError, sendResponse } = require("../../utils/response");
+const commonUserModel = require("../../model/userModels/commonUserModel");
 
 // validation schema
 const updateSchema = yup.object().shape({
-  fullName: yup.string().required("Full name is required"),
-  vehicleNo: yup.string().required("Vehicle number is required"),
-  vehicleName: yup.string().required("Vehicle name is required"),
-  vehicleBrand: yup.string().required("Vehicle brand is required"),
-  concurrency: yup.date().required("Concurrency timestamp is required")
+  email: yup.string().email("Invalid email").required("Email is required"),
+  brand_id: yup.string().required("Brand ID is required"),
+  model_id: yup.string().required("Model ID is required")
 });
 
-const updateUserController = async (req, res) => {
+const updateUserController =  async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { fullName, vehicleNo, vehicleName, vehicleBrand, concurrency } = req.body;
+    const { email, brand_id, model_id } = req.body;
 
-    // ✅ validate input
-    await updateSchema.validate({ fullName, vehicleNo, vehicleName, vehicleBrand, concurrency });
-
-    // ✅ find user by ID
-    const user = await User.findById(userId);
-    if (!user) {
-      return sendError(res, {
-        message: "User not found",
-        status: 404
-      });
-    }
-
-    // ✅ check concurrency timestamp
-    if (new Date(concurrency).getTime() !== new Date(user.concurrency).getTime()) {
-      return sendError(res, {
-        message: "Data has been updated by someone else. Please refresh.",
-        status: 409
-      });
-    }
-
-    // ✅ update data
-    user.fullName = fullName;
-    user.vehicleNo = vehicleNo;
-    user.vehicleName = vehicleName;
-    user.vehicleBrand = vehicleBrand;
-    user.concurrency = new Date(); // update timestamp
-
-    await user.save();
-
-    return sendResponse(res, {
-      message: "User updated successfully",
-      data: {
-        fullName: user.fullName,
-        vehicleNo: user.vehicleNo,
-        vehicleName: user.vehicleName,
-        vehicleBrand: user.vehicleBrand,
-        concurrency: user.concurrency
-      },
-      status: 200
+    // validate input
+    updateSchema.validateSync({
+      email,
+      brand_id: String(brand_id),
+      model_id: String(model_id)
     });
+
+    const isUserVerify = await commonUserModel.findOne({ email : email , isVerified: true });
+
+    if(isUserVerify?.isVerified){
+      const findManufacturer = await Manufacturer.findOne({id:brand_id});
+      const findCarModel = await CarModel.findOne({id:model_id});
+
+      if (!findManufacturer || !findCarModel) {
+        return sendError(res, {
+          message: "Brand or Model not found",
+          status: 404
+        });
+      }
+
+      // Find user and update, then save
+      let user = await User.findOne({ email: email });
+      if (!user) {
+        // Insert new user if not found
+        user = new User({
+          email: email,
+          brand: findManufacturer.display_name,
+          model: findCarModel.display_name,
+          brand_id: findManufacturer.id,
+          model_id: findCarModel.id
+        });
+        await user.save();
+      } else {
+        // Update existing user
+        user.brand = findManufacturer.display_name;
+        user.model = findCarModel.display_name;
+        user.brand_id = findManufacturer.id;
+        user.model_id = findCarModel.id;
+        await user.save();
+      }
+
+      return sendResponse(res, {
+        message: "User updated successfully",
+        data: user,
+        status: 200
+      });
+
+    } else {
+      return sendError(res, {
+        message: "User is not verified",
+        status: 400
+      });
+    }
 
   } catch (err) {
     return sendError(res, {
@@ -67,3 +80,4 @@ const updateUserController = async (req, res) => {
 };
 
 module.exports = updateUserController;
+

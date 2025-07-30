@@ -7,9 +7,12 @@ const winston = require('winston');
 const path = require('path');
 const { sendResponse } = require('./utils/response');
 const connectDB = require('./database/mongodb');
+const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/auth/login');
 
 const dashboardRoutes = require('./routes/Home/index');
+const carManufacturerRoutes = require('./routes/carDataRoutes');
+const userRoutes = require('./routes/updateUserRoutes');
 
 
 const app = express();
@@ -49,14 +52,15 @@ const allowedIps = (process.env.ALLOWED_IPS || '').split(',').map(ip => ip.trim(
 app.use((req, res, next) => {
   //   const clientIp = req.ip.replace('::ffff:', ''); // Handles IPv4-mapped IPv6 addresses
   //   if (allowedIps.length === 0 || allowedIps.includes(clientIp)) {
-  //     return next();
-  //   }
-  //   res.status(403).json({ error: 'Access denied: IP not allowed.' });
-  return next();
-});
-
-// Middleware
-app.use(express.json());
+    //     return next();
+    //   }
+    //   res.status(403).json({ error: 'Access denied: IP not allowed.' });
+    return next();
+  });
+  
+  // Middleware
+  app.use(express.json());
+  app.use(cookieParser());
 app.use(cors({
   // origin: process.env.NODE_ENV === 'production' 
   //   ? process.env.FRONTEND_URL || true 
@@ -71,6 +75,8 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/cardata', carManufacturerRoutes);
+app.use("/api/user", userRoutes)
 
 // Health check route for Render
 app.get('/health', (req, res) => {
