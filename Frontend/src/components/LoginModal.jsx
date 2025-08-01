@@ -154,7 +154,12 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
         setBrandModelSubmitted(true);
         showMessage('User updated successfully!');
         dispatch(setLoggedInEmail(email));
-        // Redirect to home and refresh
+        // Remove cookies before reload to ensure logout/login state is correct
+        document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        localStorage.setItem("loggedInEmail", email);
         navigate("/", { replace: true });
         window.location.reload();
       },
