@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -13,10 +13,18 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Popover,
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
 } from "@mui/material";
 import DirectionsCarFilledOutlinedIcon from "@mui/icons-material/DirectionsCarFilledOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { apiService } from "../../utils/apiService";
+import { useNavigate } from "react-router-dom";
 
 // Example static data
 const BRANDS = [
@@ -114,6 +122,18 @@ const BLOGS = [
 ];
 
 const Dashboard = () => {
+  // Brand/model state
+  const [manufacturers, setManufacturers] = useState([]);
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [models, setModels] = useState([]);
+  const [selectedModel, setSelectedModel] = useState("");
+  const [brandSearch, setBrandSearch] = useState("");
+  const [modelSearch, setModelSearch] = useState("");
+
+  // Anchor elements for popovers
+  const [brandAnchorEl, setBrandAnchorEl] = useState(null);
+  const [modelAnchorEl, setModelAnchorEl] = useState(null);
+
   // Generate 30 vendor cards for demo
   const vendorCards = Array.from({ length: 30 }).map((_, idx) => {
     const vendor = TOP_VENDORS[idx % TOP_VENDORS.length];
@@ -124,14 +144,55 @@ const Dashboard = () => {
     };
   });
 
+  // Fetch manufacturers and models from API on mount
+  useEffect(() => {
+    async function fetchManufacturers() {
+      try {
+        const res = await apiService.post("/cardata/getallmanufacturers", {}, {});
+        const data = res?.data?.data?.manufacturers || [];
+        setManufacturers(data);
+      } catch (err) {
+        setManufacturers([]);
+      }
+    }
+    fetchManufacturers();
+  }, []);
+
+  // Update models when brand changes
+  useEffect(() => {
+    if (selectedBrand) {
+      const brandObj = manufacturers.find(m => String(m.id) === String(selectedBrand));
+      setModels(brandObj?.car_models || []);
+      setSelectedModel("");
+    } else {
+      setModels([]);
+      setSelectedModel("");
+    }
+  }, [selectedBrand, manufacturers]);
+
+  // Popover handlers
+  const handleBrandClick = (event) => {
+    setBrandAnchorEl(event.currentTarget);
+  };
+  const handleBrandClose = () => {
+    setBrandAnchorEl(null);
+  };
+  const handleModelClick = (event) => {
+    setModelAnchorEl(event.currentTarget);
+  };
+  const handleModelClose = () => {
+    setModelAnchorEl(null);
+  };
+
+  const navigate = useNavigate();
+
   return (
     <Box
       className="dashboard-board"
-     
       mx="auto"
       px={2}
       py={4}
-      sx={{ bgcolor: "#fff" }}
+      sx={{ bgcolor: "#fff", maxWidth: "1600px" }}
     >
       {/* Filter Section */}
       <Box
@@ -187,12 +248,12 @@ const Dashboard = () => {
               disableUnderline: true,
             }}
           />
+          {/* Brand Popover with search */}
           <TextField
-            select
             label="Brand"
             variant="standard"
             sx={{
-              minWidth: 120,
+              minWidth: 180,
               mx: 1,
               "& .MuiInputLabel-root": {
                 color: "#3a1c71",
@@ -203,23 +264,69 @@ const Dashboard = () => {
                 fontWeight: 600,
                 fontSize: 16,
                 color: "#222",
+                cursor: "pointer",
               },
             }}
-            InputProps={{ disableUnderline: true }}
+            InputProps={{
+              disableUnderline: true,
+              readOnly: true,
+            }}
+            value={
+              selectedBrand
+                ? manufacturers.find((b) => String(b.id) === String(selectedBrand))?.display_name || ""
+                : ""
+            }
+            onClick={handleBrandClick}
+            placeholder="Select Brand"
+          />
+          <Popover
+            open={Boolean(brandAnchorEl)}
+            anchorEl={brandAnchorEl}
+            onClose={() => {
+              setBrandSearch("");
+              handleBrandClose();
+            }}
+            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
           >
-            <MenuItem value="">Select Brand</MenuItem>
-            {BRANDS.map((b) => (
-              <MenuItem key={b.id} value={b.id}>
-                {b.name}
-              </MenuItem>
-            ))}
-          </TextField>
+            <Box sx={{ p: 1 }}>
+              <TextField
+                size="small"
+                placeholder="Search brand..."
+                value={brandSearch}
+                onChange={e => setBrandSearch(e.target.value)}
+                sx={{ mb: 1, width: 200 }}
+              />
+            </Box>
+            <List sx={{ minWidth: 220, maxHeight: 320, overflowY: "auto" }}>
+              {manufacturers
+                .filter(b =>
+                  b.display_name.toLowerCase().includes(brandSearch.toLowerCase())
+                )
+                .map((b) => (
+                  <ListItem
+                    button
+                    key={b.id}
+                    onClick={() => {
+                      setSelectedBrand(b.id);
+                      setBrandSearch("");
+                      handleBrandClose();
+                    }}
+                    selected={String(selectedBrand) === String(b.id)}
+                  >
+                    <ListItemAvatar>
+                      <Avatar src={b.logo_url} alt={b.display_name} />
+                    </ListItemAvatar>
+                    <ListItemText primary={b.display_name} />
+                  </ListItem>
+                ))}
+            </List>
+          </Popover>
+          {/* Model Popover with search */}
           <TextField
-            select
             label="Model"
             variant="standard"
             sx={{
-              minWidth: 120,
+              minWidth: 180,
               mx: 1,
               "& .MuiInputLabel-root": {
                 color: "#3a1c71",
@@ -230,18 +337,64 @@ const Dashboard = () => {
                 fontWeight: 600,
                 fontSize: 16,
                 color: "#222",
+                cursor: "pointer",
               },
             }}
-            InputProps={{ disableUnderline: true }}
-            disabled={false}
+            InputProps={{
+              disableUnderline: true,
+              readOnly: true,
+            }}
+            value={
+              selectedModel
+                ? models.find((m) => String(m.id) === String(selectedModel))?.display_name || ""
+                : ""
+            }
+            onClick={handleModelClick}
+            placeholder="Select Model"
+            disabled={!selectedBrand}
+          />
+          <Popover
+            open={Boolean(modelAnchorEl)}
+            anchorEl={modelAnchorEl}
+            onClose={() => {
+              setModelSearch("");
+              handleModelClose();
+            }}
+            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
           >
-            <MenuItem value="">Select Model</MenuItem>
-            {MODELS.map((m) => (
-              <MenuItem key={m.id} value={m.id}>
-                {m.name}
-              </MenuItem>
-            ))}
-          </TextField>
+            <Box sx={{ p: 1 }}>
+              <TextField
+                size="small"
+                placeholder="Search model..."
+                value={modelSearch}
+                onChange={e => setModelSearch(e.target.value)}
+                sx={{ mb: 1, width: 200 }}
+              />
+            </Box>
+            <List sx={{ minWidth: 220, maxHeight: 320, overflowY: "auto" }}>
+              {models
+                .filter(m =>
+                  m.display_name.toLowerCase().includes(modelSearch.toLowerCase())
+                )
+                .map((m) => (
+                  <ListItem
+                    button
+                    key={m.id}
+                    onClick={() => {
+                      setSelectedModel(m.id);
+                      setModelSearch("");
+                      handleModelClose();
+                    }}
+                    selected={String(selectedModel) === String(m.id)}
+                  >
+                    <ListItemAvatar>
+                      <Avatar src={m.logo} alt={m.display_name} />
+                    </ListItemAvatar>
+                    <ListItemText primary={m.display_name} />
+                  </ListItem>
+                ))}
+            </List>
+          </Popover>
           {/* Vendor Filter */}
           <TextField
             select
@@ -311,12 +464,13 @@ const Dashboard = () => {
           borderRadius: 2,
           boxShadow: 1,
           p: 3,
+          overflowX: "auto",
         }}
       >
         <Grid container spacing={3}>
           {vendorCards.map((vendor) => (
-            <Grid item xs={12} key={vendor.id} sx={{ px: 0, width: "100%" }}>
-              {/* Each card takes full row */}
+            <Grid item xs={12} sm={6} md={3} key={vendor.id} sx={{ px: 0, width: "100%" }}>
+              {/* Each card now fits 4 columns on desktop */}
               <Card
                 sx={{
                   boxShadow: 3,
@@ -324,14 +478,14 @@ const Dashboard = () => {
                   transition: "transform 0.2s",
                   "&:hover": { transform: "translateY(-4px)", boxShadow: 6 },
                   display: "flex",
-                  flexDirection: "row",
+                  flexDirection: "column",
                   alignItems: "center",
                   p: 0,
                   width: "100%",
                   minWidth: "100%",
                   maxWidth: "100%",
                   margin: 0,
-                  height: 260,
+                  
                   background: "#fff",
                 }}
               >
@@ -340,13 +494,10 @@ const Dashboard = () => {
                   image={vendor.image}
                   alt={vendor.name}
                   sx={{
-                    width: "33.33%",
-                    height: 260,
+                    width: "100%",
+                    height: 300,
                     objectFit: "cover",
-                    mr: 4,
-                    border: "0px solid #fff",
-                    p: 0,
-                    borderRadius: "16px 0 0 16px",
+                    borderRadius: "16px 16px 0 0",
                   }}
                 />
                 <CardContent
@@ -357,6 +508,7 @@ const Dashboard = () => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "flex-start",
+                    width: "100%",
                   }}
                 >
                   <Box>
@@ -442,6 +594,7 @@ const Dashboard = () => {
                     boxShadow: "0 2px 8px rgba(211,47,47,0.15)",
                   }}
                   color="error"
+                  onClick={() => navigate(`/service-details?vendorId=${vendor.id}`)}
                 >
                   Visit & Choose Service
                 </Button>
@@ -553,3 +706,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

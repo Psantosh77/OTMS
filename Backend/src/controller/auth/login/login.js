@@ -6,6 +6,7 @@ const commonUserModel = require("../../../model/userModels/commonUserModel");
 const User = require("../../../model/userModels/userMode");
 const Vendor = require("../../../model/userModels/vendorModel");
 const { setTokens } = require("../../../middleware/jwtToken");
+const jwt = require("jsonwebtoken"); // Add at the top if not already imported
 
 
 // Yup schema for email validation
@@ -144,4 +145,49 @@ const logoutController = async (req, res) => {
   }
 };
 
-module.exports = { sendOtpController, verifyOtpController, logoutController };
+// API to check if token in cookies is valid
+const checkTokenController = async (req, res) => {
+  try {
+    // Only check the first valid token found (avoid fallback to refreshToken if accessToken is present)
+    const cookies = req.cookies || {};
+    let token =
+      cookies.accessToken ||
+      cookies.access_token ||
+      cookies.token;
+
+    // If token is undefined/null/empty, return error immediately
+    if (!token) {
+      return sendError(res, {
+        message: "No token provided",
+        status: 404
+      });
+    }
+
+    // Fallback: try to get from Authorization header (Bearer token)
+    if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    // If still no token, as a last resort, try refreshToken
+    if (!token && cookies.refreshToken) {
+      token = cookies.refreshToken;
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      // ...existing code...
+      return sendResponse(res, {
+        message: "Token is valid",
+        data: {},
+        status: 200
+      });
+    });
+  } catch (err) {
+    return sendError(res, {
+      message: "Token check failed",
+      data: err.message,
+      status: 500
+    });
+  }
+};
+
+module.exports = { sendOtpController, verifyOtpController, logoutController, checkTokenController };

@@ -77,6 +77,7 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
         setOtpSent(true);
         showMessage('OTP sent successfully! Check your email.');
         setCountdown(60);
+        clearInterval(timerRef.current);
         timerRef.current = setInterval(() => {
           setCountdown(prev => {
             if (prev <= 1) {
@@ -153,14 +154,20 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
         setBrandModelSubmitted(true);
         showMessage('User updated successfully!');
         dispatch(setLoggedInEmail(email));
-        handleCloseModal();
-        navigate("/dashboard");
+        // Redirect to home and refresh
+        navigate("/", { replace: true });
+        window.location.reload();
       },
       () => {
         showMessage('Failed to update user. Please try again.', true);
       }
     );
   };
+
+  useEffect(() => {
+    // Clear timer on unmount
+    return () => clearInterval(timerRef.current);
+  }, []);
 
   if (!showModal) return null;
 
@@ -172,18 +179,17 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
     <div className="modal fade show d-block modal-modern">
       <style jsx>{`
         .modal-modern {
-          /* backdrop-filter: blur(10px); */ /* removed blur */
-          // background-color: rgba(0, 0, 0, 0.4);
+          // background: #f8f9fa;
           z-index: 1050;
         }
         .modal-content-modern {
           border: none;
-          border-radius: 20px;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-          background: linear-gradient(145deg, #fff 0%, #f8f9fa 100%);
+          border-radius: 18px;
+          box-shadow: 0 2px 16px rgba(34,34,34,0.08);
+         
           animation: slideInRight 0.4s ease-out;
-          width: 500px;
-          max-width: 95vw;
+          width: 420px;
+          max-width: 98vw;
         }
         @media (max-width: 600px) {
           .modal-dialog {
@@ -209,57 +215,42 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
           }
         }
         .modal-header-modern {
-          border-bottom: 1px solid rgba(255, 107, 53, 0.1);
-          padding: 25px 30px 20px;
-          background: linear-gradient(90deg, #fff7ed 0%, #ffe0b2 100%);
+          border-bottom: 1px solid #f3f3f3;
+          padding: 22px 28px 16px;
+          background: #f8f9fa;
         }
         .modal-title-modern {
-          color: #ff6b35;
+          color: #222;
           font-weight: 700;
-          font-size: 24px;
-        }
-        .btn-close-modern {
-          background: none;
-          border: none;
-          font-size: 24px;
-          color: #ff6b35;
-          opacity: 0.7;
-          transition: all 0.3s ease;
-        }
-        .btn-close-modern:hover {
-          opacity: 1;
-          transform: rotate(90deg);
+          font-size: 22px;
         }
         .form-control-modern {
-          border: 2px solid #e9ecef;
-          border-radius: 15px;
-          padding: 15px 20px;
-          font-size: 16px;
-          transition: all 0.3s ease;
-          background: rgba(255, 255, 255, 0.9);
-          box-shadow: 0 2px 8px rgba(255,107,53,0.06);
+          border: 1.5px solid #e9ecef;
+          border-radius: 12px;
+          padding: 12px 16px;
+          font-size: 1rem;
+          transition: border-color 0.2s;
+          background: #fff;
+          box-shadow: 0 1px 4px rgba(34,34,34,0.04);
         }
         .form-control-modern:focus {
           border-color: #ff6b35;
-          box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.15);
-          background: white;
+          outline: none;
         }
         .btn-send-otp {
-          background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+          background: #ff6b35;
           border: none;
-          border-radius: 15px;
-          padding: 15px;
-          color: white;
+          border-radius: 14px;
+          padding: 13px;
+          color: #fff;
           font-weight: 600;
-          font-size: 18px;
-          transition: all 0.3s ease;
-          position: relative;
-          overflow: hidden;
-          box-shadow: 0 2px 12px rgba(255,107,53,0.12);
+          font-size: 1.08rem;
+          transition: background 0.2s, box-shadow 0.2s;
+          box-shadow: 0 2px 8px rgba(255,107,53,0.10);
         }
         .btn-send-otp:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 25px rgba(255, 107, 53, 0.18);
+          background: #f7931e;
+          box-shadow: 0 6px 18px rgba(255,107,53,0.16);
         }
         .btn-send-otp:disabled {
           opacity: 0.7;
@@ -270,7 +261,7 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
           font-size: 15px;
           margin-bottom: 15px;
           padding: 10px;
-          background: rgba(40, 167, 69, 0.08);
+          background: #eafbe7;
           border-radius: 8px;
           text-align: center;
         }
@@ -279,7 +270,7 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
           font-size: 15px;
           margin-bottom: 15px;
           padding: 10px;
-          background: rgba(220, 53, 69, 0.08);
+          background: #fbeaea;
           border-radius: 8px;
           text-align: center;
         }
@@ -287,9 +278,9 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
           display: inline-block;
           width: 20px;
           height: 20px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
+          border: 2px solid #eee;
           border-radius: 50%;
-          border-top-color: white;
+          border-top-color: #ff6b35;
           animation: spin 1s ease-in-out infinite;
         }
         @keyframes spin {
@@ -333,32 +324,42 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
                   />
                 </div>
 
+                {/* Show OTP field and submit only if OTP is sent and not verified */}
                 {otpSent && !isOtpVerified && (
-                  <div className="mb-4">
-                    <label htmlFor="otp" className="form-label fw-semibold mb-3" style={{ fontSize: '16px' }}>
-                      Enter OTP
-                    </label>
-                    <input
-                      type="text"
-                      ref={otpInputRef}
-                      className="form-control form-control-modern"
-                      id="otp"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      placeholder="Enter 6-digit OTP"
-                      maxLength="6"
-                      required
-                      disabled={isVerifying}
-                    />
-                  </div>
+                  <>
+                    <div className="mb-4">
+                      <label htmlFor="otp" className="form-label fw-semibold mb-3" style={{ fontSize: '16px' }}>
+                        Enter OTP
+                      </label>
+                      <input
+                        type="text"
+                        ref={otpInputRef}
+                        className="form-control form-control-modern"
+                        id="otp"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        placeholder="Enter 6-digit OTP"
+                        maxLength="6"
+                        required
+                        disabled={isVerifying}
+                      />
+                    </div>
+                    <button type="submit" className="btn btn-send-otp w-100" disabled={isVerifying}>
+                      {isVerifying ? <><span className="loading-spinner me-2"></span>Verifying OTP...</> : 'Submit'}
+                    </button>
+                    {/* Resend OTP button, enabled only when countdown is 0 */}
+                    <button
+                      type="button"
+                      className="btn btn-send-otp w-100 mt-3"
+                      onClick={handleSendOTP}
+                      disabled={countdown > 0}
+                    >
+                      {countdown > 0 ? `Resend OTP in ${countdown}s` : 'Resend OTP'}
+                    </button>
+                  </>
                 )}
 
-                {!isOtpVerified && otpSent && (
-                  <button type="submit" className="btn btn-send-otp w-100" disabled={isVerifying}>
-                    {isVerifying ? <><span className="loading-spinner me-2"></span>Verifying OTP...</> : 'Submit'}
-                  </button>
-                )}
-
+                {/* Show Send OTP button only if OTP is not sent */}
                 {!otpSent && (
                   <button type="submit" className="btn btn-send-otp w-100" disabled={isLoading || countdown > 0}>
                     {isLoading ? <><span className="loading-spinner me-2"></span>Sending OTP...</> : countdown > 0 ? `Resend OTP in ${countdown}s` : 'Send OTP'}
@@ -368,7 +369,7 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
             )}
 
             {/* Brand/Model Form after OTP verification */}
-            {isOtpVerified && !brandModelSubmitted && (
+            {otpSent && isOtpVerified && (
               <form onSubmit={handleBrandModelSubmit}>
                 <div className="mb-4">
                   <label htmlFor="brand" className="form-label fw-semibold mb-3" style={{ fontSize: '16px' }}>

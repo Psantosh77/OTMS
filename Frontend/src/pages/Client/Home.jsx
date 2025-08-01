@@ -231,25 +231,66 @@ const Home = () => {
           transform: rotate(360deg) scale(1.1);
         }
       `}</style>
+      <style>{`
+        .home-main {
+          width: 100%;
+          max-width: 1600px;
+          margin: 0 auto;
+          padding: 0 24px;
+        }
+        @media (max-width: 900px) {
+          .home-main {
+            max-width: 100vw !important;
+            padding: 0 8px !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .home-main {
+            max-width: 100vw !important;
+            padding: 0 2vw !important;
+          }
+          .home-section {
+            flex-direction: column !important;
+            gap: 1rem !important;
+            padding: 0 !important;
+          }
+          .home-title {
+            font-size: 1.3rem !important;
+            margin-bottom: 8px !important;
+          }
+          .home-desc {
+            font-size: 1rem !important;
+            margin-bottom: 8px !important;
+          }
+          .home-img {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: auto !important;
+            border-radius: 12px !important;
+          }
+        }
+      `}</style>
       
       <div className="font-sans">
-        <div className="fade-in-up">
-          <Hero />
-        </div>
-        <div className="fade-in-up stagger-1">
-          <Services />
-        </div>
-        <div className="fade-in-up stagger-2">
-          <HowItWorks />
-        </div>
-        <div className="fade-in-up stagger-3">
-          <WhyChooseUs />
-        </div>
-        <div className="fade-in-up stagger-4">
-          <Testimonials />
-        </div>
-        <div className="fade-in-up stagger-5">
-          <CTA />
+        <div className="home-main">
+          <div className="fade-in-up">
+            <Hero />
+          </div>
+          <div className="fade-in-up stagger-1">
+            <Services />
+          </div>
+          <div className="fade-in-up stagger-2">
+            <HowItWorks />
+          </div>
+          <div className="fade-in-up stagger-3">
+            <WhyChooseUs />
+          </div>
+          <div className="fade-in-up stagger-4">
+            <Testimonials />
+          </div>
+          <div className="fade-in-up stagger-5">
+            <CTA />
+          </div>
         </div>
       </div>
     </>

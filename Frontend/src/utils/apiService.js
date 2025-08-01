@@ -14,13 +14,15 @@ const getApiBaseUrl = () => {
 
 const api = axios.create({
   baseURL: getApiBaseUrl(),
-  withCredentials: true, // send cookies
+  withCredentials: true, // send cookies (for CORS, must be set here)
   timeout: parseInt(import.meta.env.VITE_API_TIMEOUT) || 10000,
 });
 
-// Request interceptor
+// Ensure cookies are sent in all requests (especially for cross-origin)
 api.interceptors.request.use(
   (config) => {
+    config.withCredentials = true; // force withCredentials on every request
+
     // Add timestamp to prevent caching
     config.params = {
       ...config.params,

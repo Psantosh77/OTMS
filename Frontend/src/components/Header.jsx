@@ -6,41 +6,60 @@ import LoginModal from "./LoginModal";
 import UpdateUser from "./UpdateUser";
 import { useSelector, useDispatch } from "react-redux";
 import { setLoggedInEmail } from "../redux/userSlice"; // adjust path as needed
+import { isUserLoggedIn } from "../utils/auth";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { Popover, Box, Typography, Button as MuiButton } from "@mui/material";
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showUpdateUser, setShowUpdateUser] = useState(false);
+  const [accountAnchorEl, setAccountAnchorEl] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const loggedInEmail = useSelector(state => state.user.loggedInEmail);
 
+  // Try to get email from Redux, fallback to localStorage if null (for refresh)
+  let loggedInEmail = useSelector(state => state.user.loggedInEmail);
+  if (!loggedInEmail) {
+    loggedInEmail = localStorage.getItem("loggedInEmail") || null;
+  }
+
+  // Save email to localStorage when it changes
   useEffect(() => {
-    const checkAuthToken = () => {
-      const cookies = document.cookie.split(';');
-      const accessTokenCookie = cookies.find(cookie =>
-        cookie.trim().startsWith('accessToken=') ||
-        cookie.trim().startsWith('access_token=') ||
-        cookie.trim().startsWith('token=')
-      );
-      const hasValidToken = accessTokenCookie && accessTokenCookie.split('=')[1] && accessTokenCookie.split('=')[1] !== '';
-      setIsAuthenticated(hasValidToken);
+    if (loggedInEmail) {
+      localStorage.setItem("loggedInEmail", loggedInEmail);
+    } else {
+      localStorage.removeItem("loggedInEmail");
+    }
+  }, [loggedInEmail]);
+
+  // Only check authentication once on mount (not every second)
+  useEffect(() => {
+    let isMounted = true;
+    const checkAuthToken = async () => {
+      const hasValidToken = await isUserLoggedIn();
+      if (isMounted) {
+        setIsAuthenticated(hasValidToken);
+        // Auto-login: if cookies present and not logged in, set dummy email if needed
+        if (hasValidToken && !loggedInEmail) {
+          dispatch(setLoggedInEmail(loggedInEmail));
+        }
+      }
     };
     checkAuthToken();
-    const interval = setInterval(checkAuthToken, 1000);
-    return () => clearInterval(interval);
+    return () => { isMounted = false; };
   }, []);
 
   useEffect(() => {
+    // Only check again if isAuthenticated changes to true
     if (isAuthenticated) {
-      const cookies = document.cookie.split(';');
-      const accessTokenCookie = cookies.find(cookie =>
-        cookie.trim().startsWith('accessToken=') ||
-        cookie.trim().startsWith('access_token=') ||
-        cookie.trim().startsWith('token=')
-      );
-      const hasValidToken = accessTokenCookie && accessTokenCookie.split('=')[1] && accessTokenCookie.split('=')[1] !== '';
-      if (!hasValidToken) setIsAuthenticated(false);
+      let isMounted = true;
+      const checkAuthToken = async () => {
+        const hasValidToken = await isUserLoggedIn();
+        if (isMounted && !hasValidToken) setIsAuthenticated(false);
+      };
+      checkAuthToken();
+      return () => { isMounted = false; };
     }
   }, [isAuthenticated]);
 
@@ -60,7 +79,8 @@ const Header = () => {
           document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
           document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
           localStorage.clear();
-          navigate('/');
+          navigate('/', { replace: true });
+          window.location.reload(); // reload after logout
         },
         () => {
           document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -68,7 +88,8 @@ const Header = () => {
           document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
           document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
           localStorage.clear();
-          navigate('/');
+          navigate('/', { replace: true });
+          window.location.reload(); // reload after logout
         }
       );
     } catch {
@@ -77,126 +98,167 @@ const Header = () => {
       document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       localStorage.clear();
-      navigate('/');
+      navigate('/', { replace: true });
+      window.location.reload(); // reload after logout
     }
   };
 
   const handleCloseModal = () => setShowModal(false);
 
+  // Account popover handlers
+  const handleAccountClick = (event) => {
+    setAccountAnchorEl(event.currentTarget);
+  };
+  const handleAccountClose = () => {
+    setAccountAnchorEl(null);
+  };
+
   return (
     <>
       <style jsx>{`
-        .header-gradient {
-          background: linear-gradient(90deg, #fff7ed 0%, #ffe0b2 100%);
-        }
         .header-modern {
-          background: linear-gradient(90deg, #fff7ed 0%, #ffe0b2 100%);
-          box-shadow: 0 12px 32px rgba(255,167,38,0.13);
-          border-radius: 0 0 40px 40px;
-          border-bottom: 3px solid #ffd180;
+          background: #fff;
+          box-shadow: 0 4px 24px rgba(255,107,53,0.10);
+          border-radius: 0 0 32px 32px;
+          border-bottom: 2px solid #ffe0b2;
           position: relative;
+          transition: box-shadow 0.2s;
         }
-        .header-modern::after {
-          content: '';
-          position: absolute;
-          left: 0; right: 0; bottom: -10px;
-          height: 18px;
-          background: radial-gradient(circle, #ffd180 0%, transparent 70%);
-          opacity: 0.5;
-          z-index: 0;
+        .header-modern.sticky-top {
+          position: sticky;
+          top: 0;
+          z-index: 1100;
         }
         .logo-modern {
-          font-size: 2.6rem;
-          font-weight: 900;
+          font-size: 2.4rem;
+          font-weight: 800;
           letter-spacing: 2.5px;
           background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          text-shadow: 0 2px 12px #ffd18044;
+          text-shadow: 0 2px 12px rgba(255,107,53,0.10);
+          padding: 0 8px;
         }
         .nav-modern {
           display: flex;
-          gap: 2.8rem;
+          gap: 1.5rem;
           align-items: center;
+          background: rgba(255,255,255,0.85);
+          border-radius: 18px;
+          padding: 4px 18px;
+          box-shadow: 0 2px 12px rgba(255,107,53,0.06);
         }
         .nav-link-modern {
           color: #222 !important;
-          font-weight: 700;
+          font-weight: 600;
           font-size: 1.18rem;
           position: relative;
-          padding: 12px 26px;
-          border-radius: 26px;
-          background: transparent; // removed white background
-          transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+          padding: 10px 22px;
+          border-radius: 18px;
+          background: transparent;
+          transition: background 0.2s, color 0.2s, font-size 0.2s;
           cursor: pointer;
-          letter-spacing: 0.7px;
-          box-shadow: none; // removed box-shadow
+          letter-spacing: 0.5px;
+          border: none;
+          outline: none;
         }
         .nav-link-modern:hover, .nav-link-modern.active {
           background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
           color: #fff !important;
-          box-shadow: 0 6px 18px rgba(255,107,53,0.22);
-          transform: translateY(-3px) scale(1.06);
+          font-size: 1.22rem;
+          box-shadow: 0 2px 12px rgba(255,107,53,0.10);
         }
         .nav-link-modern::after {
           content: '';
           position: absolute;
-          left: 26px;
-          bottom: 10px;
+          left: 18px;
+          bottom: 6px;
           width: 0;
-          height: 3px;
+          height: 2px;
           background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
-          border-radius: 2px;
           transition: width 0.3s;
         }
         .nav-link-modern:hover::after, .nav-link-modern.active::after {
-          width: calc(100% - 52px);
-        }
-        .btn-modern {
-          background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
-          border: none;
-          border-radius: 30px;
-          padding: 14px 36px;
-          color: #fff;
-          font-weight: 800;
-          font-size: 1.15rem;
-          box-shadow: 0 6px 20px rgba(255,107,53,0.22);
-          transition: all 0.3s;
-          letter-spacing: 1px;
-        }
-        .btn-modern:hover {
-          transform: translateY(-3px) scale(1.07);
-          box-shadow: 0 12px 32px rgba(255,107,53,0.32);
-          background: linear-gradient(90deg, #f7931e 0%, #ff6b35 100%);
-        }
-        .btn-logout {
-          background: linear-gradient(90deg, #d32f2f 0%, #b71c1c 100%);
-          border: none;
-          border-radius: 30px;
-          padding: 14px 36px;
-          color: #fff;
-          font-weight: 800;
-          font-size: 1.15rem;
-          box-shadow: 0 6px 20px rgba(211,47,47,0.22);
-          transition: all 0.3s;
-          letter-spacing: 1px;
-        }
-        .btn-logout:hover {
-          transform: translateY(-3px) scale(1.07);
-          box-shadow: 0 12px 32px rgba(211,47,47,0.32);
-          background: linear-gradient(90deg, #b71c1c 0%, #d32f2f 100%);
+          width: calc(100% - 36px);
         }
         .welcome-email {
-          color: #222;
+          color: #ff6b35;
+          font-weight: 600;
+          margin-right: 1rem;
+          font-size: 1rem;
+        }
+        .account-popover .MuiPaper-root {
+          border-radius: 18px !important;
+          box-shadow: 0 4px 24px rgba(255,107,53,0.13) !important;
+        }
+        .account-popover .MuiTypography-subtitle1 {
+          color: #ff6b35;
           font-weight: 700;
-          margin-right: 1.2rem;
-          font-size: 1.12rem;
-          letter-spacing: 0.5px;
+          font-size: 1.08rem;
+        }
+        .account-popover .MuiButton-root {
+          background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+          color: #fff;
+          font-weight: 600;
+          border-radius: 12px;
+          box-shadow: 0 2px 8px rgba(255,107,53,0.10);
+        }
+        .account-popover .MuiButton-root:hover {
+          background: linear-gradient(90deg, #f7931e 0%, #ff6b35 100%);
+        }
+        @media (max-width: 900px) {
+          .logo-modern {
+            font-size: 1.7rem;
+            padding: 0 2px;
+          }
+          .nav-modern {
+            gap: 0.6rem;
+            padding: 2px 8px;
+          }
+          .nav-link-modern {
+            font-size: 1rem;
+            padding: 7px 10px;
+          }
+        }
+        @media (max-width: 600px) {
+          .header-modern {
+            border-radius: 0 0 18px 18px;
+            padding: 0 !important;
+          }
+          .container {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            min-height: 0 !important;
+            padding: 0 2vw !important;
+          }
+          .logo-modern {
+            font-size: 1.3rem;
+            padding: 0 2px;
+            margin-bottom: 6px;
+          }
+          .nav-modern {
+            flex-direction: column;
+            gap: 0.2rem;
+            padding: 2px 2px;
+            border-radius: 10px;
+            box-shadow: none;
+            margin-bottom: 8px;
+          }
+          .nav-link-modern {
+            font-size: 0.98rem;
+            padding: 7px 8px;
+            border-radius: 10px;
+            width: 100%;
+            text-align: left;
+          }
+          .account-popover .MuiPaper-root {
+            min-width: 160px !important;
+            padding: 8px !important;
+          }
         }
       `}</style>
-
       <header className="header-modern sticky-top py-3 px-0">
-        <div className="container d-flex align-items-center" style={{ minHeight: 70 }}>
+        <div className="container d-flex align-items-center justify-content-between" style={{ minHeight: 70, flexWrap: "wrap" }}>
           {/* Section 1: Logo */}
           <div style={{ flex: "0 0 auto" }}>
             <Link to="/" className="text-decoration-none">
@@ -204,13 +266,17 @@ const Header = () => {
             </Link>
           </div>
           {/* Section 2: Menu */}
-          <div style={{ flex: "1 1 auto", display: "flex", justifyContent: "center" }}>
+          <div style={{ flex: "1 1 auto", display: "flex", justifyContent: "flex-end" }}>
             <nav className="nav-modern">
+              {/* Show Dashboard menu only if cookies/token is present */}
               {isAuthenticated && (
                 <Link to="/services" className="nav-link-modern">
                   Services
                 </Link>
               )}
+               <Link to="/" className="nav-link-modern">
+                Home  
+              </Link>
               <Link to="/about" className="nav-link-modern">
                 About
               </Link>
@@ -224,9 +290,60 @@ const Header = () => {
           </div>
           {/* Section 3: User Details */}
           <div style={{ flex: "0 0 auto", display: "flex", alignItems: "center" }}>
-            {loggedInEmail ? (
-              <span className="welcome-email">Welcome, <b>{loggedInEmail}</b></span>
-            ) : null}
+            {isAuthenticated && (
+              <>
+                <AccountCircleIcon
+                  style={{
+                    fontSize: 36,
+                    color: "#ff6b35",
+                    cursor: "pointer",
+                    marginRight: 8,
+                    borderRadius: "50%",
+                    background: "linear-gradient(90deg, #fff 60%, #ffe0b2 100%)",
+                    boxShadow: "0 2px 8px rgba(255,107,53,0.10)",
+                    padding: 2,
+                  }}
+                  onClick={handleAccountClick}
+                />
+                <Popover
+                  className="account-popover"
+                  open={Boolean(accountAnchorEl)}
+                  anchorEl={accountAnchorEl}
+                  onClose={handleAccountClose}
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  transformOrigin={{ vertical: "top", horizontal: "right" }}
+                  PaperProps={{
+                    sx: { p: 2, minWidth: 220, borderRadius: 2 }
+                  }}
+                >
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+                      {loggedInEmail}
+                    </Typography>
+                    <MuiButton
+                      variant="contained"
+                      color="error"
+                      size="small"
+                      sx={{
+                        mt: 1,
+                        borderRadius: 2,
+                        fontWeight: 600,
+                        textTransform: "none",
+                        px: 2,
+                        py: 0.5,
+                        fontSize: "1rem"
+                      }}
+                      onClick={() => {
+                        handleAccountClose();
+                        handleLogout();
+                      }}
+                    >
+                      Logout
+                    </MuiButton>
+                  </Box>
+                </Popover>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -246,4 +363,6 @@ const Header = () => {
 };
 
 export default Header;
+
+
 
