@@ -55,17 +55,14 @@ api.interceptors.response.use(
     if (
       error.response &&
       error.response.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url.includes('/auth/refresh-token')
+      !originalRequest._retry 
+     
     ) {
       originalRequest._retry = true;
       try {
         // Attempt to refresh token
-        let response = await api.post('/auth/refresh-token');
-        if (response && response.status === 200) {
-          // Retry the original request
-          return api(originalRequest);
-        }
+      
+        return api(originalRequest);
       } catch (refreshError) {
         // If refresh fails, redirect to login or home
         window.location.href = '/';
