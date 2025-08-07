@@ -158,6 +158,9 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
 
         if (response.status === 200) {
           navigate("/");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         }
         // No extra API calls or blocking logic
       },
