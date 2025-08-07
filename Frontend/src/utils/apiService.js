@@ -1,5 +1,5 @@
 import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Get environment variables with fallbacks
 const getApiBaseUrl = () => {
@@ -50,24 +50,14 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
+  const navigate = useNavigate();
 
     // Handle 401 errors with token refresh
-    if (
-      error.response &&
-      error.response.status === 401 &&
-      !originalRequest._retry 
-     
-    ) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      try {
-        // Attempt to refresh token
-      
-        return api(originalRequest);
-      } catch (refreshError) {
-        // If refresh fails, redirect to login or home
-        window.location.href = '/';
-        return Promise.reject(refreshError);
-      }
+     // window.location.href = '/'; // Navigate to home on 401
+     navigate('/');
+      return; // Prevent further processing
     }
 
     // Return raw error without transformation
