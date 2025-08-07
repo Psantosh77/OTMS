@@ -1,10 +1,19 @@
-require('dotenv').config();
+// Load environment variables based on NODE_ENV
+const path = require('path');
+require('dotenv').config({
+  path: path.resolve(__dirname, `../.env.${process.env.NODE_ENV || 'development'}`)
+});
+
+// Fallback to default .env if environment-specific file doesn't exist
+if (!process.env.MONGO_URI) {
+  require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+}
 
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const winston = require('winston');
-const path = require('path');
+//const path = require('path');
 const { sendResponse } = require('./utils/response');
 const connectDB = require('./database/mongodb');
 const cookieParser = require('cookie-parser');
@@ -87,23 +96,53 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Environment validation
+console.log('🚀 Starting OTGMS Backend Server...');
+console.log('📋 Environment Check:');
+console.log('- NODE_ENV:', process.env.NODE_ENV || 'not set');
+console.log('- PORT:', process.env.PORT || 'not set (using default 9000)');
+console.log('- MONGO_URI:', process.env.MONGO_URI ? '✅ Set' : '❌ Not set');
+console.log('- FRONTEND_URL:', process.env.FRONTEND_URL || 'not set');
+
+// Validate required environment variables
+const requiredEnvVars = ['MONGO_URI', 'ACCESS_TOKEN_SECRET', 'REFRESH_TOKEN_SECRET'];
+const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+
+if (missingEnvVars.length > 0) {
+  console.error('❌ Missing required environment variables:');
+  missingEnvVars.forEach(envVar => console.error(`  - ${envVar}`));
+  console.error('\n💡 Make sure you have a .env file in the Backend directory with all required variables.');
+  process.exit(1);
+}
+
 // Basic route
 app.get('/', (req, res) => {
   sendResponse(res, {
     message: 'Hello, Express server is running!',
-    data: { env: process.env.NODE_ENV },
+    data: { 
+      env: process.env.NODE_ENV,
+      timestamp: new Date().toISOString(),
+      mongoStatus: 'connected'
+    },
     status: 200
   });
 });
 
 // Connect to database and start server
+console.log('\n🔌 Connecting to MongoDB...');
 connectDB()
   .then(() => {
     app.listen(port, () => {
+      console.log(`\n✅ Server successfully started!`);
+      console.log(`🌐 Server running on: http://localhost:${port}`);
+      console.log(`🏠 Health check: http://localhost:${port}/health`);
+      console.log(`📊 API base URL: http://localhost:${port}/api`);
       logger.info(`Server is running on port ${port}`);
     });
   })
   .catch((err) => {
+    console.error('\n❌ Failed to start server:');
+    console.error('Error:', err.message);
     logger.error('Failed to connect to MongoDB:', err);
     process.exit(1);
   });

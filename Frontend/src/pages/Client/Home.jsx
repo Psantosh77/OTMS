@@ -7,6 +7,7 @@ import HowItWorks from '../../components/HowItWorks';
 import WhyChooseUs from '../../components/WhyChooseUs';
 import Testimonials from '../../components/Testimonials';
 import CTA from '../../components/CTA';
+import Header from '../../components/Header';
 
 const Home = () => {
   return (
@@ -236,7 +237,7 @@ const Home = () => {
           width: 100%;
           max-width: 1600px;
           margin: 0 auto;
-          padding: 0 24px;
+          padding: 0;
         }
         @media (max-width: 900px) {
           .home-main {
@@ -273,6 +274,7 @@ const Home = () => {
       
       <div className="font-sans">
         <div className="home-main">
+          <Header />
           <div className="fade-in-up">
             <Hero />
           </div>

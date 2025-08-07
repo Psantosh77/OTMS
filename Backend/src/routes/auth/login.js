@@ -1,18 +1,31 @@
 const express = require('express');
 const router = express.Router();
 
-const { sendOtpController, verifyOtpController, logoutController, checkTokenController } = require('../../controller/auth/login/login');
+const { 
+  sendOtpController, 
+  verifyOtpController, 
+  logoutController, 
+  checkTokenController, 
+  getUserInfoController, 
+  getUserRoleController 
+} = require('../../controller/auth/login/login');
 const { refreshTokenController } = require('../../middleware/jwtToken');
+const { extractToken } = require('../../middleware/authMiddleware');
 
 
-// POST /api/auth/login
+// Authentication routes (no token required)
 router.post('/sendotp', sendOtpController);
 router.post('/verifyOpt', verifyOtpController);
-router.post('/logout', logoutController);
-router.post('/refresh', refreshTokenController);
-// Add update user/vendor route (JWT required)
 
-// Add token check route
-router.post('/check-token', checkTokenController);
+// Token management routes
+router.post('/logout', logoutController);
+router.post('/refresh-token', refreshTokenController);
+
+// Token validation routes (requires extractToken middleware)
+router.post('/check-token', extractToken, checkTokenController);
+
+// User info routes (requires extractToken middleware)
+router.post('/get-user-info', extractToken, getUserInfoController);
+router.post('/get-user-role', extractToken, getUserRoleController);
 
 module.exports = router;

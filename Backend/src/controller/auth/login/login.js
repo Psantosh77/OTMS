@@ -23,6 +23,7 @@ async function sendOtpController(req, res) {
     try {
         await emailSchema.validate(req.body, { abortEarly: false });
     } catch (validationError) {
+      
         return sendError(res, {
             message: "Validation failed",
             data: validationError.errors,
@@ -51,6 +52,7 @@ async function sendOtpController(req, res) {
             status: 200
         });
     } catch (error) {
+      console.log(error)
         return sendError(res, {
             message: 'Failed to send OTP',
             data: error.message,
@@ -148,36 +150,27 @@ const logoutController = async (req, res) => {
 // API to check if token in cookies is valid
 const checkTokenController = async (req, res) => {
   try {
-    // Only check the first valid token found (avoid fallback to refreshToken if accessToken is present)
-    const cookies = req.cookies || {};
-    let token =
-      cookies.accessToken ||
-      cookies.access_token ||
-      cookies.token;
+    const token = req.token; // From extractToken middleware
 
-    // If token is undefined/null/empty, return error immediately
     if (!token) {
       return sendError(res, {
         message: "No token provided",
-        status: 404
+        status: 401
       });
     }
 
-    // Fallback: try to get from Authorization header (Bearer token)
-    if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
-      token = req.headers.authorization.split(" ")[1];
-    }
+    // Verify token
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        return sendError(res, {
+          message: "Invalid or expired token",
+          status: 401
+        });
+      }
 
-    // If still no token, as a last resort, try refreshToken
-    if (!token && cookies.refreshToken) {
-      token = cookies.refreshToken;
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      // ...existing code...
       return sendResponse(res, {
         message: "Token is valid",
-        data: {},
+        data: { valid: true, email: decoded.email },
         status: 200
       });
     });
@@ -190,4 +183,177 @@ const checkTokenController = async (req, res) => {
   }
 };
 
-module.exports = { sendOtpController, verifyOtpController, logoutController, checkTokenController };
+// API to get user info (email and role) from valid token
+const getUserInfoController = async (req, res) => {
+  try {
+    const token = req.token; // From extractToken middleware
+
+    if (!token) {
+      return sendError(res, {
+        message: "No token provided",
+        status: 401
+      });
+    }
+
+    // Verify token
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return sendError(res, {
+          message: "Invalid or expired token",
+          status: 401
+        });
+      }
+
+      try {
+        const email = decoded.email;
+
+        // Detect user role by checking different collections
+        let role = null;
+        let userDetails = null;
+
+        // Check if user exists in User collection
+        const user = await User.findOne({ email });
+        if (user) {
+          role = "customer";
+          userDetails = {
+            name: user.name,
+            phone: user.phone,
+            address: user.address
+          };
+        } else {
+          // Check if user exists in Vendor collection
+          const vendor = await Vendor.findOne({ email });
+          if (vendor) {
+            role = "vendor";
+            userDetails = {
+              name: vendor.name,
+              phone: vendor.phone,
+              businessName: vendor.businessName,
+              address: vendor.address
+            };
+          } else {
+            // Check if it's an admin (you might have a separate admin collection or logic)
+            // For now, we'll assume admin if the email matches certain criteria
+            const adminEmails = ['admin@otgms.com', 'support@otgms.com']; // Add your admin emails
+            if (adminEmails.includes(email)) {
+              role = "admin";
+              userDetails = {
+                name: "Administrator",
+                type: "admin"
+              };
+            }
+          }
+        }
+
+        // If no role found, default to customer (for newly registered users)
+        if (!role) {
+          role = "customer";
+          userDetails = {
+            name: email.split('@')[0], // Use email prefix as default name
+            isNewUser: true
+          };
+        }
+
+        return sendResponse(res, {
+          message: "User info retrieved successfully",
+          data: {
+            email,
+            role,
+            userDetails,
+            isAuthenticated: true
+          },
+          status: 200
+        });
+
+      } catch (dbError) {
+        return sendError(res, {
+          message: "Failed to retrieve user info",
+          data: dbError.message,
+          status: 500
+        });
+      }
+    });
+
+  } catch (err) {
+    return sendError(res, {
+      message: "Failed to get user info",
+      data: err.message,
+      status: 500
+    });
+  }
+};
+
+// API to get user role only
+const getUserRoleController = async (req, res) => {
+  try {
+    const token = req.token; // From extractToken middleware
+
+    if (!token) {
+      return sendError(res, {
+        message: "No token provided",
+        status: 401
+      });
+    }
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return sendError(res, {
+          message: "Invalid or expired token",
+          status: 401
+        });
+      }
+
+      try {
+        const email = decoded.email;
+        let role = null;
+
+        // Check user role
+        const user = await User.findOne({ email });
+        if (user) {
+          role = "customer";
+        } else {
+          const vendor = await Vendor.findOne({ email });
+          if (vendor) {
+            role = "vendor";
+          } else {
+            const adminEmails = ['admin@otgms.com', 'support@otgms.com'];
+            if (adminEmails.includes(email)) {
+              role = "admin";
+            } else {
+              role = "customer"; // Default role
+            }
+          }
+        }
+
+        return sendResponse(res, {
+          message: "User role retrieved successfully",
+          data: { role },
+          status: 200
+        });
+
+      } catch (dbError) {
+        return sendError(res, {
+          message: "Failed to retrieve user role",
+          data: dbError.message,
+          status: 500
+        });
+      }
+    });
+
+  } catch (err) {
+    return sendError(res, {
+      message: "Failed to get user role",
+      data: err.message,
+      status: 500
+    });
+  }
+};
+
+module.exports = { 
+  sendOtpController, 
+  verifyOtpController, 
+  logoutController, 
+  checkTokenController, 
+  getUserInfoController, 
+  getUserRoleController 
+};

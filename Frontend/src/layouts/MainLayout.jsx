@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom"; // 👈 this will render child routes
 const MainLayout = () => {
   return (
     <>
-      <Header />
+      
       <main>
         <Outlet /> {/* 👈 This will inject Home, About, etc. */}
       </main>

@@ -1,4 +1,5 @@
 import axios from "axios";
+// import { useNavigate } from "react-router-dom";
 
 // Get environment variables with fallbacks
 const getApiBaseUrl = () => {
@@ -51,14 +52,24 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // Handle 401 errors with token refresh
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes('/auth/refresh-token')
+    ) {
       originalRequest._retry = true;
       try {
-        await api.post('/auth/refresh');
-        return api(originalRequest); // Retry the original request
+        // Attempt to refresh token
+        let response = await api.post('/auth/refresh-token');
+        if (response && response.status === 200) {
+          // Retry the original request
+          return api(originalRequest);
+        }
       } catch (refreshError) {
-        // Handle refresh failure (e.g., redirect to home page)
+        // If refresh fails, redirect to login or home
         window.location.href = '/';
+        return Promise.reject(refreshError);
       }
     }
 

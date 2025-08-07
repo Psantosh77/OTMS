@@ -7,6 +7,8 @@ const initialState = {
   selectedModel: "",
   brandModelSubmitted: false,
   loggedInEmail: null,
+  userRole: null, // 'client', 'vendor', 'admin'
+  isAuthenticated: false,
   selectedServices: [],
   serviceSearch: "",
   locationFilter: "",
@@ -35,6 +37,17 @@ const userSlice = createSlice({
     },
     setLoggedInEmail(state, action) {
       state.loggedInEmail = action.payload;
+    },
+    setUserRole(state, action) {
+      state.userRole = action.payload;
+    },
+    setIsAuthenticated(state, action) {
+      state.isAuthenticated = action.payload;
+    },
+    setUserInfo(state, action) {
+      state.loggedInEmail = action.payload.email;
+      state.userRole = action.payload.role;
+      state.isAuthenticated = action.payload.isAuthenticated;
     },
     setServiceSearch(state, action) {
       state.serviceSearch = action.payload;
@@ -66,6 +79,8 @@ const userSlice = createSlice({
       state.selectedModel = "";
       state.brandModelSubmitted = false;
       state.loggedInEmail = null;
+      state.userRole = null;
+      state.isAuthenticated = false;
       state.selectedServices = [];
       state.serviceSearch = "";
       state.locationFilter = "";
@@ -82,6 +97,9 @@ export const {
   setSelectedModel,
   setBrandModelSubmitted,
   setLoggedInEmail,
+  setUserRole,
+  setIsAuthenticated,
+  setUserInfo,
   setServiceSearch,
   addSelectedService,
   removeSelectedService,

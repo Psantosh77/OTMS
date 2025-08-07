@@ -150,18 +150,16 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
         model_id: selectedModel
       },
       {},
-      () => {
+      (response) => {
         setBrandModelSubmitted(true);
         showMessage('User updated successfully!');
         dispatch(setLoggedInEmail(email));
-        // Remove cookies before reload to ensure logout/login state is correct
-        document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         localStorage.setItem("loggedInEmail", email);
-        navigate("/", { replace: true });
-        window.location.reload();
+
+        if (response.status === 200) {
+          window.location.href = "/"
+        }
+        // No extra API calls or blocking logic
       },
       () => {
         showMessage('Failed to update user. Please try again.', true);

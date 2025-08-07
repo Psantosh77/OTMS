@@ -1,5 +1,5 @@
-// pages/Client/Services.jsx
 import React from "react";
+import CustomerDashboardHeader from "./CustomerDashboardHeader";
 
 const services = [
   {
@@ -35,30 +35,29 @@ const services = [
 ];
 
 const Services = () => {
-    
   return (
-
-    <div className="container py-5">
-      <div className="text-center mb-5">
-        <h2 className="fw-bold">Our Services</h2>
-        <p className="text-muted">Reliable, professional, and just a tap away.</p>
-      </div>
-
-      <div className="row g-4">
-        {services.map((service, index) => (
-          <div className="col-md-4" key={index}>
-            <div className="card h-100 shadow-sm border-0">
-              <div className="card-body text-center">
-                <div className="display-4 mb-3">{service.icon}</div>
-                <h5 className="card-title fw-semibold">{service.title}</h5>
-                <p className="card-text text-muted">{service.desc}</p>
+    <>
+      <CustomerDashboardHeader />
+      <div className="container py-5">
+        <div className="text-center mb-5">
+          <h2 className="fw-bold">Our Services</h2>
+          <p className="text-muted">Reliable, professional, and just a tap away.</p>
+        </div>
+        <div className="row g-4">
+          {services.map((service, index) => (
+            <div className="col-md-4" key={index}>
+              <div className="card h-100 shadow-sm border-0">
+                <div className="card-body text-center">
+                  <div className="display-4 mb-3">{service.icon}</div>
+                  <h5 className="card-title fw-semibold">{service.title}</h5>
+                  <p className="card-text text-muted">{service.desc}</p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
- 
+    </>
   );
 };
 
