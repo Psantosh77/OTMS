@@ -157,7 +157,7 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
         localStorage.setItem("loggedInEmail", email);
 
         if (response.status === 200) {
-          window.location.href = "/"
+          navigate("/");
         }
         // No extra API calls or blocking logic
       },
