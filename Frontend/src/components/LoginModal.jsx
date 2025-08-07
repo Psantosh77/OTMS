@@ -157,10 +157,9 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
         localStorage.setItem("loggedInEmail", email);
 
         if (response.status === 200) {
+          // Dispatch a custom event to notify dashboard to rerender
+          window.dispatchEvent(new Event('user-updated'));
           navigate("/");
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
         }
         // No extra API calls or blocking logic
       },

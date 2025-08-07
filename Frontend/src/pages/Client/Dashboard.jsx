@@ -3,7 +3,7 @@ import React from "react";
 import CustomerDashboardHeader from "./CustomerDashboardHeader";
 import VendorCatalogCard from "../../components/VendorCatalogCard";
 import FilterBar from "../../components/FilterBar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 
 // Example vendor data
@@ -36,8 +36,14 @@ const Dashboard = () => {
     service: "All",
     vendor: "All",
   });
-
   const [filteredVendors, setFilteredVendors] = useState(vendorsData);
+  const [userUpdateFlag, setUserUpdateFlag] = useState(0);
+
+  useEffect(() => {
+    const rerenderOnUserUpdate = () => setUserUpdateFlag(f => f + 1);
+    window.addEventListener('user-updated', rerenderOnUserUpdate);
+    return () => window.removeEventListener('user-updated', rerenderOnUserUpdate);
+  }, []);
 
   const handleFilter = () => {
     let result = vendorsData;
