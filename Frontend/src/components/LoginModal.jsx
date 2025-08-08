@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import BrandModelForm from "./BrandModelForm";
 import { apiService } from "../utils/apiService";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoggedInEmail } from "../redux/userSlice"; // adjust path as needed
@@ -97,14 +98,33 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
 
   // Verify OTP and fetch manufacturers
   const handleVerifyOTP = async () => {
+    debugger
+    console.log("Verifying OTP for email:");
     setIsVerifying(true);
     await apiService.post(
       '/auth/verifyOpt',
       { email, otp },
       {},
-      () => {
+      (response) => {
+        console.log('Full verifyOpt response:', response);
         setIsVerifying(false);
         showMessage('OTP verified successfully!');
+        // Store tokens in localStorage if present in response.data
+        debugger
+        console.log('Response data:', response.data);
+        if (response?.data?.accessToken) {
+          localStorage.setItem('accessToken', response.data.accessToken);
+        }
+        if (response?.data?.refreshToken) {
+          localStorage.setItem('refreshToken', response.data.refreshToken);
+        }
+        // If tokens are inside response.data.data:
+        if (response?.data?.data?.accessToken) {
+          localStorage.setItem('accessToken', response.data.data.accessToken);
+        }
+        if (response?.data?.data?.refreshToken) {
+          localStorage.setItem('refreshToken', response.data.data.refreshToken);
+        }
         apiService.post(
           '/cardata/getallmanufacturers',
           { email },
@@ -139,15 +159,19 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
     );
   };
 
-  // Submit brand/model
-  const handleBrandModelSubmit = async (e) => {
-    e.preventDefault();
+  // Submit brand/model and new fields
+  const handleBrandModelSubmit = async (fields) => {
     await apiService.post(
       '/user/updateuser',
       {
         email,
         brand_id: selectedBrand,
-        model_id: selectedModel
+        model_id: selectedModel,
+        year: fields?.year,
+        engine_size: fields?.engine_size,
+        vin_number: fields?.vin_number,
+        registration_expiry: fields?.registration_expiry,
+        insurance_expiry: fields?.insurance_expiry
       },
       {},
       (response) => {
@@ -159,7 +183,7 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
         if (response.status === 200) {
           // Dispatch a custom event to notify dashboard to rerender
           window.dispatchEvent(new Event('user-updated'));
-          navigate("/");
+          window.location.replace("/")
         }
         // No extra API calls or blocking logic
       },
@@ -375,62 +399,17 @@ const LoginModal = ({ showModal, handleCloseModal }) => {
 
             {/* Brand/Model Form after OTP verification */}
             {otpSent && isOtpVerified && (
-              <form onSubmit={handleBrandModelSubmit}>
-                <div className="mb-4">
-                  <label htmlFor="brand" className="form-label fw-semibold mb-3" style={{ fontSize: '16px' }}>
-                    Select Brand
-                  </label>
-                  <select
-                    id="brand"
-                    className="form-control form-control-modern"
-                    value={selectedBrand}
-                    onChange={e => setSelectedBrand(e.target.value)}
-                    required
-                  >
-                    <option value="">Choose a brand</option>
-                    {manufacturers.map(m => (
-                      <option key={m.id} value={String(m.id)}>
-                        {m.display_name}
-                      </option>
-                    ))}
-                  </select>
-                  {selectedBrandObj && (
-                    <div className="d-flex align-items-center mt-2">
-                      <img src={selectedBrandObj.logo_url} alt={selectedBrandObj.display_name} style={{ width: 40, height: 20, objectFit: 'contain', marginRight: 8 }} />
-                      <span>{selectedBrandObj.display_name}</span>
-                    </div>
-                  )}
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="model" className="form-label fw-semibold mb-3" style={{ fontSize: '16px' }}>
-                    Select Model
-                  </label>
-                  <select
-                    id="model"
-                    className="form-control form-control-modern"
-                    value={selectedModel}
-                    onChange={e => setSelectedModel(e.target.value)}
-                    required
-                    disabled={!selectedBrand}
-                  >
-                    <option value="">Choose a model</option>
-                    {models.map(m => (
-                      <option key={m.id} value={String(m.id)}>
-                        {m.display_name}
-                      </option>
-                    ))}
-                  </select>
-                  {selectedModelObj && (
-                    <div className="d-flex align-items-center mt-2">
-                      <img src={selectedModelObj.logo} alt={selectedModelObj.display_name} style={{ width: 40, height: 20, objectFit: 'contain', marginRight: 8 }} />
-                      <span>{selectedModelObj.display_name}</span>
-                    </div>
-                  )}
-                </div>
-                <button type="submit" className="btn btn-send-otp w-100" disabled={!selectedBrand || !selectedModel}>
-                  Proceed
-                </button>
-              </form>
+              <BrandModelForm
+                manufacturers={manufacturers}
+                selectedBrand={selectedBrand}
+                setSelectedBrand={setSelectedBrand}
+                models={models}
+                selectedModel={selectedModel}
+                setSelectedModel={setSelectedModel}
+                selectedBrandObj={selectedBrandObj}
+                selectedModelObj={selectedModelObj}
+                handleBrandModelSubmit={handleBrandModelSubmit}
+              />
             )}
 
             {isOtpVerified && brandModelSubmitted && (

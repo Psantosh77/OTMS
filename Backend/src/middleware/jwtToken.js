@@ -24,11 +24,18 @@ function setTokens(res, payload) {
   return { accessToken, refreshToken };
 }
 
-// Middleware to get JWT token from cookies and verify
+// Middleware to get JWT token from Authorization header (Bearer) or cookies and verify
 function verifyAccessToken(req, res, next) {
-  // Ensure cookies are available (require cookie-parser in your app)
-  const cookies = req.cookies || {};
-  const token = cookies.accessToken;
+  let token = null;
+  // Check Authorization header first
+  if (req.headers && req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+  // Fallback to cookies
+  if (!token) {
+    const cookies = req.cookies || {};
+    token = cookies.accessToken;
+  }
   if (!token) {
     return res.status(401).json({ success: false, message: 'Access token missing', status: 401 });
   }
@@ -40,8 +47,9 @@ function verifyAccessToken(req, res, next) {
   }
 }
 
-// Refresh token controller
+// Refresh token controller supporting Authorization header (Bearer) or cookies
 function refreshTokenController(req, res) {
+  // Only take refresh token from cookies
   const refreshToken = req?.cookies?.refreshToken;
   if (!refreshToken) {
     return res.status(401).json({ success: false, message: 'Refresh token missing', status: 401 });

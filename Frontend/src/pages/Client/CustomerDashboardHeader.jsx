@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
+import { Box, Popover, Typography, Button as MuiButton, Drawer, List, ListItem, ListItemButton, ListItemText, Divider, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Popover, Typography, Button as MuiButton } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 
 const CustomerDashboardHeader = () => {
@@ -84,44 +84,6 @@ const CustomerDashboardHeader = () => {
             display: block;
           }
         }
-        .customer-mobile-menu {
-          position: fixed;
-          top: 0;
-          right: ${mobileMenuOpen ? "0" : "-100%"};
-          width: 260px;
-          height: 100%;
-          background: #fff;
-          z-index: 1300;
-          transition: right 0.3s;
-          box-shadow: -4px 0 24px rgba(0,0,0,0.12);
-          padding: 20px;
-          overflow-y: auto;
-        }
-        .customer-mobile-menu-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 24px;
-        }
-        .customer-mobile-menu-nav {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-        .customer-mobile-nav-link {
-          color: #222;
-          font-weight: 600;
-          font-size: 1.08rem;
-          padding: 12px 16px;
-          border-radius: 10px;
-          background: transparent;
-          transition: background 0.2s;
-          text-decoration: none;
-        }
-        .customer-mobile-nav-link:hover {
-          background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
-          color: #fff;
-        }
       `}</style>
       <header className="customer-header">
         <div className="container">
@@ -157,23 +119,54 @@ const CustomerDashboardHeader = () => {
             <MenuIcon style={{ fontSize: 28, color: "#ff6b35" }} />
           </button>
         </div>
-        {/* Mobile Menu */}
-        <div className="customer-mobile-menu" style={{ right: mobileMenuOpen ? 0 : '-100%' }}>
-          <div className="customer-mobile-menu-header">
+        {/* Mobile Menu (Material UI Drawer) */}
+        <Drawer
+          anchor="right"
+          open={mobileMenuOpen}
+          onClose={closeMobileMenu}
+          PaperProps={{ sx: { width: { xs: '100vw', sm: 320 }, maxWidth: '100vw' } }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 2 }}>
             <span className="customer-logo" style={{ fontSize: '1.5rem' }}>OTGMS</span>
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', borderRadius: '8px' }} onClick={closeMobileMenu}>
-              <CloseIcon style={{ fontSize: 22, color: "#ff6b35" }} />
-            </button>
-          </div>
-          <nav className="customer-mobile-menu-nav">
-            <Link to="/client/dashboard" className="customer-mobile-nav-link" onClick={closeMobileMenu}>Dashboard</Link>
-            <Link to="/services" className="customer-mobile-nav-link" onClick={closeMobileMenu}>Services</Link>
-            <Link to="/bookings" className="customer-mobile-nav-link" onClick={closeMobileMenu}>Bookings</Link>
-            <Link to="/history" className="customer-mobile-nav-link" onClick={closeMobileMenu}>History</Link>
-            <Link to="/vehicle-info" className="customer-mobile-nav-link" onClick={closeMobileMenu}>Vehicle Info</Link>
-            <button className="customer-mobile-nav-link" onClick={() => { closeMobileMenu(); handleLogout(); }}>Logout</button>
-          </nav>
-        </div>
+            <IconButton onClick={closeMobileMenu} size="large">
+              <CloseIcon style={{ fontSize: 24, color: "#ff6b35" }} />
+            </IconButton>
+          </Box>
+          <Divider />
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/client/dashboard" onClick={closeMobileMenu}>
+                <ListItemText primary="Dashboard" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/services" onClick={closeMobileMenu}>
+                <ListItemText primary="Services" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/bookings" onClick={closeMobileMenu}>
+                <ListItemText primary="Bookings" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/history" onClick={closeMobileMenu}>
+                <ListItemText primary="History" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton component={Link} to="/vehicle-info" onClick={closeMobileMenu}>
+                <ListItemText primary="Vehicle Info" />
+              </ListItemButton>
+            </ListItem>
+            <Divider sx={{ my: 1 }} />
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => { closeMobileMenu(); handleLogout(); }}>
+                <ListItemText primary="Logout" sx={{ color: '#ff6b35', fontWeight: 700 }} />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Drawer>
       </header>
     </>
   );

@@ -34,6 +34,16 @@ const Header = () => {
       }
     };
 
+
+    // Only auto-open mobile menu for client on mobile, and close on desktop
+    if (isAuthenticated && userRole === 'client') {
+      if (window.innerWidth <= 768) {
+        setMobileMenuOpen(true);
+      } else {
+        setMobileMenuOpen(false);
+      }
+    }
+
     if (mobileMenuOpen) {
       document.addEventListener('keydown', handleEscapeKey);
       window.addEventListener('resize', handleResize);
@@ -47,7 +57,7 @@ const Header = () => {
       window.removeEventListener('resize', handleResize);
       document.body.style.overflow = '';
     };
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, isAuthenticated, userRole]);
 
   const handleLoginClick = () => setShowModal(true);
 
@@ -188,7 +198,7 @@ const Header = () => {
         .mobile-menu {
           position: fixed;
           top: 0;
-          right: -100%;
+         
           width: 280px;
           height: 100%;
           background: #fff;
@@ -197,9 +207,16 @@ const Header = () => {
           box-shadow: -4px 0 24px rgba(0,0,0,0.15);
           padding: 20px;
           overflow-y: auto;
+          display: none;
         }
         .mobile-menu.open {
           right: 0;
+          display: block;
+        }
+        @media (max-width: 768px) {
+          .mobile-menu {
+            display: block;
+          }
         }
         .mobile-menu-header {
           display: flex;
@@ -337,11 +354,16 @@ const Header = () => {
             min-height: 60px !important;
           }
           .mobile-menu {
-            width: 100%;
-            right: -100%;
+            width: 100vw;
+            left: 0;
+            right: 0;
+            transform: translateX(100vw);
+            transition: transform 0.3s cubic-bezier(.4,0,.2,1);
           }
           .mobile-menu.open {
+            left: 0;
             right: 0;
+            transform: translateX(0);
           }
         }
         

@@ -237,12 +237,38 @@ const Home = () => {
           width: 100%;
           max-width: 1600px;
           margin: 0 auto;
-          padding: 0;
+          padding: 0 24px;
+        }
+        .modern-section {
+          padding: 80px 0;
+        }
+        .modern-card {
+          padding: 40px 30px;
+        }
+        .modern-btn {
+          padding: 15px 40px;
+          font-size: 16px;
+        }
+        @media (max-width: 1200px) {
+          .home-main {
+            max-width: 98vw !important;
+            padding: 0 12px !important;
+          }
+          .modern-section {
+            padding: 60px 0;
+          }
         }
         @media (max-width: 900px) {
           .home-main {
             max-width: 100vw !important;
             padding: 0 8px !important;
+          }
+          .modern-section {
+            padding: 40px 0;
+          }
+          .modern-card {
+            padding: 28px 12px;
+            border-radius: 16px;
           }
         }
         @media (max-width: 600px) {
@@ -254,6 +280,17 @@ const Home = () => {
             flex-direction: column !important;
             gap: 1rem !important;
             padding: 0 !important;
+          }
+          .modern-section {
+            padding: 24px 0;
+          }
+          .modern-card {
+            padding: 16px 4px;
+            border-radius: 10px;
+          }
+          .modern-btn {
+            padding: 12px 18px;
+            font-size: 14px;
           }
           .home-title {
             font-size: 1.3rem !important;
@@ -268,6 +305,16 @@ const Home = () => {
             max-width: 100vw !important;
             height: auto !important;
             border-radius: 12px !important;
+          }
+        }
+        @media (max-width: 400px) {
+          .modern-card {
+            padding: 8px 2px;
+            border-radius: 6px;
+          }
+          .modern-btn {
+            padding: 8px 8px;
+            font-size: 12px;
           }
         }
       `}</style>

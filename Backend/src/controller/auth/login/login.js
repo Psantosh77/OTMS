@@ -147,10 +147,13 @@ const logoutController = async (req, res) => {
   }
 };
 
-// API to check if token in cookies is valid
+// API to check if token in cookies or Authorization header is valid
 const checkTokenController = async (req, res) => {
   try {
-    const token = req.token; // From extractToken middleware
+    let token = req.token;
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
 
     if (!token) {
       return sendError(res, {
@@ -183,10 +186,13 @@ const checkTokenController = async (req, res) => {
   }
 };
 
-// API to get user info (email and role) from valid token
+// API to get user info (email and role) from valid token (supports Authorization header)
 const getUserInfoController = async (req, res) => {
   try {
-    const token = req.token; // From extractToken middleware
+    let token = req.token;
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
 
     if (!token) {
       return sendError(res, {
@@ -283,10 +289,13 @@ const getUserInfoController = async (req, res) => {
   }
 };
 
-// API to get user role only
+// API to get user role only (supports Authorization header)
 const getUserRoleController = async (req, res) => {
   try {
-    const token = req.token; // From extractToken middleware
+    let token = req.token;
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
 
     if (!token) {
       return sendError(res, {

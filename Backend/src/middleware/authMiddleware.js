@@ -10,17 +10,30 @@ const extractToken = (req, res, next) => {
     const cookies = req.cookies || {};
     let token = null;
 
-    // Try to get token from cookies (in order of preference)
-    token = cookies.accessToken || cookies.access_token || cookies.token;
 
-    // Fallback: try Authorization header
-    if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+    // Try to get token from Authorization header first
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
       token = req.headers.authorization.split(" ")[1];
+    }
+    // Fallback: try cookies (in order of preference)
+    if (!token) {
+      token = cookies.accessToken || cookies.access_token || cookies.token;
     }
 
     // Store token in req for use by next middleware/controller
     req.token = token;
-    req.refreshToken = cookies.refreshToken;
+
+    // Also support refreshToken in Authorization header (for refresh endpoints)
+    let refreshToken = null;
+    if (req.headers['x-refresh-token']) {
+      refreshToken = req.headers['x-refresh-token'];
+    } else if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+      // If refresh endpoint uses Bearer for refreshToken
+      refreshToken = req.headers.authorization.split(" ")[1];
+    } else {
+      refreshToken = cookies.refreshToken;
+    }
+    req.refreshToken = refreshToken;
 
     // Continue to next middleware even if no token (let controller handle)
     next();
@@ -35,14 +48,24 @@ const extractToken = (req, res, next) => {
 
 // Middleware to verify access token and decode user info
 const verifyToken = (req, res, next) => {
-  if (!req.token) {
+  // Check Authorization header for Bearer token first
+  let token = req.token;
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  console.log(token)
+
+  if (!token) {
     return sendError(res, {
       message: "No token provided",
       status: 401
     });
   }
 
-  jwt.verify(req.token, ACCESS_TOKEN_SECRET, (err, decoded) => {
+  jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
+    console.log(decoded)
+
     if (err) {
       // Token is invalid or expired
       return sendError(res, {

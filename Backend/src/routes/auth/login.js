@@ -10,7 +10,7 @@ const {
   getUserRoleController 
 } = require('../../controller/auth/login/login');
 const { refreshTokenController } = require('../../middleware/jwtToken');
-const { extractToken } = require('../../middleware/authMiddleware');
+const { extractToken, verifyToken } = require('../../middleware/authMiddleware');
 
 
 // Authentication routes (no token required)
@@ -22,10 +22,10 @@ router.post('/logout', logoutController);
 router.post('/refresh-token', refreshTokenController);
 
 // Token validation routes (requires extractToken middleware)
-router.post('/check-token', extractToken, checkTokenController);
+router.post('/check-token', verifyToken, checkTokenController);
 
 // User info routes (requires extractToken middleware)
-router.post('/get-user-info', extractToken, getUserInfoController);
-router.post('/get-user-role', extractToken, getUserRoleController);
+router.post('/get-user-info', verifyToken, getUserInfoController);
+router.post('/get-user-role', verifyToken, getUserRoleController);
 
 module.exports = router;

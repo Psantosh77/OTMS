@@ -14,7 +14,7 @@ const updateSchema = yup.object().shape({
 
 const updateUserController =  async (req, res) => {
   try {
-    const { email, brand_id, model_id } = req.body;
+    const { email, brand_id, model_id, year, engine_size, vin_number, registration_expiry, insurance_expiry } = req.body;
 
     // validate input
     updateSchema.validateSync({
@@ -45,7 +45,12 @@ const updateUserController =  async (req, res) => {
           brand: findManufacturer.display_name,
           model: findCarModel.display_name,
           brand_id: findManufacturer.id,
-          model_id: findCarModel.id
+          model_id: findCarModel.id,
+          year: year || undefined,
+          engine_size: engine_size || undefined,
+          vin_number: vin_number || undefined,
+          registration_expiry: registration_expiry || undefined,
+          insurance_expiry: insurance_expiry || undefined
         });
         await user.save();
       } else {
@@ -54,6 +59,11 @@ const updateUserController =  async (req, res) => {
         user.model = findCarModel.display_name;
         user.brand_id = findManufacturer.id;
         user.model_id = findCarModel.id;
+        if (year !== undefined) user.year = year;
+        if (engine_size !== undefined) user.engine_size = engine_size;
+        if (vin_number !== undefined) user.vin_number = vin_number;
+        if (registration_expiry !== undefined) user.registration_expiry = registration_expiry;
+        if (insurance_expiry !== undefined) user.insurance_expiry = insurance_expiry;
         await user.save();
       }
 

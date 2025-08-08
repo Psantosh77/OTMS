@@ -32,10 +32,29 @@ const userSchema = new mongoose.Schema({
   mobileNo: {
     type: String,
     required: false,
-    
   },
   password: {
     type: String,
+    required: false
+  },
+  year: {
+    type: Number,
+    required: false
+  },
+  engine_size: {
+    type: Number,
+    required: false
+  },
+  vin_number: {
+    type: String,
+    required: false
+  },
+  registration_expiry: {
+    type: Date,
+    required: false
+  },
+  insurance_expiry: {
+    type: Date,
     required: false
   },
   isActive: {

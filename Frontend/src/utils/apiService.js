@@ -1,15 +1,15 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 // Get environment variables with fallbacks
 const getApiBaseUrl = () => {
   // Check if we're in production mode
   const isProd = import.meta.env.MODE === 'production' || import.meta.env.PROD;
-  
+
   if (isProd) {
     return import.meta.env.VITE_API_BASE_URL || 'https://otms.onrender.com/api';
   }
-  
+
   return import.meta.env.VITE_API_BASE_URL || 'http://localhost:9000/api';
 };
 
@@ -29,6 +29,13 @@ api.interceptors.request.use(
       ...config.params,
       _t: Date.now(),
     };
+
+    // Attach accessToken from localStorage if present
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      config.headers = config.headers || {};
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
+    }
 
     // Log the base URL in development
     if (import.meta.env.DEV) {
@@ -50,14 +57,34 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-  const navigate = useNavigate();
 
     // Handle 401 errors with token refresh
     if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-     // window.location.href = '/'; // Navigate to home on 401
-     navigate('/');
-      return; // Prevent further processing
+      try {
+        // Send refresh token from localStorage in Authorization header
+        delete api.defaults.headers.common['Authorization'];
+        const refreshToken = localStorage.getItem('refreshToken');
+        const refreshHeaders = {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`
+          }
+        };
+        // Remove access token from default headers for this call
+        const refreshResponse = await api.post('/auth/refresh-token', {}, refreshHeaders);
+        const newAccessToken = refreshResponse.data?.accessToken;
+        if (newAccessToken) {
+          localStorage.setItem('accessToken', newAccessToken);
+          api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+          // Retry original request
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        // If refresh fails, redirect to login
+        window.location.href = '/';
+        return Promise.reject(refreshError);
+      }
     }
 
     // Return raw error without transformation
