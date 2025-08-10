@@ -1,429 +1,122 @@
-import React, { useState, useEffect, useRef } from "react";
-import BrandModelForm from "./BrandModelForm";
-import { apiService } from "../utils/apiService";
-import { useDispatch, useSelector } from "react-redux";
-import { setLoggedInEmail } from "../redux/userSlice"; // adjust path as needed
-import { useNavigate } from "react-router-dom";
 
-const LoginModal = ({ showModal, handleCloseModal }) => {
-  const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
-  const [countdown, setCountdown] = useState(0);
-  const [successMessage, setSuccessMessage] = useState('');
-  // Brand/model states
-  const [manufacturers, setManufacturers] = useState([]);
-  const [selectedBrand, setSelectedBrand] = useState('');
-  const [models, setModels] = useState([]);
-  const [selectedModel, setSelectedModel] = useState('');
-  const [brandModelSubmitted, setBrandModelSubmitted] = useState(false);
 
-  const timerRef = useRef(null);
-  const otpInputRef = useRef(null);
-  const dispatch = useDispatch();
-  const loggedInEmail = useSelector(state => state.user.loggedInEmail);
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import './LoginModal.scss';
+import { apiService } from '../utils/apiService';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+
+
+const LoginModal = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showOtpField, setShowOtpField] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
-  // Helper for showing messages
-  const showMessage = (msg, isError = false) => {
-    setSuccessMessage(msg);
-    if (isError) setTimeout(() => setSuccessMessage(''), 4000);
-  };
-
-  // OTP verified state
-  const isOtpVerified = otpSent && successMessage?.toLowerCase().includes('otp verified');
-
-  // Reset modal state on close
-  useEffect(() => {
-    if (!showModal) {
-      setEmail('');
-      setOtp('');
-      setIsLoading(false);
-      setIsVerifying(false);
-      setOtpSent(false);
-      setCountdown(0);
-      setSuccessMessage('');
-      setManufacturers([]);
-      setSelectedBrand('');
-      setModels([]);
-      setSelectedModel('');
-      setBrandModelSubmitted(false);
-      clearInterval(timerRef.current);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await apiService.post('/auth/sendotp', { email });
+      if (res && res.data && res.data.success) {
+        setSnackbar({ open: true, message: 'OTP sent successfully!', severity: 'success' });
+        setShowOtpField(true);
+      } else {
+        setSnackbar({ open: true, message: (res && res.data && res.data.message) || 'Failed to send OTP', severity: 'error' });
+      }
+    } catch (err) {
+      setSnackbar({ open: true, message: 'Network error. Please try again.', severity: 'error' });
+    } finally {
+      setLoading(false);
     }
-  }, [showModal]);
+  };
 
-  // Fetch models when selectedBrand changes
-  useEffect(() => {
-    if (selectedBrand) {
-      const brandObj = manufacturers.find(m => String(m.id) === String(selectedBrand));
-      setModels(brandObj?.car_models || []);
-      setSelectedModel(''); // Reset model when brand changes
-    } else {
-      setModels([]);
-      setSelectedModel('');
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await apiService.post('/auth/verifyOpt', { email, otp });
+      if (res && res.data && res.data.success) {
+        // Save tokens to localStorage
+        if (res.data.accessToken) {
+          localStorage.setItem('accessToken', res.data.accessToken);
+        }
+        if (res.data.refreshToken) {
+          localStorage.setItem('refreshToken', res.data.refreshToken);
+        }
+        setSnackbar({ open: true, message: 'OTP verified successfully!', severity: 'success' });
+        setTimeout(() => {
+          navigate('/update-user', { state: { email } });
+        }, 800);
+      } else {
+        setSnackbar({ open: true, message: (res && res.data && res.data.message) || 'Failed to verify OTP', severity: 'error' });
+      }
+    } catch (err) {
+      setSnackbar({ open: true, message: 'Network error. Please try again.', severity: 'error' });
+    } finally {
+      setLoading(false);
     }
-  }, [selectedBrand, manufacturers]);
-
-  // Send OTP
-  const handleSendOTP = async () => {
-    setIsLoading(true);
-    await apiService.post(
-      '/auth/sendotp',
-      { email },
-      {},
-      () => {
-        setIsLoading(false);
-        setOtpSent(true);
-        showMessage('OTP sent successfully! Check your email.');
-        setCountdown(60);
-        clearInterval(timerRef.current);
-        timerRef.current = setInterval(() => {
-          setCountdown(prev => {
-            if (prev <= 1) {
-              clearInterval(timerRef.current);
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-      },
-      () => {
-        setIsLoading(false);
-        showMessage('Failed to send OTP. Please try again.', true);
-      }
-    );
   };
-
-  // Verify OTP and fetch manufacturers
-  const handleVerifyOTP = async () => {
-    debugger
-    console.log("Verifying OTP for email:");
-    setIsVerifying(true);
-    await apiService.post(
-      '/auth/verifyOpt',
-      { email, otp },
-      {},
-      (response) => {
-        console.log('Full verifyOpt response:', response);
-        setIsVerifying(false);
-        showMessage('OTP verified successfully!');
-        // Store tokens in localStorage if present in response.data
-        debugger
-        console.log('Response data:', response.data);
-        if (response?.data?.accessToken) {
-          localStorage.setItem('accessToken', response.data.accessToken);
-        }
-        if (response?.data?.refreshToken) {
-          localStorage.setItem('refreshToken', response.data.refreshToken);
-        }
-        // If tokens are inside response.data.data:
-        if (response?.data?.data?.accessToken) {
-          localStorage.setItem('accessToken', response.data.data.accessToken);
-        }
-        if (response?.data?.data?.refreshToken) {
-          localStorage.setItem('refreshToken', response.data.data.refreshToken);
-        }
-        apiService.post(
-          '/cardata/getallmanufacturers',
-          { email },
-          {},
-          (response) => {
-            // Fix: use response.data for axios
-            const data = response?.data;
-            if (data?.data?.manufacturers) {
-              setManufacturers(data.data.manufacturers);
-              if (data.data.selectedBrandId) setSelectedBrand(String(data.data.selectedBrandId));
-              else if (data.data.manufacturers.length === 1) setSelectedBrand(String(data.data.manufacturers[0].id));
-              if (data.data.selectedModelId) setSelectedModel(String(data.data.selectedModelId));
-            } else {
-              setManufacturers([]);
-              setSelectedBrand('');
-              setModels([]);
-              setSelectedModel('');
-            }
-          },
-          () => {
-            setManufacturers([]);
-            setSelectedBrand('');
-            setModels([]);
-            setSelectedModel('');
-          }
-        );
-      },
-      () => {
-        setIsVerifying(false);
-        showMessage('Invalid OTP. Please try again.', true);
-      }
-    );
-  };
-
-  // Submit brand/model and new fields
-  const handleBrandModelSubmit = async (fields) => {
-    await apiService.post(
-      '/user/updateuser',
-      {
-        email,
-        brand_id: selectedBrand,
-        model_id: selectedModel,
-        year: fields?.year,
-        engine_size: fields?.engine_size,
-        vin_number: fields?.vin_number,
-        registration_expiry: fields?.registration_expiry,
-        insurance_expiry: fields?.insurance_expiry
-      },
-      {},
-      (response) => {
-        setBrandModelSubmitted(true);
-        showMessage('User updated successfully!');
-        dispatch(setLoggedInEmail(email));
-        localStorage.setItem("loggedInEmail", email);
-
-        if (response.status === 200) {
-          // Dispatch a custom event to notify dashboard to rerender
-          window.dispatchEvent(new Event('user-updated'));
-          window.location.replace("/")
-        }
-        // No extra API calls or blocking logic
-      },
-      () => {
-        showMessage('Failed to update user. Please try again.', true);
-      }
-    );
-  };
-
-  useEffect(() => {
-    // Clear timer on unmount
-    return () => clearInterval(timerRef.current);
-  }, []);
-
-  if (!showModal) return null;
-
-  // Find selected brand object for logo display
-  const selectedBrandObj = manufacturers.find(m => String(m.id) === String(selectedBrand)) || null;
-  const selectedModelObj = models.find(m => String(m.id) === String(selectedModel)) || null;
 
   return (
-    <div className="modal fade show d-block modal-modern">
-      <style jsx>{`
-        .modal-modern {
-          // background: #f8f9fa;
-          z-index: 1050;
-        }
-        .modal-content-modern {
-          border: none;
-          border-radius: 18px;
-          box-shadow: 0 2px 16px rgba(34,34,34,0.08);
-         
-          animation: slideInRight 0.4s ease-out;
-          width: 420px;
-          max-width: 98vw;
-        }
-        @media (max-width: 600px) {
-          .modal-dialog {
-            max-width: 100vw !important;
-            width: 100vw !important;
-            right: 0 !important;
-            left: 0 !important;
-            top: 0 !important;
-            margin: 0 !important;
-          }
-          .modal-content-modern {
-            border-radius: 0;
-            width: 100vw !important;
-            min-height: 100vh;
-            box-shadow: none;
-            padding: 0;
-          }
-          .modal-header-modern {
-            padding: 18px 16px 12px;
-          }
-          .modal-body {
-            padding: 18px 16px;
-          }
-        }
-        .modal-header-modern {
-          border-bottom: 1px solid #f3f3f3;
-          padding: 22px 28px 16px;
-          background: #f8f9fa;
-        }
-        .modal-title-modern {
-          color: #222;
-          font-weight: 700;
-          font-size: 22px;
-        }
-        .form-control-modern {
-          border: 1.5px solid #e9ecef;
-          border-radius: 12px;
-          padding: 12px 16px;
-          font-size: 1rem;
-          transition: border-color 0.2s;
-          background: #fff;
-          box-shadow: 0 1px 4px rgba(34,34,34,0.04);
-        }
-        .form-control-modern:focus {
-          border-color: #ff6b35;
-          outline: none;
-        }
-        .btn-send-otp {
-          background: #ff6b35;
-          border: none;
-          border-radius: 14px;
-          padding: 13px;
-          color: #fff;
-          font-weight: 600;
-          font-size: 1.08rem;
-          transition: background 0.2s, box-shadow 0.2s;
-          box-shadow: 0 2px 8px rgba(255,107,53,0.10);
-        }
-        .btn-send-otp:hover:not(:disabled) {
-          background: #f7931e;
-          box-shadow: 0 6px 18px rgba(255,107,53,0.16);
-        }
-        .btn-send-otp:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-        }
-        .success-message {
-          color: #28a745;
-          font-size: 15px;
-          margin-bottom: 15px;
-          padding: 10px;
-          background: #eafbe7;
-          border-radius: 8px;
-          text-align: center;
-        }
-        .error-message {
-          color: #dc3545;
-          font-size: 15px;
-          margin-bottom: 15px;
-          padding: 10px;
-          background: #fbeaea;
-          border-radius: 8px;
-          text-align: center;
-        }
-        .loading-spinner {
-          display: inline-block;
-          width: 20px;
-          height: 20px;
-          border: 2px solid #eee;
-          border-radius: 50%;
-          border-top-color: #ff6b35;
-          animation: spin 1s ease-in-out infinite;
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
-      <div className="modal-dialog" style={{ position: 'fixed', right: '30px', top: '30px', margin: '0', maxWidth: '500px', width: '500px' }}>
-        <div className="modal-content modal-content-modern">
-          <div className="modal-header modal-header-modern d-flex justify-content-between align-items-center">
-            <h5 className="modal-title modal-title-modern m-0">To take care of your car please enter <span className="text-primary"></span></h5>
-            {/* Close button removed */}
-          </div>
-          <div className="modal-body" style={{ padding: '30px' }}>
-            {successMessage && (
-              <div className={successMessage.toLowerCase().includes('fail') || successMessage.toLowerCase().includes('invalid') ? 'error-message' : 'success-message'}>
-                {successMessage}
-              </div>
-            )}
-
-            {/* OTP Form */}
-            {!isOtpVerified && (
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                otpSent
-                  ? (!isOtpVerified && handleVerifyOTP())
-                  : handleSendOTP();
-              }}>
-                <div className="mb-4">
-                  <label htmlFor="email" className="form-label fw-semibold mb-3" style={{ fontSize: '16px' }}>
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    className="form-control form-control-modern"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
-                    required
-                    disabled={isLoading || otpSent}
-                  />
-                </div>
-
-                {/* Show OTP field and submit only if OTP is sent and not verified */}
-                {otpSent && !isOtpVerified && (
-                  <>
-                    <div className="mb-4">
-                      <label htmlFor="otp" className="form-label fw-semibold mb-3" style={{ fontSize: '16px' }}>
-                        Enter OTP
-                      </label>
-                      <input
-                        type="text"
-                        ref={otpInputRef}
-                        className="form-control form-control-modern"
-                        id="otp"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                        placeholder="Enter 6-digit OTP"
-                        maxLength="6"
-                        required
-                        disabled={isVerifying}
-                      />
-                    </div>
-                    <button type="submit" className="btn btn-send-otp w-100" disabled={isVerifying}>
-                      {isVerifying ? <><span className="loading-spinner me-2"></span>Verifying OTP...</> : 'Submit'}
-                    </button>
-                    {/* Resend OTP button, enabled only when countdown is 0 */}
-                    <button
-                      type="button"
-                      className="btn btn-send-otp w-100 mt-3"
-                      onClick={handleSendOTP}
-                      disabled={countdown > 0}
-                    >
-                      {countdown > 0 ? `Resend OTP in ${countdown}s` : 'Resend OTP'}
-                    </button>
-                  </>
-                )}
-
-                {/* Show Send OTP button only if OTP is not sent */}
-                {!otpSent && (
-                  <button type="submit" className="btn btn-send-otp w-100" disabled={isLoading || countdown > 0}>
-                    {isLoading ? <><span className="loading-spinner me-2"></span>Sending OTP...</> : countdown > 0 ? `Resend OTP in ${countdown}s` : 'Send OTP'}
-                  </button>
-                )}
-              </form>
-            )}
-
-            {/* Brand/Model Form after OTP verification */}
-            {otpSent && isOtpVerified && (
-              <BrandModelForm
-                manufacturers={manufacturers}
-                selectedBrand={selectedBrand}
-                setSelectedBrand={setSelectedBrand}
-                models={models}
-                selectedModel={selectedModel}
-                setSelectedModel={setSelectedModel}
-                selectedBrandObj={selectedBrandObj}
-                selectedModelObj={selectedModelObj}
-                handleBrandModelSubmit={handleBrandModelSubmit}
-              />
-            )}
-
-            {isOtpVerified && brandModelSubmitted && (
-              <div className="success-message mt-3">
-                Welcome, <b>{email}</b>!
-              </div>
-            )}
-          </div>
+    <div className="login-modal-container">
+      <form className="login-modal-form" onSubmit={showOtpField ? handleVerifyOtp : handleSubmit}>
+        <div className="login-modal-tagline">
+          Unlock Your Journey – Sign In to Experience Seamless Car Care!
         </div>
-      </div>
+        <TextField
+          label="Email"
+          type="email"
+          id="email"
+          name="email"
+          required
+          fullWidth
+          margin="normal"
+          variant="outlined"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          disabled={loading || showOtpField}
+        />
+        {showOtpField && (
+          <TextField
+            label="Enter OTP"
+            type="text"
+            id="otp"
+            name="otp"
+            required
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            value={otp}
+            onChange={e => setOtp(e.target.value)}
+            disabled={loading}
+            inputProps={{ maxLength: 6 }}
+          />
+        )}
+        <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading || (showOtpField && !otp)}>
+          {loading ? <CircularProgress size={24} color="inherit" /> : showOtpField ? 'Verify OTP' : 'Send OTP'}
+        </Button>
+      </form>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar(s => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        ContentProps={{ sx: { zIndex: 999999999999 } }}
+      >
+        <MuiAlert elevation={6} variant="filled" onClose={() => setSnackbar(s => ({ ...s, open: false }))} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </MuiAlert>
+      </Snackbar>
     </div>
   );
-};
+}
 
-
-export default LoginModal;
-
+export default LoginModal

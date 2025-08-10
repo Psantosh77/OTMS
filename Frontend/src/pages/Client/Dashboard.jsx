@@ -1,9 +1,11 @@
 
 import React from "react";
+import StarIcon from '@mui/icons-material/Star';
 import CustomerDashboardHeader from "./CustomerDashboardHeader";
 import VendorCatalogCard from "../../components/VendorCatalogCard";
 import FilterBar from "../../components/FilterBar";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 // Example vendor data
@@ -38,6 +40,7 @@ const Dashboard = () => {
   });
   const [filteredVendors, setFilteredVendors] = useState(vendorsData);
   const [userUpdateFlag, setUserUpdateFlag] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const rerenderOnUserUpdate = () => setUserUpdateFlag(f => f + 1);
@@ -57,14 +60,99 @@ const Dashboard = () => {
     setFilteredVendors(result);
   };
 
+  // Reset filtered vendors when filters are cleared
+  useEffect(() => {
+    if (
+      filters.location === "All" &&
+      filters.brand === "All" &&
+      filters.model === "All" &&
+      filters.service === "All" &&
+      filters.vendor === "All"
+    ) {
+      setFilteredVendors(vendorsData);
+    }
+  }, [filters]);
+
+  console.log("test", filteredVendors);
+
   return (
     <>
       <CustomerDashboardHeader />
-      <div style={{ padding: '24px 0', background: '#fff1eb', borderRadius: 16 }}>
+      <div
+        style={{
+          padding: '32px 0',
+          background: 'linear-gradient(90deg, #fff1eb 0%, #ffecd2 100%)',
+          borderRadius: 24,
+          fontFamily: 'Inter, Roboto, Arial, sans-serif',
+          minHeight: '100vh',
+        }}
+      >
         <FilterBar filters={filters} setFilters={setFilters} onFilter={handleFilter} />
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'flex-start' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 32,
+            margin: '0 auto',
+            maxWidth: 900,
+            width: '100%',
+          }}
+        >
           {filteredVendors.map((vendor, idx) => (
-            <VendorCatalogCard key={idx} vendor={vendor} />
+            <div
+              key={idx}
+              style={{
+                background: '#fff',
+                borderRadius: 16,
+                boxShadow: '0 4px 24px 0 rgba(255,107,53,0.10)',
+                padding: 0,
+                width: '100%',
+                marginBottom: 0,
+                fontFamily: 'inherit',
+                position: 'relative',
+              }}
+            >
+              {/* Rating Star in top right */}
+              <div style={{
+                position: 'absolute',
+                top: 16,
+                right: 20,
+                display: 'flex',
+                alignItems: 'center',
+                background: 'rgba(255,255,255,0.95)',
+                borderRadius: 16,
+                padding: '2px 10px',
+                boxShadow: '0 2px 8px 0 rgba(255,107,53,0.10)',
+                fontWeight: 600,
+                fontSize: 16,
+                zIndex: 2
+              }}>
+                <span style={{ color: '#FFA726', marginRight: 4 }}>4.5</span>
+                <StarIcon sx={{ color: '#FFA726', fontSize: 22 }} />
+              </div>
+              <VendorCatalogCard vendor={vendor} />
+              {/* Book Now button in bottom right */}
+              <button
+                style={{
+                  position: 'absolute',
+                  bottom: 20,
+                  right: 24,
+                  background: 'linear-gradient(90deg, #ff9800 0%, #ff5722 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '8px 22px',
+                  fontWeight: 600,
+                  fontSize: 16,
+                  boxShadow: '0 2px 8px 0 rgba(255,107,53,0.10)',
+                  cursor: 'pointer',
+                  zIndex: 2
+                }}
+                onClick={() => navigate(`/service-details?vendorId=${encodeURIComponent(vendor.name)}`)}
+              >
+                Book Now
+              </button>
+            </div>
           ))}
         </div>
       </div>

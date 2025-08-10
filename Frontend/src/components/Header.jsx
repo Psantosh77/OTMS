@@ -113,9 +113,10 @@ const Header = () => {
           transition: box-shadow 0.2s, background 0.2s;
         }
         .header-modern.sticky-top {
-          position: sticky;
+          position: fixed;
           top: 0;
           z-index: 1100;
+          width: 100%;
         }
         .logo-modern {
           font-size: 2.4rem;

@@ -26,8 +26,16 @@ const updateUserController =  async (req, res) => {
     const isUserVerify = await commonUserModel.findOne({ email : email , isVerified: true });
 
     if(isUserVerify?.isVerified){
-      const findManufacturer = await Manufacturer.findOne({id:brand_id});
-      const findCarModel = await CarModel.findOne({id:model_id});
+
+      // Try to find by _id (MongoDB ObjectId) first, fallback to id (string/number)
+      let findManufacturer = await Manufacturer.findOne({ _id: brand_id });
+      if (!findManufacturer) {
+        findManufacturer = await Manufacturer.findOne({ id: brand_id });
+      }
+      let findCarModel = await CarModel.findOne({ _id: model_id });
+      if (!findCarModel) {
+        findCarModel = await CarModel.findOne({ id: model_id });
+      }
 
       if (!findManufacturer || !findCarModel) {
         return sendError(res, {

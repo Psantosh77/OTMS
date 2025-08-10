@@ -235,9 +235,9 @@ const Home = () => {
       <style>{`
         .home-main {
           width: 100%;
-          max-width: 1600px;
+        
           margin: 0 auto;
-          padding: 0 24px;
+          
         }
         .modern-section {
           padding: 80px 0;
@@ -319,9 +319,9 @@ const Home = () => {
         }
       `}</style>
       
+      <Header />
       <div className="font-sans">
         <div className="home-main">
-          <Header />
           <div className="fade-in-up">
             <Hero />
           </div>

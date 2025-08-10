@@ -31,6 +31,9 @@ import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardRouter from "./components/DashboardRouter";
 import { getUserInfo, getDashboardPathForRole } from "./utils/auth";
+import UpdateUser from "./pages/Client/UpdateUser";
+import OrderStatusWrapper from "./pages/Client/OrderStatusWrapper";
+
 
 
 const RoutesConfig = () => {
@@ -62,31 +65,52 @@ const RoutesConfig = () => {
       </Route>
       {/* Protected Client Routes */}
       <Route element={<MainLayout />}>
-        <Route path="/client/dashboard" element={<ProtectedRoute allowedRoles={['customer']}><ClientDashboard /></ProtectedRoute>} />
-        <Route path="/services" element={<ProtectedRoute allowedRoles={['customer']}><Services /></ProtectedRoute>} />
-        <Route path="/service-details" element={<ProtectedRoute allowedRoles={['customer']}><ServiceDetails /></ProtectedRoute>} />
-        <Route path="/bookings" element={<ProtectedRoute allowedRoles={['customer']}><Bookings /></ProtectedRoute>} />
-        <Route path="/checkout" element={<ProtectedRoute allowedRoles={['customer']}><Checkout /></ProtectedRoute>} />
-        <Route path="/history" element={<ProtectedRoute allowedRoles={['customer']}><History /></ProtectedRoute>} />
-        <Route path="/vehicle-info" element={<ProtectedRoute allowedRoles={['customer']}><VehicleInfo /></ProtectedRoute>} />
+        <Route path="/update-user" element={<UpdateUser />} />
+        <Route path="/order-status" element={<OrderStatusWrapper />} />
+        {/* <Route path="/client/dashboard" element={<ProtectedRoute allowedRoles={['customer']}><ClientDashboard /></ProtectedRoute>} /> */}
+        <Route path="/client/dashboard" element={<ClientDashboard />} />
+        {/* <Route path="/services" element={<ProtectedRoute allowedRoles={['customer']}><Services /></ProtectedRoute>} /> */}
+        <Route path="/services" element={<Services />} />
+        {/* <Route path="/service-details" element={<ProtectedRoute allowedRoles={['customer']}><ServiceDetails /></ProtectedRoute>} /> */}
+        <Route path="/service-details" element={<ServiceDetails />} />
+        {/* <Route path="/bookings" element={<ProtectedRoute allowedRoles={['customer']}><Bookings /></ProtectedRoute>} /> */}
+        <Route path="/bookings" element={<Bookings />} />
+        {/* <Route path="/checkout" element={<ProtectedRoute allowedRoles={['customer']}><Checkout /></ProtectedRoute>} /> */}
+        <Route path="/checkout" element={<Checkout />} />
+        {/* <Route path="/history" element={<ProtectedRoute allowedRoles={['customer']}><History /></ProtectedRoute>} /> */}
+        <Route path="/history" element={<History />} />
+        {/* <Route path="/vehicle-info" element={<ProtectedRoute allowedRoles={['customer']}><VehicleInfo /></ProtectedRoute>} /> */}
+        <Route path="/vehicle-info" element={<VehicleInfo />} />
       </Route>
       {/* Protected Vendor Routes */}
       <Route element={<MainLayout />}>
-        <Route path="/vendor/dashboard" element={<ProtectedRoute allowedRoles={['vendor']}><VendorDashboard /></ProtectedRoute>} />
-        <Route path="/vendor/kyc" element={<ProtectedRoute allowedRoles={['vendor']}><VendorKYC /></ProtectedRoute>} />
-        <Route path="/vendor/onboarding" element={<ProtectedRoute allowedRoles={['vendor']}><VendorOnboarding /></ProtectedRoute>} />
-        <Route path="/vendor/orders" element={<ProtectedRoute allowedRoles={['vendor']}><VendorOrders /></ProtectedRoute>} />
-        <Route path="/vendor/pricing" element={<ProtectedRoute allowedRoles={['vendor']}><VendorPricingSetup /></ProtectedRoute>} />
-        <Route path="/vendor/services" element={<ProtectedRoute allowedRoles={['vendor']}><VendorServices /></ProtectedRoute>} />
+        {/* <Route path="/vendor/dashboard" element={<ProtectedRoute allowedRoles={['vendor']}><VendorDashboard /></ProtectedRoute>} /> */}
+        <Route path="/vendor/dashboard" element={<VendorDashboard />} />
+        {/* <Route path="/vendor/kyc" element={<ProtectedRoute allowedRoles={['vendor']}><VendorKYC /></ProtectedRoute>} /> */}
+        <Route path="/vendor/kyc" element={<VendorKYC />} />
+        {/* <Route path="/vendor/onboarding" element={<ProtectedRoute allowedRoles={['vendor']}><VendorOnboarding /></ProtectedRoute>} /> */}
+        <Route path="/vendor/onboarding" element={<VendorOnboarding />} />
+        {/* <Route path="/vendor/orders" element={<ProtectedRoute allowedRoles={['vendor']}><VendorOrders /></ProtectedRoute>} /> */}
+        <Route path="/vendor/orders" element={<VendorOrders />} />
+        {/* <Route path="/vendor/pricing" element={<ProtectedRoute allowedRoles={['vendor']}><VendorPricingSetup /></ProtectedRoute>} /> */}
+        <Route path="/vendor/pricing" element={<VendorPricingSetup />} />
+        {/* <Route path="/vendor/services" element={<ProtectedRoute allowedRoles={['vendor']}><VendorServices /></ProtectedRoute>} /> */}
+        <Route path="/vendor/services" element={<VendorServices />} />
       </Route>
       {/* Protected Admin Routes */}
       <Route element={<MainLayout />}>
-        <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/cms" element={<ProtectedRoute allowedRoles={['admin']}><AdminCMS /></ProtectedRoute>} />
-        <Route path="/admin/fraud-check" element={<ProtectedRoute allowedRoles={['admin']}><AdminFraudCheck /></ProtectedRoute>} />
-        <Route path="/admin/transactions" element={<ProtectedRoute allowedRoles={['admin']}><AdminTransactions /></ProtectedRoute>} />
-        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsers /></ProtectedRoute>} />
-        <Route path="/admin/vendors" element={<ProtectedRoute allowedRoles={['admin']}><AdminVendors /></ProtectedRoute>} />
+        {/* <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} /> */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        {/* <Route path="/admin/cms" element={<ProtectedRoute allowedRoles={['admin']}><AdminCMS /></ProtectedRoute>} /> */}
+        <Route path="/admin/cms" element={<AdminCMS />} />
+        {/* <Route path="/admin/fraud-check" element={<ProtectedRoute allowedRoles={['admin']}><AdminFraudCheck /></ProtectedRoute>} /> */}
+        <Route path="/admin/fraud-check" element={<AdminFraudCheck />} />
+        {/* <Route path="/admin/transactions" element={<ProtectedRoute allowedRoles={['admin']}><AdminTransactions /></ProtectedRoute>} /> */}
+        <Route path="/admin/transactions" element={<AdminTransactions />} />
+        {/* <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsers /></ProtectedRoute>} /> */}
+        <Route path="/admin/users" element={<AdminUsers />} />
+        {/* <Route path="/admin/vendors" element={<ProtectedRoute allowedRoles={['admin']}><AdminVendors /></ProtectedRoute>} /> */}
+        <Route path="/admin/vendors" element={<AdminVendors />} />
       </Route>
       {/* Dynamic Dashboard Route - Redirects to appropriate dashboard based on user role */}
 

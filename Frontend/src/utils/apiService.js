@@ -1,3 +1,4 @@
+
 import axios from "axios";
 // import { useNavigate } from "react-router-dom";
 
@@ -93,6 +94,23 @@ api.interceptors.response.use(
 );
 
 class ApiService {
+  async get(endpoint, options = {}, onSuccess = null, onError = null) {
+    try {
+      const response = await this.api.get(endpoint, options);
+      if (onSuccess && typeof onSuccess === 'function') {
+        onSuccess(response);
+      }
+      return response;
+    } catch (error) {
+      if (onError && typeof onError === 'function') {
+        onError(
+          error.response?.data?.message || error.message || 'Unknown error occurred',
+          error.response?.status
+        );
+      }
+      throw error;
+    }
+  }
   constructor() {
     this.api = api;
   }

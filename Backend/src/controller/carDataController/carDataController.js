@@ -79,6 +79,7 @@ async function getAllManufacturers(req, res) {
         const User = require('../../model/userModels/userMode');
         let selectedBrandId = null;
         let selectedModelId = null;
+        let userDetails = null;
 
         // Get all manufacturers with their car_models
         const allManufacturers = await Manufacturer.find().populate('car_models');
@@ -92,9 +93,9 @@ async function getAllManufacturers(req, res) {
         if (email) {
             const user = await User.findOne({ email });
             if (user) {
-                // Use correct property names and ensure numbers are returned
                 selectedBrandId = user.brand_id !== undefined ? user.brand_id : null;
                 selectedModelId = user.model_id !== undefined ? user.model_id : null;
+                userDetails = user;
             }
         }
 
@@ -103,7 +104,8 @@ async function getAllManufacturers(req, res) {
             data: {
                 manufacturers: manufacturerList,
                 selectedBrandId,
-                selectedModelId
+                selectedModelId,
+                user: userDetails
             },
             status: 200
         });
@@ -113,7 +115,8 @@ async function getAllManufacturers(req, res) {
             data: {
                 manufacturers: [],
                 selectedBrandId: null,
-                selectedModelId: null
+                selectedModelId: null,
+                user: null
             },
             status: 200
         });

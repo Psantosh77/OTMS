@@ -2,6 +2,17 @@ import React from "react";
 import { Box, TextField, MenuItem, Stack, Button, Grid } from "@mui/material";
 
 const FilterBar = ({ filters, setFilters, onFilter }) => {
+  // Handler for clearing all filters
+  const handleClear = () => {
+    setFilters({
+      location: "All",
+      brand: "All",
+      model: "All",
+      service: "All",
+      vendor: "All",
+    });
+    if (onFilter) onFilter();
+  };
   // Example options, replace with real data as needed
   const locations = ["All", "Delhi", "Mumbai", "Bangalore"];
   const brands = ["All", "Toyota", "Honda", "Ford"];
@@ -13,18 +24,19 @@ const FilterBar = ({ filters, setFilters, onFilter }) => {
     <Box
       sx={{
         mb: 3,
-        p: { xs: 1, sm: 2 },
-        background: 'rgba(255, 107, 53, 0.08)', // light orange
-        borderRadius: 3,
-        boxShadow: 2,
+        p: { xs: 2, sm: 3 },
+        background: 'linear-gradient(90deg, #fff1eb 0%, #ffecd2 100%)',
+        borderRadius: 4,
+        boxShadow: '0 4px 24px 0 rgba(255,107,53,0.10)',
         display: 'flex',
         justifyContent: 'center',
         width: '100%',
         maxWidth: '100vw',
         overflowX: 'auto',
+        fontFamily: 'Inter, Roboto, Arial, sans-serif',
       }}
     >
-      <Grid container spacing={{ xs: 1.5, sm: 2.5 }} sx={{ width: '100%', maxWidth: 1200 }}>
+      <Grid container spacing={{ xs: 1.5, sm: 2.5 }} sx={{ width: '100%', maxWidth: 1200, alignItems: 'center' }}>
         <Grid item xs={6} sm={2}>
           <TextField
             select
@@ -90,7 +102,7 @@ const FilterBar = ({ filters, setFilters, onFilter }) => {
             {vendors.map(vendor => <MenuItem key={vendor} value={vendor}>{vendor}</MenuItem>)}
           </TextField>
         </Grid>
-        <Grid item xs={6} sm={2} display="flex" alignItems="center">
+        <Grid item xs={6} sm={2} display="flex" alignItems="center" gap={1}>
           <Button
             variant="contained"
             color="primary"
@@ -100,14 +112,36 @@ const FilterBar = ({ filters, setFilters, onFilter }) => {
               borderRadius: 2,
               fontWeight: 700,
               fontSize: { xs: 14, sm: 16 },
-              background: '#ff6b35',
+              background: 'linear-gradient(90deg, #ff6b35 0%, #ff8c42 100%)',
               color: '#fff',
-              boxShadow: 1,
+              boxShadow: 2,
               width: '100%',
-              '&:hover': { background: '#ff8c42' },
+              textTransform: 'none',
+              fontFamily: 'inherit',
+              '&:hover': { background: 'linear-gradient(90deg, #ff8c42 0%, #ff6b35 100%)' },
             }}
           >
             Filter
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={handleClear}
+            sx={{
+              minWidth: { xs: 80, sm: 110 },
+              borderRadius: 2,
+              fontWeight: 700,
+              fontSize: { xs: 14, sm: 16 },
+              color: '#ff6b35',
+              borderColor: '#ff6b35',
+              background: '#fff',
+              boxShadow: 1,
+              width: '100%',
+              textTransform: 'none',
+              fontFamily: 'inherit',
+              '&:hover': { background: '#fff1eb', borderColor: '#ff8c42', color: '#ff8c42' },
+            }}
+          >
+            Clear
           </Button>
         </Grid>
       </Grid>

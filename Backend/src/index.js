@@ -19,9 +19,11 @@ const connectDB = require('./database/mongodb');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/auth/login');
 
+
 const dashboardRoutes = require('./routes/Home/index');
 const carManufacturerRoutes = require('./routes/carDataRoutes');
 const userRoutes = require('./routes/updateUserRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 
 
 const app = express();
@@ -82,10 +84,12 @@ app.use(cors({
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // Routes
+
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/cardata', carManufacturerRoutes);
-app.use("/api/user", userRoutes)
+app.use('/api/user', userRoutes);
+app.use('/api/order', orderRoutes);
 
 // Health check route for Render
 app.get('/health', (req, res) => {

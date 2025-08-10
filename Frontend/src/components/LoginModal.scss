@@ -1,0 +1,22 @@
+    .login-modal-container {
+  background: rgba(189, 187, 187, 0.589);
+  border-radius: 12px;
+  box-shadow: 0 2px 32px rgba(34, 34, 34, 0.18);
+  padding: 32px;
+  max-width: 400px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-modal-form {
+  width: 100%;
+}
+
+// Override MUI contained button color to orange
+.login-modal-form .MuiButton-contained {
+  background-color: #ff6b35 !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.12);
+}
