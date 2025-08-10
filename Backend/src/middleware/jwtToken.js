@@ -52,7 +52,7 @@ function refreshTokenController(req, res) {
   // Only take refresh token from cookies
   const refreshToken = req?.cookies?.refreshToken;
   if (!refreshToken) {
-    return res.status(401).json({ success: false, message: 'Refresh token missing', status: 401 });
+    return res.status(401).json({ success: false, message: 'Refresh token missing', status: 400 });
   }
 
   try {
