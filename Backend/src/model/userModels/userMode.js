@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
     required: false
   },
   engine_size: {
-    type: Number,
+    type: String,
     required: false
   },
   vin_number: {

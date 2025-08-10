@@ -72,17 +72,17 @@ api.interceptors.response.use(
           }
         };
         // Remove access token from default headers for this call
-        const refreshResponse = await api.post('/auth/refresh-token', {}, refreshHeaders);
-        const newAccessToken = refreshResponse.data?.accessToken;
-        if (newAccessToken) {
-          localStorage.setItem('accessToken', newAccessToken);
-          api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-          originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-          // Retry original request
-          return api(originalRequest);
-        }
+        // const refreshResponse = await api.post('/auth/refresh-token', {}, refreshHeaders);
+        // const newAccessToken = refreshResponse.data?.accessToken;
+        // if (newAccessToken) {
+        //   localStorage.setItem('accessToken', newAccessToken);
+        //   api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+        //   originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        //   // Retry original request
+        //   return api(originalRequest);
+        // }
       } catch (refreshError) {
-        // If refresh fails, redirect to login
+        // If refresh fails, redirect to loginx
         window.location.href = '/';
         return Promise.reject(refreshError);
       }
