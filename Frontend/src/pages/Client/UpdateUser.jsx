@@ -199,9 +199,9 @@ const UpdateUser = () => {
 
       setUpdateMsg(res.data?.message || 'Profile updated successfully!');
       if (res.data?.status === 200) {
-      //  navigate('/client/dashboard');
+        navigate('/client/dashboard');
       console.log("fsts")
-       window.location.href = '/client/dashboard'; // Force reload to reflect changes
+       //window.location.href = '/client/dashboard'; // Force reload to reflect changes
       }
     } catch (err) {
       setUpdateMsg(err.response?.data?.message || 'Update failed.');

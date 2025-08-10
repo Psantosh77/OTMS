@@ -42,11 +42,11 @@ const Dashboard = () => {
   const [userUpdateFlag, setUserUpdateFlag] = useState(0);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const rerenderOnUserUpdate = () => setUserUpdateFlag(f => f + 1);
-    window.addEventListener('user-updated', rerenderOnUserUpdate);
-    return () => window.removeEventListener('user-updated', rerenderOnUserUpdate);
-  }, []);
+  // useEffect(() => {
+  //   const rerenderOnUserUpdate = () => setUserUpdateFlag(f => f + 1);
+  //   window.addEventListener('user-updated', rerenderOnUserUpdate);
+  //   return () => window.removeEventListener('user-updated', rerenderOnUserUpdate);
+  // }, []);
 
   const handleFilter = () => {
     let result = vendorsData;
