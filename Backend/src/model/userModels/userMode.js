@@ -29,11 +29,7 @@ const userSchema = new mongoose.Schema({
     required: true
    
   },
-  mobileNo: {
-    type: String,
-    required: false,
-    // unique: true // Removed unique constraint to allow multiple nulls
-  },
+ 
   password: {
     type: String,
     required: false
