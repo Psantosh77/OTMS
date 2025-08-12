@@ -393,7 +393,9 @@ const Header = () => {
               <Link to="/" className="nav-link-modern">
                 Home  
               </Link>
-              
+               <Link to="/Servicessection" className="nav-link-modern">
+                    Services
+                </Link>
               {/* Role-based navigation */}
               {isAuthenticated && userRole === 'client' && (
                 <>
