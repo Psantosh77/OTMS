@@ -8,6 +8,7 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "react-redux": "^9.2.0",
+    "react-typed": "^2.0.12",
     "sass": "^1.90.0"
   }
 }
