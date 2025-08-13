@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import BrandModelForm from "./BrandModelForm";
 import { ReactTyped } from "react-typed";
@@ -6,6 +7,7 @@ import {motion} from "framer-motion"
 import "./LoginModal.scss"; // Adjust the import path as necessary
 
 const Hero = () => {
+  const navigate = useNavigate();
   return (
     <section
       style={{
@@ -33,7 +35,7 @@ const Hero = () => {
           height: "100%",
           objectFit: "cover",
           zIndex: 0,
-          filter: "blur(8px)",
+          filter: "blur(1px)",
           pointerEvents: "none",
         }}
       >
@@ -101,6 +103,30 @@ const Hero = () => {
   transparent pricing, and quick turnaround — so you can get back on the 
   road with confidence.
 </p>
+
+  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '18px' }}>
+    <button
+  onClick={() => navigate('/Servicessection')}
+      style={{
+        background: 'linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)', // orange gradient
+        color: '#fff',
+        fontWeight: 600,
+        fontSize: '1.08rem',
+        padding: '12px 32px',
+        border: 'none',
+        borderRadius: '8px',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+        cursor: 'pointer',
+        transition: 'background 0.2s',
+        letterSpacing: '0.5px',
+      }}
+      aria-label="Explore Services"
+      onMouseOver={e => e.currentTarget.style.background = 'linear-gradient(90deg, #fff 0%, #ff8800 100%)'}
+      onMouseOut={e => e.currentTarget.style.background = 'linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)'}
+    >
+      Explore Services
+    </button>
+  </div>
 
 <style>
 {`

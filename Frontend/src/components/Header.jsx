@@ -451,9 +451,7 @@ const Header = () => {
               <Link to="/contact" className="nav-link-modern">
                 Contact
               </Link>
-              <Link to="/signuo" className="nav-link-modern">
-                Sign up
-              </Link>
+             
               <Link to="/sign in" className="nav-link-modern">
                 Sign in
               </Link>
