@@ -396,6 +396,7 @@ const Header = () => {
                <Link to="/Servicessection" className="nav-link-modern">
                     Services
                 </Link>
+              
               {/* Role-based navigation */}
               {isAuthenticated && userRole === 'client' && (
                 <>
@@ -409,6 +410,7 @@ const Header = () => {
                     History
                   </Link>
                 </>
+                
               )}
               
               {isAuthenticated && userRole === 'vendor' && (
@@ -449,6 +451,11 @@ const Header = () => {
               <Link to="/contact" className="nav-link-modern">
                 Contact
               </Link>
+             
+              <Link to="/sign in" className="nav-link-modern">
+                Sign in
+              </Link>
+              
             </nav>
           </div>
           
