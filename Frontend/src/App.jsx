@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import ErrorBoundary from "./components/ErrorBoundary";
 import RoutesConfig from "./RoutesConfig";
 
+
 import store from "./redux/store";
 // ...existing code...
 
