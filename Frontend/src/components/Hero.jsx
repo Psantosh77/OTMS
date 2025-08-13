@@ -1,6 +1,8 @@
 import React from "react";
 import LoginModal from "./LoginModal";
 import BrandModelForm from "./BrandModelForm";
+import { ReactTyped } from "react-typed";
+import {motion} from "framer-motion"
 import "./LoginModal.scss"; // Adjust the import path as necessary
 
 const Hero = () => {
@@ -8,7 +10,7 @@ const Hero = () => {
     <section
       style={{
         background: "#f8f9fa",
-        minHeight: 1080,
+        minHeight: 763,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -44,40 +46,84 @@ const Hero = () => {
       <div className="heroGrid" style={{zIndex:1, display:'flex'}}>
         <div style={{flex:1, display:'flex', flexDirection:'column', justifyContent:'center'}}>
           <div className="heroMainHeading">
-            <h2
-              style={{
-                color: "#fff", // white text
-                fontWeight: 800,
-                fontSize: "2.5rem",
-                marginBottom: "1.2rem",
-                letterSpacing: "0.5px",
-                lineHeight: 1.15,
-                textShadow: "0 2px 16px rgba(0,0,0,0.25)"
-              }}
-            >
-              Drive In, Drive Out: Fast, Reliable Car Repairs. <br />
-              Your Journey, Our Priority.
-            </h2>
-            <p
-              style={{
-                fontSize: "1.1rem",
-                color: "#fff", // white text
-                marginBottom: "1.5rem",
-                lineHeight: 1.6,
-                textAlign: "center",
-                textShadow: "0 2px 12px rgba(0,0,0,0.18)"
-              }}
-            >
-              Experience hassle-free car care. Trusted mechanics, transparent pricing, and quick turnaround—so you can get back on the road with confidence.
-            </p>
+           <h2
+
+  
+  style={{
+    color: "#fff",
+      fontFamily: "'Anta','Poppins', sans-serif",
+       
+    fontWeight: 800,
+    fontSize: "2.5rem",
+    marginBottom: "1.2rem",
+    letterSpacing: "0.5px",
+    lineHeight: 1.15,
+    textShadow: "0 2px 16px rgba(0,0,0,0.25)",
+    textAlign: "center",
+    maxWidth: "90%",
+    marginLeft: "auto",
+    marginRight: "auto"
+  }}
+>
+
+<ReactTyped
+  strings={[
+    'Drive In, Drive Out: Fast, Reliable Car Repairs.<br/>Your Journey, Our Priority.'
+  ]}
+  typeSpeed={40}        // typing speed
+  backSpeed={20}        // erase speed
+  backDelay={1500}      // delay before erase
+  loop                  // repeat forever
+  smartBackspace        // erase only what's needed
+  contentType="html"    // ✅ allow HTML tags in strings
+/>
+</h2>
+           <p
+  style={{
+    fontSize: "1.15rem",
+    fontFamily: "'Poppins', sans-serif",
+    color: "rgba(255, 255, 255, 0.92)", // softer white for comfort
+    marginBottom: "1.5rem",
+    lineHeight: 1.6,
+    textAlign: "center",
+    textShadow: "0 2px 12px rgba(0,0,0,0.18)",
+    maxWidth: "750px", // keeps text readable
+    marginLeft: "auto",
+    marginRight: "auto",
+    background: "rgba(255, 255, 255, 0.08)", // soft transparent bg
+    padding: "15px 20px",
+    borderRadius: "10px",
+    backdropFilter: "blur(6px)", // glass effect
+    animation: "fadeInUp 1s ease-out"
+  }}
+>
+  Experience hassle-free car care. <strong>Trusted mechanics</strong>, 
+  transparent pricing, and quick turnaround — so you can get back on the 
+  road with confidence.
+</p>
+
+<style>
+{`
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+`}
+</style>
           </div>
         </div>
-        <div style={{flex:1, display:'flex', alignItems:'center', justifyContent:'center'}}>
+        {/* <div style={{flex:1, display:'flex', alignItems:'center', justifyContent:'center'}}>
           <div className="heroLoginCol">
-            {/* Conditional rendering for login and brand model forms */}
+            Conditional rendering for login and brand model forms
             <HeroLoginBrandModel />
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

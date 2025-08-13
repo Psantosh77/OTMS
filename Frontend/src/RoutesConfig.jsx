@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Home from "./pages/Client/Home";
+import Servicesetion from "./pages/Client/Servicessection"
 import About from "./pages/Client/About";
 import Contact from "./pages/Client/Contact";
 import Services from "./pages/Client/Services";
@@ -59,6 +60,7 @@ const RoutesConfig = () => {
       {/* Public Routes with Layout */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/Servicessection" element={<Servicesetion/>} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
