@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { apiService } from "../utils/apiService";
 
 import { useAuth } from "../hooks/useAuth";
+import LoginModal from './LoginModal';
+import SignupDropdown from './log'
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -16,6 +18,8 @@ const Header = () => {
   const [accountAnchorEl, setAccountAnchorEl] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const [showLoginDropdown, setShowLoginDropdown] = useState(false);
+
 
   // Use the auth hook
   const { isAuthenticated, userRole, email: loggedInEmail, logout } = useAuth();
@@ -451,10 +455,38 @@ const Header = () => {
               <Link to="/contact" className="nav-link-modern">
                 Contact
               </Link>
-             
-              <Link to="/sign in" className="nav-link-modern">
-                Sign in
-              </Link>
+              {/* <div 
+  className="nav-link-modern"
+  onMouseEnter={() => setShowLoginDropdown(true)}
+  onMouseLeave={() => setShowLoginDropdown(false)}
+  style={{ position: 'relative' }}
+>
+  Sign up
+  {showLoginDropdown && (
+    <div 
+      style={{
+       position: 'absolute',
+      top: '100%',
+      right: 0, // ✅ instead of left: 0
+      background: 'white',
+      padding: '10px',
+      borderRadius: '8px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+      zIndex: 999,
+      minWidth: '320px', // same as modal width
+      maxWidth: '90vw',  // ✅ prevent overflow
+      }}
+      onMouseEnter={() => setShowLoginDropdown(true)}
+      onMouseLeave={() => setShowLoginDropdown(false)}
+    >
+      <div style={{ width: '320px' }}>
+        <LoginModal />
+      </div>
+    </div>
+  )}
+</div> */}
+<SignupDropdown />
+
               
             </nav>
           </div>
