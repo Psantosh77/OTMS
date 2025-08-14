@@ -35,6 +35,7 @@ const Contact = () => {
                     background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
                     position: relative;
                     overflow: hidden;
+                    top: 4rem;
                 }
 
                 .contact-section::before {

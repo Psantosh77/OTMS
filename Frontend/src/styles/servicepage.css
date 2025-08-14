@@ -1,0 +1,192 @@
+/* Banner */
+.service-banner {
+  position: relative;
+  overflow: hidden;
+  height: 100vh;
+}
+.service-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.service-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+}
+.service-banner-txt {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+  z-index: 2;
+  padding: 0 15px;
+}
+.service-banner-txt p {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+.service-banner-txt h1 {
+  font-size: 75px;
+  margin: 0 0 20px 0;
+  text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+}
+/* Button */
+.service-btn {
+  background-color: #ff6b35;
+  display: inline-block;
+  padding: 12px 40px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+.service-btn a {
+  text-decoration: none;
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  display: block;
+}
+.service-btn:hover {
+  background-color: #e85c28;
+}
+
+/* Container for padding left/right */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-inline: clamp(20px, 5vw, 60px);
+}
+
+/* Service Cards - Grid Layout */
+.service-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(16px, 2vw, 28px);
+  margin: 50px 0;
+   position: relative;
+  
+}
+.service-card {
+  padding: clamp(16px, 2vw, 24px);
+  text-align: center;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  background: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.service-card::before,
+.service-card::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+}
+
+.service-card::before {
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: #f27c36;
+  transition: width .6s .63s ease-out;
+}
+
+.service-card::after {
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 0;
+  background: linear-gradient(#f27c36, #e9485f);
+  transition: height .35s .28s;
+}
+
+.service-card:hover::before {
+  width: 100%;
+  transition: width .1s;
+}
+
+.service-card:hover::after {
+  height: 100%;
+  transition: height .2s .09s;
+}
+.service-card h5 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.service-card p {
+  font-size: 16px;
+  color: rgba(33, 37, 41, 0.75);
+}
+.service-icon {
+  font-size: 50px;
+  margin-bottom: 16px;
+  color: #ff6b35;
+}
+
+/* Glass effect for cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shine effect on hover */
+.shine-effect {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  transition: all 0.6s ease;
+}
+.glass-card:hover .shine-effect {
+  animation: shineMove 1s forwards;
+}
+@keyframes shineMove {
+  from {
+    transform: translateX(-150%) rotate(25deg);
+  }
+  to {
+    transform: translateX(150%) rotate(25deg);
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: 992px) {
+  .service-banner-txt h1 {
+    font-size: 50px;
+  }
+  .service-banner-txt p {
+    font-size: 18px;
+  }
+}
+@media (max-width: 768px) {
+  .service-banner {
+    height: 70vh;
+  }
+  .service-banner-txt h1 {
+    font-size: 32px;
+  }
+  .service-banner-txt p {
+    font-size: 16px;
+  }
+}

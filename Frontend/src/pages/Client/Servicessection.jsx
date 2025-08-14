@@ -43,6 +43,11 @@ const ServicePage = () => {
               }}
             >
               <div className="shine-effect"></div>
+
+              
+  {/* Orange border divs */}
+  <div className="border-bottom"></div>
+  <div className="border-left"></div>
               <div className="service-icon">
                 <i className={service.icon}></i>
               </div>
