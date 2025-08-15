@@ -1,0 +1,34 @@
+.feature-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px 20px;
+  perspective: 2000px; /* enable 3D for child */
+  transition: transform 0.5s;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.icon-wrapper {
+  perspective: 1000px; /* inner layer 3D */
+  transition: transform 0.5s;
+}
+
+.feature-card .icon {
+  font-size: 3rem;
+  display: inline-block;
+  transition: transform 0.5s, text-shadow 0.5s;
+}
+
+.feature-card:hover .icon-wrapper {
+  transform: rotateX(20deg) rotateY(0deg) translateZ(30px);
+}
+
+.feature-card:hover .icon {
+  transform: translate3d(0, -20px, 50px);
+  text-shadow: 2px 15px 25px rgba(0,0,0,0.3);
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+}

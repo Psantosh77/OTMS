@@ -272,7 +272,7 @@ const Contact = () => {
                 .stagger-3 { animation-delay: 0.6s; }
             `}</style>
 
-            <section className="py-5 contact-section" id="contact">
+            <section className="py-5 contact-section" id="contact" style={{marginBottom:'3rem'}}>
                 <div className="container" style={{ position: 'relative', zIndex: 1 }}>
                     <div className="text-center mb-5 fade-in-up">
                         <h2 className="contact-title">Contact Us</h2>

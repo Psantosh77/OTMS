@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import  { useState } from "react";
 import "../../styles/servicepage.css"; 
 
 const ServicePage = () => {
@@ -12,6 +13,13 @@ const ServicePage = () => {
     { icon: "fas fa-spray-can-sparkles", title: "Cleaning, Detailing & Accessories", desc: "Car wash, polishing, ceramic coating, dashcams, sound system, wraps." },
     { icon: "fas fa-truck-monster", title: "At-Home & Emergency Services", desc: "Mobile oil change, battery jump-start, flat tire fix, fuel delivery, inspections." },
   ];
+
+    const [activeCard, setActiveCard] = useState(null);
+
+  // touch device detect
+  const isTouch =
+    typeof window !== "undefined" &&
+    window.matchMedia("(hover: none) and (pointer: coarse)").matches;
 
   return (
     <>
@@ -28,33 +36,29 @@ const ServicePage = () => {
 
       <section className="container">
         <div className="service-cards">
-          {services.map((service, index) => (
-            <motion.div
-              className="service-card glass-card"
-              key={index}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.5,
-                delay: index * 0.1,
-                ease: "easeOut",
-              }}
-            >
-              <div className="shine-effect"></div>
-
-              
-  {/* Orange border divs */}
-  <div className="border-bottom"></div>
-  <div className="border-left"></div>
-              <div className="service-icon">
-                <i className={service.icon}></i>
-              </div>
-              <h5>{service.title}</h5>
-              <p>{service.desc}</p>
-            </motion.div>
-          ))}
+         {services.map((service, index) => (
+  <motion.div
+    key={index}
+    className={`service-card glass-card ${activeCard === index ? "is-active" : ""}`}
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.98 }}
+    onClick={() => {
+      if (isTouch) {
+        // mobile/tablet par tap se hover jaisa effect
+        setActiveCard(activeCard === index ? null : index);
+      }
+    }}
+    role="button"
+    tabIndex={0}
+  >
+    <div className="shine-effect"></div>
+    <div className="service-icon">
+      <i className={service.icon}></i>
+    </div>
+    <h5>{service.title}</h5>
+    <p>{service.desc}</p>
+  </motion.div>
+))}
         </div>
       </section>
     </>

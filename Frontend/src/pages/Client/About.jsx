@@ -5,7 +5,7 @@ import React from "react";
 const About = () => {
   return (
     
-    <section className="py-5 bg-white" id="about" style={{ top: "4rem", position: "relative", display: "flex",}}>
+    <section className="py-5 bg-white" id="about" style={{ top: "4rem", position: "relative", display: "flex", marginBottom:'2rem'}}>
       <div className="container">
         <h2 className="text-center fw-bold mb-4">About OTGMS Bhanu</h2>
         <p className="text-center text-muted mb-5">

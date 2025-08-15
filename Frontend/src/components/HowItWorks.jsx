@@ -1,5 +1,7 @@
 // src/components/HowItWorks.jsx
 import React from "react";
+import "animate.css";
+import { useInView } from "react-intersection-observer";
 
 const steps = [
   {
@@ -34,17 +36,30 @@ const HowItWorks = () => {
         </p>
 
         <div className="row g-4">
-          {steps.map((step, index) => (
-            <div key={index} className="col-12 col-sm-6 col-md-3">
-              <div className="card h-100 shadow-sm border-0">
-                <div className="card-body text-center">
-                  <div className="fs-1 mb-3">{step.icon}</div>
-                  <h5 className="fw-semibold">{step.title}</h5>
-                  <p className="text-muted small">{step.description}</p>
+          {steps.map((step, index) => {
+            const { ref, inView } = useInView({
+              triggerOnce: false, // Scroll ke sath har baar chale
+              threshold: 0.8,
+            });
+
+            return (
+              <div key={index} className="col-12 col-sm-6 col-md-3">
+               <div
+  ref={ref}
+  className={`card h-100 shadow-sm border-0 ${
+    inView ? "animate__animated animate__flipInX" : ""
+  }`}
+  style={{ animationDuration: "2s" }} // speed slow ki
+>
+                  <div className="card-body text-center">
+                    <div className="fs-1 mb-3">{step.icon}</div>
+                    <h5 className="fw-semibold">{step.title}</h5>
+                    <p className="text-muted small">{step.description}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

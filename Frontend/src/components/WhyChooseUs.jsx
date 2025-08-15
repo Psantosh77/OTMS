@@ -1,6 +1,5 @@
-// src/components/WhyChooseUs.jsx
 import React from "react";
-
+import '../styles/Home.css'
 const features = [
   {
     title: "Verified Garages",
@@ -46,9 +45,12 @@ const WhyChooseUs = () => {
         <div className="row g-4">
           {features.map((item, index) => (
             <div key={index} className="col-12 col-sm-6 col-md-4">
-              <div className="card h-100 shadow-sm border-0">
+              <div className="feature-card">
+                {/* 3D icon wrapper */}
+                <div className="icon-wrapper">
+                  <div className="icon">{item.icon}</div>
+                </div>
                 <div className="card-body text-center">
-                  <div className="fs-1 mb-3">{item.icon}</div>
                   <h5 className="fw-semibold">{item.title}</h5>
                   <p className="text-muted small">{item.desc}</p>
                 </div>

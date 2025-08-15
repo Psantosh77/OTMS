@@ -3,11 +3,11 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-dark text-white py-5 px-3" id="footer">
+    <footer className="bg-dark text-white py-5 px-3" id="footer" style={{position:'relative'}}>
       <div className="container">
-        <div className="row g-4">
+        <div className="row g-4 text-center text-md-start">
           {/* Logo & About */}
-          <div className="col-md-4">
+          <div className="col-12 col-md-4 d-flex flex-column align-items-center align-items-md-start">
             <h2 className="h4 fw-bold mb-3">OTGMS</h2>
             <p className="text-light small">
               Your all-in-one platform for car servicing, repair, and rentals — trusted by users across India.
