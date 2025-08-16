@@ -19,6 +19,7 @@
     "@mui/material": "^7.2.0",
     "@mui/x-date-pickers": "^8.10.0",
     "@reduxjs/toolkit": "^2.8.2",
+    "animate.css": "^3.7.0",
     "aos": "^2.3.4",
     "axios": "^1.11.0",
     "bootstrap": "^5.3.7",
