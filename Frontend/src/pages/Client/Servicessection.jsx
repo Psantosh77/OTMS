@@ -1,6 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import  { useState } from "react";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 import "../../styles/servicepage.css"; 
 
 const ServicePage = () => {
@@ -15,6 +18,7 @@ const ServicePage = () => {
   ];
 
     const [activeCard, setActiveCard] = useState(null);
+      const navigate = useNavigate();
 
   // touch device detect
   const isTouch =
@@ -29,13 +33,14 @@ const ServicePage = () => {
           <p>Anytime, Anywhere</p>
           <h1>One-Stop Car Service & Repairs</h1>
           <div className="service-btn">
-            <a href="#">Show Now</a>
+             <Link to="/service-details">Explore Services</Link>
           </div>
         </div>
       </div>
 
       <section className="container">
         <div className="service-cards">
+          
          {services.map((service, index) => (
   <motion.div
     key={index}
@@ -47,6 +52,8 @@ const ServicePage = () => {
         // mobile/tablet par tap se hover jaisa effect
         setActiveCard(activeCard === index ? null : index);
       }
+        // ✅ Redirect to ServiceDetails page
+            navigate("/service-details");
     }}
     role="button"
     tabIndex={0}
