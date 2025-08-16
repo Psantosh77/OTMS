@@ -7,7 +7,7 @@ const getApiBaseUrl = () => {
   // Check if we're in production mode
   const isProd = import.meta.env.MODE === 'production' || import.meta.env.PROD;
 
-  if (isProd) {
+  if (!isProd) {
     return import.meta.env.VITE_API_BASE_URL || 'https://otms.onrender.com/api';
   }
 
