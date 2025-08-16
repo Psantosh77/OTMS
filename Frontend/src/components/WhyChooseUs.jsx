@@ -35,7 +35,7 @@ const features = [
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-5 bg-white" id="why-choose-us">
+    <section className="py-5 " id="why-choose-us">
       <div className="container text-center">
         <h2 className="fw-bold display-6 mb-3 text-dark">Why Choose OTGMS?</h2>
         <p className="text-muted mb-5">

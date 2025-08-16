@@ -14,7 +14,7 @@ const About = () => {
 
         <div className="row justify-content-center">
           <div className="col-lg-10">
-            <p className="lead text-justify">
+            <p className="lead text-justify "style={{color:'black'}}>
               OTGMS (On-The-Go Motor Services) is a one-stop platform designed to bring car services and rentals into the digital era. 
               Whether you're a B2C customer looking for fast service or a B2B fleet manager seeking accountability and scale, 
               OTGMS delivers with verified garages, transparent pricing, live tracking, and doorstep convenience.

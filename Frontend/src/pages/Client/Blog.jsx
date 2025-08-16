@@ -115,7 +115,7 @@ useEffect(() => {
     {/* Tumhara back side */}
     <div className="flip-card-back">
       <span className="category">{blog.category}</span> <h3>{blog.title}</h3> <p>{blog.desc}</p>
-      <button
+      <button className="read-me"
         onClick={(e) => {
           e.stopPropagation(); // flip na ho jab button click ho
           openModal(blog);
