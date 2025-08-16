@@ -24,6 +24,7 @@ const dashboardRoutes = require('./routes/Home/index');
 const carManufacturerRoutes = require('./routes/carDataRoutes');
 const userRoutes = require('./routes/updateUserRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const HomeRoutes = require('./routes/Home/index');
 
 
 const app = express();
@@ -90,6 +91,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/cardata', carManufacturerRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/order', orderRoutes);
+app.use('/api/home', HomeRoutes );
 
 // Health check route for Render
 app.get('/health', (req, res) => {
