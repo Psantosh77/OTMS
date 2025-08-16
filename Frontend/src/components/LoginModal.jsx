@@ -41,9 +41,9 @@ const LoginModal = () => {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setLoading(true); 
     try {
-      const res = await apiService.post('/auth/verifyOpt', { email, otp, loginAsVendor });
+      const res = await apiService.post('/auth/verifyOpt', { email, otp , role : loginAsVendor ? 'Vendor' : "customer" });
       if (res?.data?.success) {
         if (res.data.accessToken) localStorage.setItem('accessToken', res.data.accessToken);
         if (res.data.refreshToken) localStorage.setItem('refreshToken', res.data.refreshToken);
