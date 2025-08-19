@@ -7,6 +7,7 @@ import Contact from "./pages/Client/Contact";
 import Services from "./pages/Client/Services";
 import ServiceDetails from "./pages/Client/ServiceDetails";
 import Blog from "./pages/Client/Blog";
+import Faq from './pages/Client/Faq'
 import Bookings from "./pages/Client/Bookings";
 import Checkout from "./pages/Client/Checkout";
 import History from "./pages/Client/History";
@@ -64,6 +65,8 @@ const RoutesConfig = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/faq" element={< Faq/>} />
+
       </Route>
       {/* Protected Client Routes */}
       <Route element={<MainLayout />}>

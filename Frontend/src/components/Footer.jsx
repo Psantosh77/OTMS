@@ -26,11 +26,11 @@ const Footer = () => {
           </div>
 
           {/* Contact Info */}
-          <div className="col-md-4">
+          <div className="col-md-4 "style={{color:'white'}}>
             <h5 className="fw-semibold mb-3">Contact Us</h5>
-            <p className="small mb-1">📍 Noida, Uttar Pradesh, India</p>
-            <p className="small mb-1">📞 +91 9876543210</p>
-            <p className="small">📧 support@otgms.in</p>
+            <p className="small mb-1" style={{color:'white'}}>📍 Noida, Uttar Pradesh, India</p>
+            <p className="small mb-1"style={{color:'white'}}>📞 +91 9876543210</p>
+            <p className="small"style={{color:'white'}}>📧 support@otgms.in</p>
           </div>
         </div>
 

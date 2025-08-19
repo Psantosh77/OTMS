@@ -114,7 +114,7 @@ useEffect(() => {
 
     {/* Tumhara back side */}
     <div className="flip-card-back">
-      <span className="category">{blog.category}</span> <h3>{blog.title}</h3> <p>{blog.desc}</p>
+      <span className="category">{blog.category}</span> <h3>{blog.title}</h3> <p style={{color:'black'}}> {blog.desc}</p>
       <button className="read-me"
         onClick={(e) => {
           e.stopPropagation(); // flip na ho jab button click ho

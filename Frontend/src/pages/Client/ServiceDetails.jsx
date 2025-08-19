@@ -199,7 +199,7 @@ const ServiceDetails = () => {
   };
 
   return (
-    <Box sx={{ p: 4, bgcolor: '#fff3e0', minHeight: '100vh' }}>
+    <Box sx={{ p: 4, minHeight: '100vh' , top:'5rem', marginBottom:'3rem' ,position:'relative'}}>
       {/* Vendor Info Centered */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
         <img
