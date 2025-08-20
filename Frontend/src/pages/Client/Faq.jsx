@@ -11,12 +11,14 @@ const FAQSection = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("accessToken");
-        const res = await apiService.get("/home/getfaq", {
+        const res = await apiService.post("/home/getfaq", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
+
+
 
         if (res?.data?.success) {
           setFaqs(res.data.data.filter((item) => item.isActive)); // sirf active faqs

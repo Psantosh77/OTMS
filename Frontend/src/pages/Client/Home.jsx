@@ -8,6 +8,7 @@ import WhyChooseUs from '../../components/WhyChooseUs';
 import Testimonials from '../../components/Testimonials';
 import CTA from '../../components/CTA';
 import Header from '../../components/Header';
+import FAQSection from '../Client/Faq';
 
 const Home = () => {
   return (
@@ -336,6 +337,9 @@ const Home = () => {
           </div>
           <div className="fade-in-up stagger-4">
             <Testimonials />
+          </div>
+          <div className="fade-in-up stagger-5">
+            <FAQSection />
           </div>
           <div className="fade-in-up stagger-5">
             <CTA />
