@@ -25,6 +25,8 @@ const carManufacturerRoutes = require('./routes/carDataRoutes');
 const userRoutes = require('./routes/updateUserRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const HomeRoutes = require('./routes/Home/index');
+const serviceRoutes = require('./routes/serviceRoute/serviceRoutes');
+
 
 
 const app = express();
@@ -92,6 +94,7 @@ app.use('/api/cardata', carManufacturerRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/home', HomeRoutes );
+app.use('/api/services', serviceRoutes );
 
 // Health check route for Render
 app.get('/health', (req, res) => {
@@ -152,3 +155,4 @@ connectDB()
     logger.error('Failed to connect to MongoDB:', err);
     process.exit(1);
   });
+

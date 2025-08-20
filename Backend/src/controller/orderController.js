@@ -1,26 +1,35 @@
+// Backend/src/controller/orderController.js
+const { sendResponse, sendError } = require('../utils/response');
+const Order = require('../model/orderModel');
+
 // Get order details by ID
 exports.getOrderDetails = async (req, res) => {
   try {
     const { orderId } = req.params;
     const order = await Order.findById(orderId);
     if (!order) {
-      return res.status(404).json({ success: false, message: 'Order not found' });
+      return sendResponse(res, {
+        message: 'Order not found',
+        data: null,
+        status: 404
+      });
     }
-    res.json({ success: true, order });
+    return sendResponse(res, {
+      message: 'Order fetched successfully',
+      data: order,
+      status: 200
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    return sendError(res, 500, 'Failed to fetch order', err);
   }
 };
-// Backend/src/controller/orderController.js
-const Order = require('../model/orderModel');
 
 // Create a new order (for both pay now and pay later)
 exports.createOrder = async (req, res) => {
   try {
-    const { userId, vendorId, services, subServices, total, serviceType, timeSlot, address, paymentStatus } = req.body;
+    const { userId, services, subServices, total, serviceType, timeSlot, address, paymentStatus } = req.body;
     const order = new Order({
       userId,
-      vendorId,
       services,
       subServices,
       total,
@@ -31,8 +40,12 @@ exports.createOrder = async (req, res) => {
       createdAt: new Date()
     });
     await order.save();
-    res.status(201).json({ success: true, order });
+    return sendResponse(res, {
+      message: 'Order created successfully',
+      data: order,
+      status: 201
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    return sendError(res, 500, 'Failed to create order', err);
   }
 };

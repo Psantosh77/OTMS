@@ -4,9 +4,8 @@ import { copyFileSync, existsSync } from 'fs'
 import { resolve } from 'path'
 
 export default defineConfig(({ command, mode }) => {
-  // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), '')
-  
+
   return {
     plugins: [
       react(),
@@ -29,7 +28,6 @@ export default defineConfig(({ command, mode }) => {
       port: 3000,
       host: true,
       strictPort: true,
-      historyApiFallback: true,
     },
     build: {
       outDir: 'dist',
@@ -48,7 +46,6 @@ export default defineConfig(({ command, mode }) => {
     preview: {
       port: 3000,
       host: true,
-      historyApiFallback: true,
     },
     envDir: './',
     envPrefix: 'VITE_',

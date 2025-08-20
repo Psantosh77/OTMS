@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
   userId: { type: String, required: true },
-  vendorId: { type: String, required: true },
   services: [String],
   subServices: [String],
   total: { type: Number, required: true },

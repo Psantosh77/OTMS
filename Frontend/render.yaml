@@ -1,10 +1,10 @@
 services:
-  - type: static
-    name: otms-frontend
-    env: static
+  - type: web
+    name: my-react-app
+    env: node
     buildCommand: npm run build
     staticPublishPath: dist
     routes:
       - type: rewrite
-        source: /.*       # match all routes
+        source: /*
         destination: /index.html
