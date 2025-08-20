@@ -3,13 +3,13 @@ import React from "react";
 import { Zoom } from "react-awesome-reveal"; // Animation
 
 const services = [
-  { title: "General Service", icon: "🛠️", desc: "Periodic maintenance to keep your car running smoothly." },
-  { title: "AC Repair", icon: "❄️", desc: "Cool your drive with our expert AC services." },
-  { title: "Denting & Painting", icon: "🎨", desc: "Restore your car’s shine with professional touch-ups." },
-  { title: "Battery Replacement", icon: "🔋", desc: "Reliable battery checks and replacements." },
-  { title: "Car Spa & Cleaning", icon: "🧼", desc: "Interior & exterior deep cleaning for a fresh look." },
-  { title: "Tyre & Wheel Care", icon: "🚗", desc: "Alignment, balancing, and replacements." },
-  { title: "Car Rental Services", icon: "🚙", desc: "Rent self-drive or chauffeur-driven cars at the best rates." },
+  { icon: "fas fa-tools", title: "General Service", desc: "Oil change, filters, periodic servicing, inspection, AC gas top-up." },
+    { icon: "fas fa-wrench", title: "Problem & Repairs", desc: "Car not starting, engine noise, overheating, warning lights, brake/suspension fix." },
+    { icon: "fas fa-car-battery", title: "AC, Battery & Electrical", desc: "AC repair, battery replacement, alternator, power windows, lighting issue." },
+    { icon: "fas fa-car-side", title: "Bodywork, Interior Fixes", desc: "Dent removal, repainting, glass, upholstery, dashboard, headliner, sunroof." },
+    { icon: "fas fa-car-crash", title: "Brakes, Tires & Suspension", desc: "Brake pad/disc change, tire repair/replacement, wheel alignment, shocks." },
+    { icon: "fas fa-spray-can-sparkles", title: "Cleaning, Detailing & Accessories", desc: "Car wash, polishing, ceramic coating, dashcams, sound system, wraps." },
+   
 ];
 
 const Services = () => {
@@ -34,7 +34,9 @@ const Services = () => {
     {/* Added h-100 here */}
     <div className="card shadow-sm border-0 w-100 h-100 d-flex flex-column">
       <div className="card-body text-center d-flex flex-column">
-        <div className="fs-1 mb-3">{service.icon}</div>
+       <div className="fs-1 mb-3">
+  <i className={service.icon}></i>
+</div>
         <h5 className="card-title fw-semibold">{service.title}</h5>
         {/* flex-grow-1 ensures desc takes space but equalizes height */}
         <p className="card-text text-muted flex-grow-1">{service.desc}</p>

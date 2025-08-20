@@ -1,46 +1,67 @@
 const mongoose = require("mongoose");
 
 const vendorSchema = new mongoose.Schema({
-  email: {
+  businessTradeLicense: {
     type: String,
+    required: false
+  },
+  vatCertificate: {
+    type: String,
+    required: false
+  },
+  businessCard: {
+    type: String,
+    required: false
+  },
+  bankAccountInfo: {
+    type: String,
+    required: false
+  },
+  vendorId: {
+    type: Number,
     required: true,
     unique: true
   },
-  mobile: {
+  concurrency: {
+    type: Date,
+    default: () => new Date() // timestamp for concurrency control
+  },
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true
+  },
+  phone: {
     type: String,
     required: true
   },
-  fullName: {
+  businessName: {
     type: String,
     required: true
+  },
+  address: {
+    type: String,
+    required: false
+  },
+  role: {
+    type: String,
+    enum: ["vendor"],
+    required: true,
+    default: "vendor"
   },
   isActive: {
     type: Boolean,
     default: true
   },
-  concurrency: {
-    type: Date,
-    default: Date.now
-  },
   signupDate: {
     type: Date,
     default: Date.now
-  },
-  vehicleNumber: {
-    type: String,
-    required: true
-  },
-  vehicleName: {
-    type: String,
-    required: true
-  },
-  vehicleBrand: {
-    type: String,
-    required: true
-  },
-  isVerified: {
-    type: Boolean,
-    default: false
   }
 });
 

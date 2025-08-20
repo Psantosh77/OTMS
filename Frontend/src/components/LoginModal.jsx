@@ -31,8 +31,7 @@ const LoginModal = () => {
     e.preventDefault();
     setLoading(true);
     try {
-     const role = loginAsVendor ? "Vendor" : "Customer";  // role set
-    const res = await apiService.post('/auth/sendotp', { email, role }); // role send
+      const res = await apiService.post('/auth/sendotp', { email, role : loginAsVendor ? 'Vendor' : "customer" });
       if (res?.data?.success) {
         setSnackbar({ open: true, message: 'OTP sent successfully!', severity: 'success' });
         setShowOtpField(true);

@@ -1,5 +1,6 @@
-const { sendResponse } = require("../../utils/response");
+const { sendResponse, sendError } = require('../../utils/response');
 const axios = require("axios");
+const Faq = require('../../model/homeModel/faqModel');
 
 async function getConfig(req, res) {
   const { latitude, longitude } = req.body;
@@ -49,4 +50,49 @@ async function getConfig(req, res) {
   });
 }
 
-module.exports = { getConfig };
+async function getFaqs(req, res) {
+  try {
+    const faqs = await Faq.find({ isActive: true });
+    return sendResponse(res, {
+      message: 'FAQs fetched successfully',
+      data: faqs,
+      status: 200
+    });
+  } catch (err) {
+    return sendError(res, {
+      message: 'Failed to fetch FAQs',
+      data: err.message,
+      status: 500
+    });
+  }
+}
+
+
+
+async function addFaqs(req, res) {
+  try {
+    const { question, answer, category } = req.body;
+    if (!question || !answer) {
+      return sendError(res, {
+        message: 'Question and answer are required',
+        data: null,
+        status: 400
+      });
+    }
+    const faq = new Faq({ question, answer, category });
+    await faq.save();
+    return sendResponse(res, {
+      message: 'FAQ added successfully',
+      data: faq,
+      status: 201
+    });
+  } catch (err) {
+    return sendError(res, {
+      message: 'Failed to add FAQ',
+      data: err.message,
+      status: 500
+    });
+  }
+}
+
+module.exports = { getConfig, getFaqs, addFaqs};

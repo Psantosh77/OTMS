@@ -30,7 +30,7 @@ const ServicePage = () => {
       <div className="service-banner">
         <img src="/assets/service_banner.jpg" alt="Car Service Banner" />
         <div className="service-banner-txt">
-          <p>Anytime, Anywhere</p>
+          <p style={{color:'white'}}>Anytime, Anywhere</p>
           <h1>One-Stop Car Service & Repairs</h1>
         
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '18px' }}>

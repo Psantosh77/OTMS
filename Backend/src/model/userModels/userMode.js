@@ -6,6 +6,11 @@ const userSchema = new mongoose.Schema({
     required: false,
     trim: true
   },
+  role: {
+    type: String,
+    enum: ["customer", "vendor", "admin"],
+    required: true
+  },
   email: {
     type: String,
     required: true,
@@ -65,7 +70,16 @@ const userSchema = new mongoose.Schema({
   signupDate: {
     type: Date,
     default: Date.now
+  },
+  fuetType:{
+    type:String,
+    required:false
+  },
+  cylinderNo:{
+    type:Number,
+    required: false
   }
+
 }, {
   timestamps: true
 });

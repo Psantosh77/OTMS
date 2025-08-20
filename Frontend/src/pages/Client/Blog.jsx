@@ -83,9 +83,9 @@ useEffect(() => {
     <div>
       {/* Banner */}
       <div className="service-banner">
-        <img src="/assets/image/blog_banner.png"alt="Car Blog Banner" />
+        <img src="/assets/image/blog_banner.webp"alt="Car Blog Banner" style={{loading:"lazy"}} />
         <div className="service-banner-txt">
-          <p>Your Daily Dose of Auto Trends</p>
+          <p style={{color:"white"}}>Your Daily Dose of Auto Trends</p>
           <h1>Latest Car News & Reviews</h1>
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '18px' }}>
     <button
@@ -130,7 +130,7 @@ useEffect(() => {
   <div className="flip-card-inner">
     {/* Tumhara front side */}
     <div className="flip-card-front">
-      <img src={blog.img} alt={blog.title} />
+      <img src={blog.img} alt={blog.title} style={{loading:"lazy"}} />
       <h3>{blog.title}</h3>
     </div>
 
