@@ -43,18 +43,18 @@ const HowItWorks = () => {
 
         <div className="row g-4">
           {steps.map((step, index) => (
-            <div key={index} className="col-12 col-sm-6 col-md-3">
+            <div key={index} className="col-12 col-sm-6 col-md-3 d-flex">
               <Flip
                 direction="horizontal" // ✅ flipInX ke jaisa
                 triggerOnce={false}
                 duration={800}
                 delay={index * 200}
               >
-                <div className="card h-100 shadow-sm border-0">
-                  <div className="card-body text-center">
+                <div className="card shadow-sm border-0 w-100 h-100 d-flex flex-column">
+                  <div className="card-body text-center d-flex flex-column">
                     <div className="fs-1 mb-3">{step.icon}</div>
                     <h5 className="fw-semibold">{step.title}</h5>
-                    <p className="text-muted small">{step.description}</p>
+                    <p className="text-muted small flex-grow-1">{step.description}</p>
                   </div>
                 </div>
               </Flip>

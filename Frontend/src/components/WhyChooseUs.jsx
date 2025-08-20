@@ -42,22 +42,23 @@ const WhyChooseUs = () => {
           We're not just another car service. We're a smarter solution.
         </p>
 
-        <div className="row g-4">
-          {features.map((item, index) => (
-            <div key={index} className="col-12 col-sm-6 col-md-4">
-              <div className="feature-card">
-                {/* 3D icon wrapper */}
-                <div className="icon-wrapper">
-                  <div className="icon">{item.icon}</div>
-                </div>
-                <div className="card-body text-center">
-                  <h5 className="fw-semibold">{item.title}</h5>
-                  <p className="text-muted small">{item.desc}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+       <div className="row g-4 align-items-stretch">
+  {features.map((item, index) => (
+    <div key={index} className="col-12 col-sm-6 col-md-4 d-flex">
+      <div className="feature-card flex-fill">
+        {/* 3D icon wrapper */}
+        <div className="icon-wrapper">
+          <div className="icon">{item.icon}</div>
         </div>
+        <div className="card-body text-center mt-auto">
+          <h5 className="fw-semibold">{item.title}</h5>
+          <p className="text-muted small">{item.desc}</p>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
       </div>
     </section>
   );

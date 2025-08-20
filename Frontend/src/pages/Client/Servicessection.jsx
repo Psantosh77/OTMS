@@ -32,9 +32,34 @@ const ServicePage = () => {
         <div className="service-banner-txt">
           <p>Anytime, Anywhere</p>
           <h1>One-Stop Car Service & Repairs</h1>
-          <div className="service-btn">
-             <Link to="/service-details">Explore Services</Link>
-          </div>
+        
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '18px' }}>
+    <button
+    className="service-btn"
+  onClick={() => navigate('/service-details')}
+      style={{
+        background: 'linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)', // orange gradient
+        color: '#fff',
+        fontWeight: 600,
+        fontSize: '1.08rem',
+      
+        border: 'none',
+        borderRadius: '8px',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+        cursor: 'pointer',
+        transition: 'background 0.2s',
+        letterSpacing: '0.5px',
+      }}
+      aria-label="Explore Services"
+      onMouseOver={e => e.currentTarget.style.background = 'linear-gradient(90deg, #fff 0%, #ff8800 100%)'}
+      onMouseOut={e => e.currentTarget.style.background = 'linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)'}
+    >
+      Explore Services
+    </button>
+  </div>
+
+            
+       
         </div>
       </div>
 

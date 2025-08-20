@@ -37,31 +37,8 @@
   text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
 }
 /* Button */
-.service-btn {
-    background: linear-gradient(90deg, rgb(255, 136, 0) 0%, rgb(255, 184, 77) 100%);
-    color: rgb(255, 255, 255);
-    font-weight: 600;
-    font-size: 1.08rem;
-    padding: 12px 32px;
-    border: none;
-    border-radius: 8px;
-    box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 12px;
-    cursor: pointer;
-    transition: background 0.2s;
-    letter-spacing: 0.5px;
 
-}
-.service-btn a {
-  text-decoration: none;
-  text-align: center;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-  display: block;
-}
-.service-btn:hover {
-  background-color: #e85c28;
-}
+
 
 /* Container for padding left/right */
 .container {
@@ -103,7 +80,7 @@
   left: 0;
   width: 0;
   height: 3px;
-  background: #f27c36;
+  background: #f1eeec;
   transition: width .6s .63s ease-out;
 }
 
@@ -112,7 +89,7 @@
   right: 0;
   width: 3px;
   height: 0;
-  background: linear-gradient(#f27c36, #e9485f);
+  background: linear-gradient(#fffefd, #f1ebec);
   transition: height .35s .28s;
 }
 
@@ -132,18 +109,17 @@
 }
 .service-card p {
   font-size: 16px;
-  color: rgba(33, 37, 41, 0.75);
+  color:black;
 }
 .service-icon {
   font-size: 50px;
   margin-bottom: 16px;
-  color: #ff6b35;
+  color: #f0ebea;
 }
 
 /* Glass effect for cards */
 .glass-card {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
+ background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
@@ -158,7 +134,7 @@
   height: 200%;
   background: linear-gradient(
     120deg,
-    transparent 0%,
+    transparent 50%,
     rgba(255, 255, 255, 0.4) 50%,
     transparent 100%
   );
@@ -180,10 +156,13 @@
 /* Responsive tweaks */
 @media (max-width: 992px) {
   .service-banner-txt h1 {
-    font-size: 50px;
+    font-size: 25px;
   }
   .service-banner-txt p {
     font-size: 18px;
+  }
+  .service-btn{
+   padding: 0.6em 0.35em;
   }
 }
 @media (max-width: 768px) {
@@ -195,5 +174,13 @@
   }
   .service-banner-txt p {
     font-size: 16px;
+  }
+  .service-banner-txt h1 {
+  font-size: 25px !important;
+  margin: 0 0 20px 0;
+  text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+}
+ .service-btn{
+    padding: 0.6em 0.35em;
   }
 }
