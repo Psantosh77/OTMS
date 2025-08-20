@@ -192,6 +192,7 @@ const UpdateUser = () => {
         vin_number: vinNumber,
         registration_expiry: registrationDate,
         insurance_expiry: expiryDate,
+        role: 'customer' // Assuming role is always customer for this update
       };
       const res = await apiService.post('/user/updateuser', payload);
 
