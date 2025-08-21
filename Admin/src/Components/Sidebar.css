@@ -1,0 +1,66 @@
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 80px; /* below header */
+  left: 0;
+  width: 220px;
+  height: 100%;
+  background: #0f172a;
+  color: white;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.icon {
+  color: white;
+}
+
+.sidebar li {
+  padding: 12px 0;
+  cursor: pointer;
+  transition: 0.2s;
+  position: relative;
+}
+
+.sidebar li:hover {
+  color: #38bdf8;
+}
+
+/* Dropdown submenu */
+.submenu {
+  display: none;
+  list-style: none;
+  padding-left: 15px;
+}
+
+.submenu li {
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.submenu.open {
+  display: block;
+}
+
+/* Arrow icon */
+.arrow {
+  float: right;
+  transition: transform 0.3s;
+}
+
+.rotate {
+  transform: rotate(90deg);
+}
+
+/* Main content */
+.content {
+  margin-top: 100px; /* space for header */
+  margin-left: 220px; /* space for sidebar */
+  padding: 20px;
+}
