@@ -15,6 +15,7 @@ function App() {
     <ErrorBoundary>
       <Provider store={store}>
         <BrowserRouter>
+        
           <RoutesConfig />
         </BrowserRouter>
       </Provider>

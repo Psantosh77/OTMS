@@ -1,7 +1,7 @@
 // src/components/BlogPage.jsx
 import React, { useState , useEffect } from "react";
 import "../../styles/Blog.css"; // aap apna existing CSS yahan import kar sakte ho
-
+import { useNavigate } from "react-router-dom";
 const blogData = [
   {
     img: "/assets/image/blog_card1.png",
@@ -56,6 +56,7 @@ const blogData = [
 const BlogPage = () => {
   const [modalData, setModalData] = useState(null);
     const [flippedCard, setFlippedCard] = useState(null);
+      const navigate = useNavigate();
 
   const openModal = (blog) => {
     setModalData(blog);
@@ -82,13 +83,34 @@ useEffect(() => {
     <div>
       {/* Banner */}
       <div className="service-banner">
-        <img src="/assets/image/blog_banner.png"alt="Car Blog Banner" />
+        <img src="/assets/image/blog_banner.webp"alt="Car Blog Banner" style={{loading:"lazy"}} />
         <div className="service-banner-txt">
-          <p>Your Daily Dose of Auto Trends</p>
+          <p style={{color:"white"}}>Your Daily Dose of Auto Trends</p>
           <h1>Latest Car News & Reviews</h1>
-          <div className="service-btn">
-            <a href="#">Explore Blogs</a>
-          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '18px' }}>
+    <button
+  onClick={() => navigate('/service-details')}
+      style={{
+        background: 'linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)', // orange gradient
+        color: '#fff',
+        fontWeight: 600,
+        fontSize: '1.08rem',
+       
+        border: 'none',
+        borderRadius: '8px',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+        cursor: 'pointer',
+        transition: 'background 0.2s',
+        letterSpacing: '0.5px',
+      }}
+      aria-label="Explore Services"
+      onMouseOver={e => e.currentTarget.style.background = 'linear-gradient(90deg, #fff 0%, #ff8800 100%)'}
+      onMouseOut={e => e.currentTarget.style.background = 'linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)'}
+    >
+      Explore Blog
+    </button>
+  </div>
+
         </div>
       </div>
 
@@ -108,7 +130,7 @@ useEffect(() => {
   <div className="flip-card-inner">
     {/* Tumhara front side */}
     <div className="flip-card-front">
-      <img src={blog.img} alt={blog.title} />
+      <img src={blog.img} alt={blog.title} style={{loading:"lazy"}} />
       <h3>{blog.title}</h3>
     </div>
 

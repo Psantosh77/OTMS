@@ -11,6 +11,11 @@ const CommonUsers = new mongoose.Schema({
   isVerified: {
     type: Boolean,
     default: false
+},
+role:{
+  type: String,
+  enum: ["customer", "vendor", "admin"],
+  default: "customer"
 }
 
 }, {

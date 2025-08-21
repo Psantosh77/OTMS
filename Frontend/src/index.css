@@ -29,14 +29,21 @@ body {
 
 body, #root {
 
-  background: radial-gradient(
-    60% 120% at 50% 50%,
-    hsla(0,0%,100%,0) 0%,
-     #ffb400 100%
-  );
-  background-attachment: fixed; /* Scroll ke sath move na kare */
-  background-repeat: no-repeat;
-  background-size: cover;
+  background: linear-gradient(270deg, #ff7eb3, #65d6ce, #ffc371 ,  #ffb400 , #ff6b35 , #f7931e );
+  background-size: 600% 600%;
+  animation: gradientAnimation 15s ease infinite;
+  
+}
+/* .animated-bg {
+  background: linear-gradient(270deg, #ff7eb3, #65d6ce, #ffc371 ,  #ffb400);
+  background-size: 600% 600%;
+  animation: gradientAnimation 15s ease infinite;
+} */
+
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 a {
   font-weight: 500;

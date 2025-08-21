@@ -9,6 +9,10 @@ import './LoginModal.scss';
 import { apiService } from '../utils/apiService';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import SwipeableViews from 'react-swipeable-views'; // npm i react-swipeable-views
+
 
 const LoginModal = () => {
   const navigate = useNavigate();
@@ -16,16 +20,18 @@ const LoginModal = () => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [showOtpField, setShowOtpField] = useState(false);
-  const [loginAsVendor, setLoginAsVendor] = useState(false); // ✅ new state
+
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-  const [showForm, setShowForm] = useState(false);
+   const [tabIndex, setTabIndex] = useState(0); // 0 = User, 1 = Vendor
+  const loginAsVendor = tabIndex === 1; // ✅ tab se role decide hoga
+
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await apiService.post('/auth/sendotp', { email, loginAsVendor });
+      const res = await apiService.post('/auth/sendotp', { email, role : loginAsVendor ? 'Vendor' : "customer" });
       if (res?.data?.success) {
         setSnackbar({ open: true, message: 'OTP sent successfully!', severity: 'success' });
         setShowOtpField(true);
@@ -43,13 +49,14 @@ const LoginModal = () => {
     e.preventDefault();
     setLoading(true); 
     try {
-      const res = await apiService.post('/auth/verifyOpt', { email, otp , role : loginAsVendor ? 'Vendor' : "customer" });
+  const role = loginAsVendor ? "Vendor" : "Customer";
+    const res = await apiService.post('/auth/verifyOpt', { email, otp, role });
       if (res?.data?.success) {
         if (res.data.accessToken) localStorage.setItem('accessToken', res.data.accessToken);
         if (res.data.refreshToken) localStorage.setItem('refreshToken', res.data.refreshToken);
         setSnackbar({ open: true, message: 'OTP verified successfully!', severity: 'success' });
         setTimeout(() => {
-          navigate('/update-user', { state: { email, loginAsVendor } });
+         navigate('/update-user', { state: { email, role } }); // yaha bhi role bhejna better hai
         }, 800);
       } else {
         setSnackbar({ open: true, message: res?.data?.message || 'Failed to verify OTP', severity: 'error' });
@@ -63,6 +70,41 @@ const LoginModal = () => {
 
   return (
     <div className="login-modal-container">
+       {/* ✅ Tabs for User/Vendor */}
+    <Tabs
+  value={tabIndex}
+  onChange={(e, newVal) => setTabIndex(newVal)}
+  centered
+  TabIndicatorProps={{ style: { display: "none" } }} // ❌ underline hata diya
+  sx={{
+    backgroundColor: "#fff",
+    borderRadius: "50px",
+    border: "2px solid #1976d2", // main border
+    padding: "4px",
+    minHeight: "40px",
+    marginBottom:'2rem',
+    "& .MuiTab-root": {
+      textTransform: "none",
+      borderRadius: "50px",
+      minHeight: "40px",
+      padding: "6px 20px",
+      color: "#1976d2",
+      fontWeight: 600,
+    },
+    "& .Mui-selected": {
+      background: "linear-gradient(90deg, #ff6b35, #f7931e)", // ✅ gradient ko background use karo
+  color: "#fff !important",
+    },
+  }}
+>
+  <Tab label="User" />
+  <Tab label="Vendor" />
+</Tabs>
+
+      
+      {/* ✅ Swipe between forms (same form but role alag) */}
+      <SwipeableViews index={tabIndex} onChangeIndex={setTabIndex}>
+        {[0, 1].map((i) => (
       <form
         className="login-modal-form animate-form"
         onSubmit={showOtpField ? handleVerifyOtp : handleSubmit}
@@ -72,18 +114,7 @@ const LoginModal = () => {
         </div>
 
         {/* ✅ Checkbox above email */}
-        <FormControlLabel
-          className="vendor-checkbox"
-          control={
-            <Checkbox
-              checked={loginAsVendor}
-              onChange={(e) => setLoginAsVendor(e.target.checked)}
-              color="warning"
-            />
-          }
-          label="Login as a Vendor"
-        />
-
+   
         <TextField
           label="Email"
           type="email"
@@ -138,6 +169,8 @@ const LoginModal = () => {
 
 
       </form>
+         ))}
+      </SwipeableViews>
             {/* ✅ Card yahi add karo */}
    
 

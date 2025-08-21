@@ -2,33 +2,40 @@
   background: #fff;
   border-radius: 12px;
   padding: 30px 20px;
-  perspective: 2000px; /* enable 3D for child */
-  transition: transform 0.5s;
+  perspective: 2000px; /* enable 3D */
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
   cursor: pointer;
   overflow: hidden;
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transform-style: preserve-3d; /* 👈 important */
+  
+  display: flex;        /* flexbox */
+  flex-direction: column;
+  height: 100%;         /* col ke andar full stretch */
 }
 
 .icon-wrapper {
-  perspective: 1000px; /* inner layer 3D */
-  transition: transform 0.5s;
+  perspective: 1000px;
+  transition: transform 0.5s ease;
 }
 
 .feature-card .icon {
   font-size: 3rem;
   display: inline-block;
-  transition: transform 0.5s, text-shadow 0.5s;
+  transition: transform 0.5s ease, text-shadow 0.5s ease;
+}
+
+/* On hover */
+.feature-card:hover {
+  transform: translateY(-12px) scale(1.03);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.18);
 }
 
 .feature-card:hover .icon-wrapper {
-  transform: rotateX(20deg) rotateY(0deg) translateZ(30px);
+  transform: rotateX(15deg) rotateY(10deg) translateZ(25px);
 }
 
 .feature-card:hover .icon {
-  transform: translate3d(0, -20px, 50px);
-  text-shadow: 2px 15px 25px rgba(0,0,0,0.3);
-}
-
-.feature-card:hover {
-  transform: translateY(-10px);
+  transform: translate3d(0, -15px, 40px);
+  text-shadow: 0 12px 20px rgba(0,0,0,0.35);
 }

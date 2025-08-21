@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { apiService } from "../utils/apiService";
+// import { apiService } from "../utils/apiService";
 import { useAuth } from "../hooks/useAuth";
 import LoginModal from './LoginModal';
 import SignupDropdown from './log'
@@ -18,9 +18,9 @@ import { motion } from "framer-motion";
 
 const Header = () => {
   const [showModal, setShowModal] = useState(false);
-  const [accountAnchorEl, setAccountAnchorEl] = useState(null);
+  // const [accountAnchorEl, setAccountAnchorEl] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   
 const sidebarVariants = {
   open: {
@@ -84,26 +84,26 @@ const itemVariants = {
     };
   }, [mobileMenuOpen, isAuthenticated, userRole]);
 
-  const handleLogout = async () => {
-    try {
-      await apiService.post('/auth/logout', {}, {}, 
-        () => {
-          logout();
-          navigate('/', { replace: true });
-          window.location.reload();
-        },
-        () => {
-          logout();
-          navigate('/', { replace: true });
-          window.location.reload();
-        }
-      );
-    } catch {
-      logout();
-      navigate('/', { replace: true });
-      window.location.reload();
-    }
-  };
+  // const handleLogout = async () => {
+  //   try {
+  //     await apiService.post('/auth/logout', {}, {}, 
+  //       () => {
+  //         logout();
+  //         navigate('/', { replace: true });
+  //         window.location.reload();
+  //       },
+  //       () => {
+  //         logout();
+  //         navigate('/', { replace: true });
+  //         window.location.reload();
+  //       }
+  //     );
+  //   } catch {
+  //     logout();
+  //     navigate('/', { replace: true });
+  //     window.location.reload();
+  //   }
+  // };
 
 
   const toggleMobileMenu = () => {
@@ -167,10 +167,15 @@ const itemVariants = {
   text-decoration: none;
 }
 .nav-link-modern:hover, .nav-link-modern.active {
-  background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
-  color: #fff !important;
+
+ background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-size: 1.22rem;
   box-shadow: 0 2px 12px rgba(255,107,53,0.10);
+}
+  .css-1umw9bq-MuiSvgIcon-root {
+  font-size: inherit !important;
 }
 .nav-link-modern::after {
   content: '';
@@ -342,7 +347,7 @@ transform: translateY(0);
 
           {/* Right: Desktop Menu + Mobile Menu Button */}
           <div style={{ flex: "1 1 auto", display: "flex", justifyContent: "flex-end", alignItems: 'center' }}>
-         <nav className="nav-modern">
+         <nav className="nav-modern ">
   {[
     { to: "/", label: "Home", icon: <HomeIcon /> },
     { to: "/Servicessection", label: "Services", icon: <BuildIcon /> },
@@ -353,6 +358,7 @@ transform: translateY(0);
     <motion.div
       key={i}
       whileHover={{ scale: 1.1, y: -2 }}
+      animate={{opacity: 1}}
       style={{ display: "flex", alignItems: "center", gap: 6 }}
     >
       <Link to={to} className="nav-link-modern">

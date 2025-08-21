@@ -11,62 +11,62 @@ const jwt = require("jsonwebtoken"); // Add at the top if not already imported
 
 // Yup schema for email validation
 const emailSchema = yup.object().shape({
-    email: yup.string().email("Invalid email").required("Email is required")
+  email: yup.string().email("Invalid email").required("Email is required"),
+  role: yup.string().oneOf(["customer", "vendor", "admin"], "Role must be customer, vendor, or admin").required("Role is required")
 });
 
 function generateOtp() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+  return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 
 async function sendOtpController(req, res) {
-    try {
-        await emailSchema.validate(req.body, { abortEarly: false });
-    } catch (validationError) {
-      
-        return sendError(res, {
-            message: "Validation failed",
-            data: validationError.errors,
-            status: 400
-        });
-    }
+  try {
+    console.log(req.body.email)
+    await emailSchema.validate(req.body, { abortEarly: false });
+  } catch (validationError) {
+    return sendError(res, {
+      message: "Validation failed",
+      data: validationError.errors,
+      status: 400
+    });
+  }
 
-    const { email } = req.body;
-    const otp = generateOtp();
+  const { email, role } = req.body;
+  const otp = generateOtp();
 
-    try {
-        await sendOtpMail({
-            to: email,
-            subject: 'Your OTP Code',
-            text: `Your OTP code is: ${otp}`
-        });
-        await Otp.create({
-            email,
-            otp,
-            expiresAt: new Date(Date.now() + 5 * 60 * 1000) // expires in 5 mins
-        });
+  try {
+    await sendOtpMail({
+      to: email,
+      subject: 'Your OTP Code',
+      text: `Your OTP code is: ${otp}`
+    });
+    await Otp.create({
+      email,
+      otp,
+      role,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000) // expires in 5 mins
+    });
 
-        return sendResponse(res, {
-            message: 'OTP sent successfully',
-            data: { email, otp }, // Do not send OTP in production response!
-            status: 200
-        });
-    } catch (error) {
-      console.log(error)
-        return sendError(res, {
-            message: 'Failed to send OTP',
-            data: error.message,
-            status: 500
-        });
-    }
+    return sendResponse(res, {
+      message: 'OTP sent successfully',
+      data: { email, role, otp }, // Do not send OTP in production response!
+      status: 200
+    });
+  } catch (error) {
+    console.log(error)
+    return sendError(res, {
+      message: 'Failed to send OTP',
+      data: error.message,
+      status: 500
+    });
+  }
 }
-
-
 
 
 const verifyOtpController = async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const { email, otp, role } = req.body;
 
     // 1. Find OTP
     const record = await Otp.findOne({ email, otp });
@@ -83,28 +83,14 @@ const verifyOtpController = async (req, res) => {
     // 2. Insert/update CommonUser with isVerify: true
     await commonUserModel.findOneAndUpdate(
       { email },
-      { isVerified: true },
+      { isVerified: true , role: role },
       { upsert: true, new: true }
+
     );
 
-    // 3. Detect role
-    let role = null;
-    const user = await User.findOne({ email });
-    if (user) {
-      role = "user";
-    } else {
-      const vendor = await Vendor.findOne({ email });
-      if (vendor) {
-        role = "vendor";
-      }
-    }
-
-    // 4. Generate JWT tokens & set in cookies
-    const tokens = setTokens(res, { email });
-
     return sendResponse(res, {
-      message: "OTP verified and tokens set",
-      data: { email, role, ...tokens },
+      message: "OTP verified successfully",
+      data: { email, role },
       status: 200
     });
 
@@ -125,7 +111,7 @@ const logoutController = async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict'
     });
-    
+
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -358,11 +344,11 @@ const getUserRoleController = async (req, res) => {
   }
 };
 
-module.exports = { 
-  sendOtpController, 
-  verifyOtpController, 
-  logoutController, 
-  checkTokenController, 
-  getUserInfoController, 
-  getUserRoleController 
+module.exports = {
+  sendOtpController,
+  verifyOtpController,
+  logoutController,
+  checkTokenController,
+  getUserInfoController,
+  getUserRoleController
 };

@@ -192,6 +192,7 @@ const UpdateUser = () => {
         vin_number: vinNumber,
         registration_expiry: registrationDate,
         insurance_expiry: expiryDate,
+        role: 'customer' // Assuming role is always customer for this update
       };
       const res = await apiService.post('/user/updateuser', payload);
 
@@ -228,7 +229,7 @@ const UpdateUser = () => {
           <CircularProgress size={60} thickness={5} />
         </div>
       )}
-      <div style={{ padding: 40, textAlign: 'center', filter: loadingBrands ? 'blur(2px)' : 'none', pointerEvents: loadingBrands ? 'none' : 'auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px 0 #ff98001a' }}>
+      <div style={{ padding: 40, textAlign: 'center', filter: loadingBrands ? 'blur(2px)' : 'none', pointerEvents: loadingBrands ? 'none' : 'auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px 0 #ff98001a',top:'5rem' , marginBottom:'4rem', position:"relative" }}>
           
       {/* Cylinder Selection Modal */}
       <Dialog open={showCylinderModal} onClose={() => setShowCylinderModal(false)}>

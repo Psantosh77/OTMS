@@ -35,11 +35,11 @@ const Hero = () => {
           height: "100%",
           objectFit: "cover",
           zIndex: 0,
-          filter: "blur(1px)",
+          filter: "blur(5px)",
           pointerEvents: "none",
         }}
       >
-        <source src="https://videos.pexels.com/video-files/8987073/8987073-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+        <source src="/assets/vedio/herovedio.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       {/* Overlay */}
