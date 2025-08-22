@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Sidebar.css";
 import { FaUser } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   const [submenuOpen, setSubmenuOpen] = useState(false);
@@ -19,7 +20,7 @@ const Sidebar = () => {
       {/* Sidebar */}
       <div className="sidebar">
         <ul>
-          <li>🏠 Home</li>
+          <li><Link to="/">🏠 Home</Link></li>
           <li><FaUser style={{ color: "white", marginRight: "8px" }} /> Master</li>
           {/* Submenu */}
           <li onClick={toggleDropdown}>
@@ -27,9 +28,10 @@ const Sidebar = () => {
             <span className={`arrow ${submenuOpen ? "rotate" : ""}`}>▶</span>
           </li>
           <ul className={`submenu ${submenuOpen ? "open" : ""}`}>
-            <li>🛠 Services</li>
-            <li>📝 Blog</li>
-            <li>❓ FAQ</li>
+            <li><Link to="/service">🛠 Services</Link></li>
+            <li><Link to="/blog">📝 Blog</Link></li>
+            <li><Link to="/faq">❓ FAQ</Link></li>
+            <li><Link to="/location">❓ Location</Link></li>
           </ul>
 
           <li>📞 Contact</li>
@@ -38,9 +40,7 @@ const Sidebar = () => {
       </div>
 
       {/* Content */}
-      <div className="content">
-        <h2>Welcome!</h2>
-      </div>
+      
     </div>
   );
 };
