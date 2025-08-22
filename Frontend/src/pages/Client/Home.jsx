@@ -324,7 +324,7 @@ const Home = () => {
       <div className="font-sans">
         <div className="home-main">
           <div className="fade-in-up">
-            <Hero />
+            <Hero  />
           </div>
           <div className="fade-in-up stagger-1">
             <Services />

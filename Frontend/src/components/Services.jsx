@@ -1,6 +1,8 @@
 // src/components/Services.jsx
 import React from "react";
 import { Zoom } from "react-awesome-reveal"; // Animation
+import { useNavigate } from "react-router-dom"; // 👈 yeh import karo
+
 
 const services = [
   { icon: "fas fa-tools", title: "General Service", desc: "Oil change, filters, periodic servicing, inspection, AC gas top-up." },
@@ -13,6 +15,7 @@ const services = [
 ];
 
 const Services = () => {
+   const navigate = useNavigate(); // 👈 hook call
   return (
     <section className="py-5" id="services">
       <div className="container text-center">
@@ -32,7 +35,10 @@ const Services = () => {
     className="w-100"
   >
     {/* Added h-100 here */}
-    <div className="card shadow-sm border-0 w-100 h-100 d-flex flex-column">
+    <div className="card shadow-sm border-0 w-100 h-100 d-flex flex-column"
+    onClick={() => navigate('/Servicessection')} 
+                  style={{ cursor: "pointer" }} 
+    >
       <div className="card-body text-center d-flex flex-column">
        <div className="fs-1 mb-3">
   <i className={service.icon}></i>

@@ -36,7 +36,7 @@ const ServicePage = () => {
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: '18px' }}>
     <button
     className="service-btn"
-  onClick={() => navigate('/service-details')}
+  onClick={() => navigate('/update-user')}
       style={{
         background: 'linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)', // orange gradient
         color: '#fff',
@@ -78,7 +78,7 @@ const ServicePage = () => {
         setActiveCard(activeCard === index ? null : index);
       }
         // ✅ Redirect to ServiceDetails page
-            navigate("/service-details");
+            navigate("/update-user");
     }}
     role="button"
     tabIndex={0}
