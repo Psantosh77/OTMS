@@ -1,13 +1,23 @@
-import React from "react";
+import React  , {useState}from "react";
 import { useNavigate } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import BrandModelForm from "./BrandModelForm";
 import { ReactTyped } from "react-typed";
 import {motion} from "framer-motion"
+import { MapPin, Car, Compass } from "lucide-react"; // animated icons ke liye
 import "./LoginModal.scss"; // Adjust the import path as necessary
+import CityModal  from "./CitySelect";
 
-const Hero = () => {
+const Hero = (  ) => {
   const navigate = useNavigate();
+const [isCityModalOpen, setIsCityModalOpen] = useState(false);
+
+  const [selectedCity, setSelectedCity] = useState("");
+
+
+
+  
+
   return (
     <section
       style={{
@@ -126,8 +136,119 @@ const Hero = () => {
     >
       Explore Services
     </button>
-  </div>
 
+
+  </div>
+      <div
+        style={{
+          display: "flex",
+         background: "rgba(255, 255, 255, 0.2)", // transparent white
+        backdropFilter: "blur(10px)", // glassmorphism effect
+        WebkitBackdropFilter: "blur(10px)", // safari support
+          borderRadius: "50px",
+          padding: "15px 25px",
+          gap: "25px",
+          alignItems: "center",
+          justifyContent: "space-between",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+          maxWidth: "700px",
+          margin: "auto",
+          marginTop: "2rem",
+        }}
+      >
+        {/* City Selector */}
+        <div
+          style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}
+          onClick={() => setIsCityModalOpen(true)}
+        >
+          <motion.div
+            animate={{ y: [0, -5, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5 }}
+            style={{
+              width: "45px",
+              height: "45px",
+              borderRadius: "50%",
+              background: "#f5f5f5",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <MapPin size={22} color="#ff3b3b" />
+          </motion.div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: "0.8rem", color: "white" }}>Select Your City</span>
+            <strong style={{ fontSize: "1rem" }}>
+              {selectedCity || "Click to Choose"}
+            </strong>
+          </div>
+        </div>
+
+        {/* Car Selector */}
+        <div
+          style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}
+          onClick={() => navigate("/update-user")} // <-- direct navigate karega
+        >
+          <motion.div
+            animate={{ x: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            style={{
+              width: "45px",
+              height: "45px",
+              borderRadius: "50%",
+              background: "#f5f5f5",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Car size={22} color="#444" />
+          </motion.div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: "0.8rem", color: "#fff" }}>Select Your Car</span>
+            <strong style={{ fontSize: "1rem" }}>
+              Click Here
+            </strong>
+          </div>
+        </div>
+
+        {/* Check Price Button */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          style={{
+            background: "red",
+            border: "none",
+            borderRadius: "40px",
+            color: "#fff",
+            fontSize: "1rem",
+            fontWeight: "600",
+            padding: "12px 30px",
+            cursor: "pointer",
+            boxShadow: "0 5px 15px rgba(255,0,0,0.3)",
+          }}
+          onClick={() => {
+            if (!selectedCity) {
+              alert("Please select a city first!");
+              return;
+            }
+           
+            navigate("/Servicessection");
+          }}
+        >
+          Check Price
+        </motion.button>
+      </div>
+
+      {/* City Modal */}
+      <CityModal
+        isOpen={isCityModalOpen}
+        onClose={() => setIsCityModalOpen(false)}
+        setSelectedCity={setSelectedCity}
+      />
+
+
+   
 <style>
 {`
 @keyframes fadeInUp {
@@ -156,7 +277,7 @@ const Hero = () => {
 };
 
 // Helper component for conditional rendering of LoginModal and BrandModelForm
-function HeroLoginBrandModel() {
+function HeroLoginBrandModel(setModelsFromApiOrBrandForm) {
   const [showLoginModal, setShowLoginModal] = React.useState(true);
   const [isOtpVerified, setIsOtpVerified] = React.useState(false);
   const [form, setForm] = React.useState({ email: '', otp: '' });
@@ -187,9 +308,10 @@ function HeroLoginBrandModel() {
 
   // Find selected brand/model objects
   React.useEffect(() => {
-    setSelectedBrandObj(manufacturers.find(m => String(m.id) === String(selectedBrand)) || null);
-    setSelectedModelObj(models.find(m => String(m.id) === String(selectedModel)) || null);
-  }, [manufacturers, selectedBrand, models, selectedModel]);
+    if (Array.isArray(models) && models.length > 0) {
+      setModelsFromApiOrBrandForm(models);   // ✅ Hero ko models bhejna
+    }
+  }, [models, setModelsFromApiOrBrandForm]);
 
   // Fetch models when brand changes
   React.useEffect(() => {

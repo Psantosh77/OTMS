@@ -177,7 +177,7 @@ const UpdateUser = () => {
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     setUpdateMsg('');
-    if (!email || !selectedBrandObj || !selectedModelObj || !registrationDate || !expiryDate || !vinNumber) {
+    if ( !selectedBrandObj || !selectedModelObj ) {
       setUpdateMsg('Please fill all required fields.');
       return;
     }
@@ -213,23 +213,75 @@ const UpdateUser = () => {
 
   return (
     <>
-      {(loadingBrands || updating) && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          background: 'rgba(255,255,255,0.7)',
-          zIndex: 2000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          <CircularProgress size={60} thickness={5} />
-        </div>
+
+    {/* Background video */}
+      
+    <video
+      autoPlay
+      loop
+      muted
+      playsInline
+      style={{
+      position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    zIndex: 0, // 👈 -1 hata ke 0 rakho
+      }}
+    >
+      <source src="/assets/vedio/Updateuser.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
+    {/* Overlay Heading */}
+    <div
+      style={{
+       display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+      padding: "2rem",
+      }}
+    >
+       <div
+      style={{
+        background: "rgba(255, 255, 255, 0.2)", // transparent white
+        backdropFilter: "blur(10px)", // glassmorphism effect
+        WebkitBackdropFilter: "blur(10px)", // safari support
+        borderRadius: "16px",
+        padding: "2rem",
+        maxWidth: "900px",
+        width: "100%",
+        boxShadow: "0 4px 30px rgba(0,0,0,0.2)",
+        color: "#fff",
+        textAlign: "center",
+        marginTop:'5rem',
+      }}
+    >
+      <h1 style={{ fontSize: "2.5rem", fontWeight: "bold" , color:'black' , fontFamily: "'Anta','Poppins', sans-serif" }}>
+       Pick the Right Car Model
+      </h1>
+      <p>Welcome! Every car is unique! Choose your car model so we can provide the most relevant options, services, and support for your ride.</p>
+
+       {(loadingBrands || updating) && (
+        <div
+    style={{
+      position: "fixed",
+      inset: 0, // shorthand for top:0, right:0, bottom:0, left:0
+      background: "rgba(255,255,255,0.7)",
+      zIndex: 2000,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}
+  >
+    <CircularProgress size={60} thickness={5} />
+  </div>
       )}
-      <div style={{ padding: 40, textAlign: 'center', filter: loadingBrands ? 'blur(2px)' : 'none', pointerEvents: loadingBrands ? 'none' : 'auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px 0 #ff98001a',top:'5rem' , marginBottom:'4rem', position:"relative" }}>
+      
+      <div style={{ padding: 40, textAlign: 'center', filter: loadingBrands ? 'blur(2px)' : 'none', pointerEvents: loadingBrands ? 'none' : 'auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px 0 #ff98001a',top:'5rem' , marginBottom:'4rem', position:"relative" , zIndex:'2' }}>
           
       {/* Cylinder Selection Modal */}
       <Dialog open={showCylinderModal} onClose={() => setShowCylinderModal(false)}>
@@ -250,11 +302,11 @@ const UpdateUser = () => {
           </Grid>
         </div>
       </Dialog>
-        <h2>Update Your Profile</h2>
-        <p>Welcome! Please update your user information here.</p>
+        <h2 style={{fontFamily: "'Anta','Poppins', sans-serif", color:'black'}}>Car Models</h2>
+        <p>Welcome! Please procssed your user information here.</p>
         <form className="update-user-form">
           <div className="update-user-col">
-            <div style={{ marginBottom: 16 }}>
+            {/* <div style={{ marginBottom: 16 }}>
               <label htmlFor="email" style={{ display: 'block', marginBottom: 4, fontWeight: 500, textAlign: 'left' }}>Email</label>
               <input
                 id="email"
@@ -267,8 +319,8 @@ const UpdateUser = () => {
                 required
                 disabled
               />
-            </div>
-            <div style={{ marginBottom: 16 }}>
+            </div> */}
+            {/* <div style={{ marginBottom: 16 }}>
               <label htmlFor="vinNumber" style={{ display: 'block', marginBottom: 4, fontWeight: 500, textAlign: 'left' }}>VIN Number</label>
               <input
                 id="vinNumber"
@@ -281,8 +333,8 @@ const UpdateUser = () => {
                 maxLength={17}
                 autoComplete="off"
               />
-            </div>
-            <div style={{ marginBottom: 16 }}>
+            </div> */}
+            {/* <div style={{ marginBottom: 16 }}>
               <label htmlFor="registrationDate" style={{ display: 'block', marginBottom: 4, fontWeight: 500, textAlign: 'left' }}>Registration Date</label>
               <input
                 id="registrationDate"
@@ -296,8 +348,8 @@ const UpdateUser = () => {
                 max={todayStr}
               />
               {registrationDateError && <div style={{ color: '#f44336', fontSize: 13, marginTop: 2 }}>{registrationDateError}</div>}
-            </div>
-            <div style={{ marginBottom: 16 }}>
+            </div> */}
+            {/* <div style={{ marginBottom: 16 }}>
               <label htmlFor="expiryDate" style={{ display: 'block', marginBottom: 4, fontWeight: 500, textAlign: 'left' }}>Expiry Date</label>
               <input
                 id="expiryDate"
@@ -311,7 +363,7 @@ const UpdateUser = () => {
                 min={registrationDate || todayStr}
               />
               {expiryDateError && <div style={{ color: '#f44336', fontSize: 13, marginTop: 2 }}>{expiryDateError}</div>}
-            </div>
+            </div> */}
             <div style={{ marginBottom: 16 }}>
               <Button
                 variant="outlined"
@@ -401,8 +453,8 @@ const UpdateUser = () => {
           <div style={{ flexBasis: '100%' }}>
             <button
               type="button"
-              className="update-user-btn"
-              onClick={handleUpdateUser}
+              className="update-user-btn"    //  navgat add karna 
+              onClick={handleUpdateUser}   
               disabled={updating}
               style={{
                 width: '100%',
@@ -424,8 +476,7 @@ const UpdateUser = () => {
             {updateMsg && <div style={{ marginTop: 12, color: updateMsg.includes('success') ? '#388e3c' : '#f44336', fontWeight: 500 }}>{updateMsg}</div>}
           </div>
         </form>
-      </div>
-      <Dialog open={showBrandModal} onClose={() => setShowBrandModal(false)}>
+         <Dialog open={showBrandModal} onClose={() => setShowBrandModal(false)}>
         <div style={{ minWidth: 340, minHeight: 200, padding: 24 }}>
           <input
             type="text"
@@ -515,6 +566,13 @@ const UpdateUser = () => {
           )}
         </div>
       </Dialog>
+      </div>
+    </div>
+
+</div>
+
+     
+     
     </>
   );
 }

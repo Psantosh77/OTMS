@@ -1,6 +1,6 @@
 /* Add 2px padding to the whole page */
 body {
-  
+   font-family: 'Poppins', sans-serif;
   box-sizing: border-box;
 }
 
@@ -29,7 +29,7 @@ body {
 
 body, #root {
 
-  background: linear-gradient(270deg, #ff7eb3, #65d6ce, #ffc371 ,  #ffb400 , #ff6b35 , #f7931e );
+  background: linear-gradient(270deg, #ff7eb3, #65d6ce, #ffc371 );
   background-size: 600% 600%;
   animation: gradientAnimation 15s ease infinite;
   
