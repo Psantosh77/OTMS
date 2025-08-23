@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Service.css";
-import ServiceModal from "./ServiceModal";
+
 
 const Service = () => {
 
@@ -11,4 +11,4 @@ const Service = () => {
   );
 };
 
-export default Service;
+export default Service; 

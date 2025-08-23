@@ -7,7 +7,7 @@ import Sidebar from './Components/Sidebar'
 import Dashboard from "./pages/Dashboard";
 import Faq from "./pages/Faq";
 import Blog from "./pages/Blog";
-import Service from './pages/service';
+// import Service from './pages/service';
 import Location from './pages/Location';
 import "./App.css";
 
@@ -21,7 +21,7 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="/blog" element={<Blog />} />
-        <Route path="/service" element={<Service />} />
+        {/* <Route path="/service" element={<Service />} /> */}
         <Route path="/location" element={<Location />} />
       </Routes>
     </div>
