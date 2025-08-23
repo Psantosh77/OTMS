@@ -1,5 +1,5 @@
 const express = require('express');
-const { getConfig, addFaqs, getFaqs } = require('../../controller/Home/index');
+const { getConfig, addFaqs, getFaqs } = require('../../controller/Home/FAQ');
 const decodeAndDetectRole = require('../../middleware/decodeAndDetectRole');
 
 const router = express.Router();
