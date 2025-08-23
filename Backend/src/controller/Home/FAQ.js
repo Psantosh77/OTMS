@@ -71,7 +71,7 @@ async function getFaqs(req, res) {
 
 async function addFaqs(req, res) {
   try {
-    const { question, answer, category } = req.body;
+    const { question, answer, category, _id } = req.body;
     if (!question || !answer) {
       return sendError(res, {
         message: 'Question and answer are required',
@@ -79,16 +79,39 @@ async function addFaqs(req, res) {
         status: 400
       });
     }
-    const faq = new Faq({ question, answer, category });
-    await faq.save();
-    return sendResponse(res, {
-      message: 'FAQ added successfully',
-      data: faq,
-      status: 201
-    });
+    let faq;
+    if (_id) {
+      // Update existing FAQ
+      faq = await Faq.findByIdAndUpdate(
+        _id,
+        { question, answer, category },
+        { new: true }
+      );
+      if (!faq) {
+        return sendError(res, {
+          message: 'FAQ not found for update',
+          data: null,
+          status: 404
+        });
+      }
+      return sendResponse(res, {
+        message: 'FAQ updated successfully',
+        data: faq,
+        status: 200
+      });
+    } else {
+      // Add new FAQ
+      faq = new Faq({ question, answer, category });
+      await faq.save();
+      return sendResponse(res, {
+        message: 'FAQ added successfully',
+        data: faq,
+        status: 201
+      });
+    }
   } catch (err) {
     return sendError(res, {
-      message: 'Failed to add FAQ',
+      message: 'Failed to add/update FAQ',
       data: err.message,
       status: 500
     });
