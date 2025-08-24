@@ -1,6 +1,6 @@
 const { sendResponse, sendError } = require('../../utils/response');
 const axios = require("axios");
-const Faq = require('../../model/homeModel/faqModel');
+const FaqModel = require('../../model/homeModel/faqModel');
 
 async function getConfig(req, res) {
   const { latitude, longitude } = req.body;
@@ -52,7 +52,7 @@ async function getConfig(req, res) {
 
 async function getFaqs(req, res) {
   try {
-    const faqs = await Faq.find({ isActive: true });
+    const faqs = await FaqModel.find({ isActive: true });
     return sendResponse(res, {
       message: 'FAQs fetched successfully',
       data: faqs,
@@ -82,7 +82,7 @@ async function addFaqs(req, res) {
     let faq;
     if (_id) {
       // Update existing FAQ
-      faq = await Faq.findByIdAndUpdate(
+      faq = await FaqModel.findByIdAndUpdate(
         _id,
         { question, answer, category },
         { new: true }
@@ -101,7 +101,7 @@ async function addFaqs(req, res) {
       });
     } else {
       // Add new FAQ
-      faq = new Faq({ question, answer, category });
+      faq = new FaqModel({ question, answer, category });
       await faq.save();
       return sendResponse(res, {
         message: 'FAQ added successfully',
@@ -118,4 +118,37 @@ async function addFaqs(req, res) {
   }
 }
 
-module.exports = { getConfig, getFaqs, addFaqs};
+
+async function updateFaqIsActive(req, res) {
+  try {
+    const { _id, isActive } = req.body;
+    if (!_id || typeof isActive !== 'boolean') {
+      return sendError(res, {
+        message: 'FAQ _id and isActive(boolean) are required',
+        data: null,
+        status: 400
+      });
+    }
+    const faq = await FaqModel.updateIsActive(_id, isActive);
+    if (!faq) {
+      return sendError(res, {
+        message: 'FAQ not found',
+        data: null,
+        status: 404
+      });
+    }
+    return sendResponse(res, {
+      message: 'FAQ isActive updated successfully',
+      data: faq,
+      status: 200
+    });
+  } catch (err) {
+    return sendError(res, {
+      message: 'Failed to update FAQ isActive',
+      data: err.message,
+      status: 500
+    });
+  }
+}
+
+module.exports = { getConfig, getFaqs, addFaqs, updateFaqIsActive };
