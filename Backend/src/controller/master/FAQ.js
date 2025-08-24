@@ -1,3 +1,20 @@
+// Get all FAQ data (active and inactive)
+async function getAllFaqs(req, res) {
+  try {
+    const faqs = await FaqModel.find({});
+    return sendResponse(res, {
+      message: 'All FAQs fetched successfully',
+      data: faqs,
+      status: 200
+    });
+  } catch (err) {
+    return sendError(res, {
+      message: 'Failed to fetch all FAQs',
+      data: err.message,
+      status: 500
+    });
+  }
+}
 const { sendResponse, sendError } = require('../../utils/response');
 const axios = require("axios");
 const FaqModel = require('../../model/homeModel/faqModel');
@@ -67,6 +84,22 @@ async function getFaqs(req, res) {
   }
 }
 
+async function getAllFaqs(req, res) {
+  try {
+    const faqs = await FaqModel.find({});
+    return sendResponse(res, {
+      message: 'All FAQs fetched successfully',
+      data: faqs,
+      status: 200
+    });
+  } catch (err) {
+    return sendError(res, {
+      message: 'Failed to fetch all FAQs',
+      data: err.message,
+      status: 500
+    });
+  }
+}
 
 
 async function addFaqs(req, res) {
@@ -151,4 +184,4 @@ async function updateFaqIsActive(req, res) {
   }
 }
 
-module.exports = { getConfig, getFaqs, addFaqs, updateFaqIsActive };
+module.exports = { getConfig, getFaqs, addFaqs, updateFaqIsActive, getAllFaqs };
