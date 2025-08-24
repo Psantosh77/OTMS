@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Faq.css";
 
-function FaqModal({ isOpen, onClose, onSubmit, initialData, mode }) {
+function FaqModal({ open, onClose, onSubmit, editData, mode }) {
   const [formData, setFormData] = useState({
     category: "",
     question: "",
@@ -10,12 +10,12 @@ function FaqModal({ isOpen, onClose, onSubmit, initialData, mode }) {
   });
 
   useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
+    if (editData) {
+      setFormData(editData);
     } else {
       setFormData({ category: "", question: "", answer: "", active: true });
     }
-  }, [initialData]);
+  }, [editData]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -28,7 +28,7 @@ function FaqModal({ isOpen, onClose, onSubmit, initialData, mode }) {
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!open) return null;
 
   return (
     <div className="modal-overlay">
