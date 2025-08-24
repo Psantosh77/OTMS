@@ -13,7 +13,7 @@ function Faq() {
   const getFaq = async () => {
     try {
       const { postApi } = await import("../../utils/apiConfig/apiService");
-      const res = await postApi({ url: "home/getfaq" });
+      const res = await postApi({ url: "faq/getAllfaqs" });
       setFaqData(res?.data || res);
     } catch (err) {
       setFaqData([]);
@@ -38,7 +38,7 @@ function Faq() {
         payload._id = editData._id;
       }
       const { postApi } = await import("../../utils/apiConfig/apiService");
-      await postApi({ url: "home/addfaq", payload });
+      await postApi({ url: "faq/addfaq", payload });
       alert("FAQ added successfully!");
       getFaq(); // Refresh grid after add/edit
     } catch (err) {
@@ -64,6 +64,7 @@ function Faq() {
             setEditData(data);
             setModalOpen(true);
           }}
+          onDeleteSuccess={getFaq}
         />
         <FaqModal
           open={modalOpen}
