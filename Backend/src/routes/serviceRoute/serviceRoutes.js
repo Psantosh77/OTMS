@@ -6,6 +6,11 @@ const serviceController = require('../../controller/serviceController/serviceCon
 // Get all car services
 router.post('/', serviceController.getCarServices);
 
+router.post("/addService" , serviceController.addService)
+router.post("/getAllServices" , serviceController.getAllServices)
+router.post("/getActiveServices" , serviceController.getActiveServices)
+router.post("/updateServiceActive" , serviceController.updateServiceActive)
+
 // Update service price (admin only)
 router.post('/price',  serviceController.updateServicePrice);
 

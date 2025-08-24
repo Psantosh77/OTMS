@@ -14,7 +14,7 @@ const FAQSection = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem("accessToken");
-        const res = await apiService.post("/home/getfaq", {
+        const res = await apiService.post("/faq/getfaq", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

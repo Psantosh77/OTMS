@@ -20,11 +20,11 @@ const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/auth/login');
 
 
-const dashboardRoutes = require('./routes/Home/index');
+const dashboardRoutes = require('./routes/Home/FaqRoutes');
 const carManufacturerRoutes = require('./routes/carDataRoutes');
 const userRoutes = require('./routes/updateUserRoutes');
 const orderRoutes = require('./routes/orderRoutes');
-const HomeRoutes = require('./routes/Home/index');
+const FaqRoutes = require('./routes/Home/FaqRoutes');
 const serviceRoutes = require('./routes/serviceRoute/serviceRoutes');
 
 
@@ -93,7 +93,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/cardata', carManufacturerRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/order', orderRoutes);
-app.use('/api/home', HomeRoutes );
+app.use('/api/faq', FaqRoutes );
 app.use('/api/services', serviceRoutes );
 
 // Health check route for Render
