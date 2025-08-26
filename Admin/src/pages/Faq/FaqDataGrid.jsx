@@ -9,7 +9,9 @@ import UndoIcon from '@mui/icons-material/Undo';
 
 const FaqDataGrid = ({ data = [], onEdit, onDeleteSuccess }) => {
   // Map data to include 'id' field for DataGrid
-  const rows = Array.isArray(data) ? data.map(faq => ({ ...faq, id: faq._id })) : [];
+  const rows = Array.isArray(data)
+    ? data.map(faq => ({ ...faq, id: faq._id }))
+    : [];
 
   // Common function to call delete/undelete API
   const callFaqIsActiveApi = async (_id, isActive) => {
@@ -19,28 +21,40 @@ const FaqDataGrid = ({ data = [], onEdit, onDeleteSuccess }) => {
         url: 'faq/deleteUndelete',
         payload: { _id, isActive }
       });
-      alert(`FAQ ${isActive ? 'restored' : 'deleted'} (isActive=${isActive}) successfully!`);
+      alert(`FAQ ${isActive ? 'restored' : 'deleted'} successfully!`);
       if (onDeleteSuccess) onDeleteSuccess();
     } catch (err) {
-      alert(`Error ${isActive ? 'restoring' : 'deleting'} FAQ: ` + (err?.message || JSON.stringify(err)));
+      alert(
+        `Error ${isActive ? 'restoring' : 'deleting'} FAQ: ` +
+          (err?.message || JSON.stringify(err))
+      );
     }
   };
 
+  // Column configuration
   const columns = [
-    { field: 'category', headerName: 'Category', flex: 1 },
-    { field: 'question', headerName: 'Question', flex: 2 },
-    { field: 'answer', headerName: 'Answer', flex: 2 },
-    { field: 'isActive', headerName: 'Active', flex: 1, renderCell: (params) => params.value ? 'True' : 'False' },
-   
+    { field: 'category', headerName: 'Category', width: 150, minWidth: 120 },
+    { field: 'question', headerName: 'Question', flex: 2, minWidth: 200 },
+    { field: 'answer', headerName: 'Answer', flex: 2, minWidth: 200 },
+    {
+      field: 'isActive',
+      headerName: 'Active',
+      width: 100,
+      renderCell: (params) => (params.value ? 'True' : 'False'),
+    },
     {
       field: 'actions',
       headerName: 'Action',
-      flex: 1,
+      width: 150,
       sortable: false,
       filterable: false,
       renderCell: (params) => (
         <>
-          <IconButton color="primary" size="small" onClick={() => onEdit(params.row)}>
+          <IconButton
+            color="primary"
+            size="small"
+            onClick={() => onEdit(params.row)}
+          >
             <EditIcon />
           </IconButton>
           {params.row.isActive ? (
@@ -65,14 +79,17 @@ const FaqDataGrid = ({ data = [], onEdit, onDeleteSuccess }) => {
     },
   ];
 
+  // Responsive page size: mobile = 3 rows, desktop = 5 rows
+  const pageSize = window.innerWidth < 600 ? 3 : 5;
+
   return (
-    <Box sx={{ height: 500, width: '100%', mt: 3 }}>
-      <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
+    <Box sx={{ width: '100%', overflowX: 'auto', mt: 3 }}>
+      <Paper elevation={3} sx={{ p: 2, borderRadius: 2, minWidth: 600 }}>
         <DataGrid
           rows={rows}
           columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5, 10, 20]}
+          pageSize={pageSize}
+          rowsPerPageOptions={[3, 5, 10, 20]}
           disableSelectionOnClick
           autoHeight
         />

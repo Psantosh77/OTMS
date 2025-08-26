@@ -1,0 +1,82 @@
+/* Background with orange-pink gradient */
+
+.login-body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #ff8c42, #ff5f6d, #f9d423);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
+  background: white;
+  padding: 40px 20px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  animation: fadeIn 1s ease;
+}
+
+.login-container h2 {
+  margin-bottom: 20px;
+  color: #ff5f2e;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.login-container input:focus {
+  border-color: #ff5f2e;
+  box-shadow: 0 0 8px rgba(255, 95, 46, 0.4);
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ff512f, #dd2476);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  background: linear-gradient(135deg, #dd2476, #ff512f);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ✅ Responsive adjustment */
+@media (max-width: 768px) {
+  .login-container {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40px; /* smaller margin for mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 30px 20px;
+  }
+}
