@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import axios from 'axios';
 import { apiService } from '../../utils/apiService';
 import { useNavigate } from 'react-router-dom';
+import LocationPicker from "../../components/userlocation"; // import
+
+import LoginModal from "../../components/LoginModal"; // ✅ import login modal
+// ... baaki imports
 // Razorpay script loader
 function loadRazorpayScript(src) {
   return new Promise((resolve) => {
@@ -73,14 +77,14 @@ const ServiceDetails = () => {
   const vendorAddress = '123 Main Street, City Center, YourCity';
 
   // Booking validation
-  const validateBooking = () => {
-    if (!timeSlot || !address) {
-      setBookingError('Please select a time slot and enter address.');
-      return false;
-    }
-    setBookingError('');
-    return true;
-  };
+  // const validateBooking = () => {
+  //   if (timeSlot || address) {
+  //     setBookingError('Please select a time slot and enter address.');
+  //     return false;
+  //   }
+  //   setBookingError('');
+  //   return true;
+  // };
 
   // Razorpay payment handler (Pay Now)
   const handleRazorpay = async () => {
@@ -198,6 +202,19 @@ const ServiceDetails = () => {
     }
   };
 
+   // ✅ Login modal state
+  const [openLogin, setOpenLogin] = useState(false);
+
+  // ✅ Pay Now button pe click -> Login modal khul jaye
+  const handleOpenLogin = () => {
+    // if (!validateBooking()) return; // agar slot/address missing ho to error
+    setOpenLogin(true);
+  };
+
+  const handleCloseLogin = () => {
+    setOpenLogin(false);
+  };
+
   return (
     <Box sx={{ p: 4, minHeight: '100vh' , top:'5rem', marginBottom:'3rem' ,position:'relative'}}>
       {/* Vendor Info Centered */}
@@ -243,15 +260,20 @@ const ServiceDetails = () => {
             </LocalizationProvider>
           </Box>
           <Box sx={{ flex: 2 }}>
-            <TextField
-              label="Service Address"
-              value={address}
-              onChange={e => setAddress(e.target.value)}
-              multiline
-              minRows={2}
-              fullWidth
-              sx={{ mt: 0, '& label.Mui-focused': { color: '#ff9800' }, '& .MuiInput-underline:after': { borderBottomColor: '#ff9800' }, '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: '#ff9800' }, '&:hover fieldset': { borderColor: '#fb8c00' }, '&.Mui-focused fieldset': { borderColor: '#ff9800' } } }}
-            />
+           <div className="container-fluid px-0 fade-in-up stagger-3">
+                  <Typography variant="subtitle1" fontWeight={500} mb={1}>Select Location</Typography>
+  <LocationPicker onLocationSelect={(addr) => setAddress(addr)} />
+
+  {address && (
+    <TextField
+      label="Selected Address"
+      value={address}
+      onChange={(e) => setAddress(e.target.value)}
+      fullWidth
+      sx={{ mt: 2 }}
+    />
+  )}
+                </div>
           </Box>
         </Box>
         {bookingError && <Typography color="error" mt={2}>{bookingError}</Typography>}
@@ -337,12 +359,14 @@ const ServiceDetails = () => {
             <Typography fontWeight={700} color="primary">₹{total}</Typography>
           </Box>
           <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+            
             <Button
+              
               variant="contained"
               color="warning"
               fullWidth
               disabled={selectedServices.length === 0}
-              onClick={handleRazorpay}
+              onClick={handleOpenLogin}
               sx={{
                 backgroundColor: '#ff9800',
                 color: '#fff',
@@ -367,13 +391,18 @@ const ServiceDetails = () => {
             >
               Pay Later
             </Button>
+          
           </Box>
-
+      {/* ✅ Login Modal popup */}
+      <Dialog open={openLogin} onClose={handleCloseLogin} maxWidth="sm" fullWidth>
+        <LoginModal onClose={handleCloseLogin} />
+      </Dialog>
 
         </Paper>
       </Box>
     </Box>
     </Box>
+    
   );
 };
 
