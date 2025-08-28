@@ -58,4 +58,9 @@ const faqSchema = new mongoose.Schema({
 ]
 */
 
-module.exports = mongoose.model('Faq', faqSchema);
+faqSchema.statics.updateIsActive = async function (_id, isActive) {
+  return this.findByIdAndUpdate(_id, { isActive }, { new: true });
+};
+
+const FaqModel = mongoose.model('Faq', faqSchema);
+module.exports = FaqModel;
