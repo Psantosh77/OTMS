@@ -81,12 +81,21 @@ const [services, setservices] = useState([]);
                   style={{ cursor: "pointer" }} 
     >
       <div className="card-body text-center d-flex flex-column">
-       <div className="fs-1 mb-3">
-<img
-                        src={service.image || "https://via.placeholder.com/80"}
-                        alt={service.name}
-                        style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "50%" }}
-                      />
+    <div className="fs-1 mb-3">
+  {service.image && service.image.trim() !== "" ? (
+    <img
+      src={service.image}
+      // alt="img missing"
+      style={{
+        width: "80px",
+        height: "80px",
+        objectFit: "cover",
+        borderRadius: "50%",
+      }}
+    />
+  ) : (
+    <i className="fas fa-tools text-primary" style={{ fontSize: "80px" }}></i>
+  )}
 </div>
         <h5 className="card-title fw-semibold">{service.name}</h5>
         {/* flex-grow-1 ensures desc takes space but equalizes height */}
