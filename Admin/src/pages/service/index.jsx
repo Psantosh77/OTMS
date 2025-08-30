@@ -125,6 +125,45 @@ const Service = () => {
     },
   ];
 
+  // ------------------------------------------add filed ka liya call api -----------------------------
+
+const addService = async (serviceData) => {
+  console.log("Submitting Service Data:", serviceData);
+
+  try {
+    const { postApi } = await import("../../utils/apiConfig/apiService");
+
+    const res = await postApi({
+      url: "services/addService",
+      payload: {
+        name: serviceData.name,
+        description: serviceData.description || "No description",
+        price: Number(serviceData.price) || 0,
+        subServices: serviceData.subitems || [],   // ✅ subServices array
+        image: serviceData.image || "",            // ✅ image
+        active: serviceData.active ?? true,
+        showInHome: serviceData.showInHome ?? false,
+        showInService: serviceData.showInService ?? false,
+        couponOffers: serviceData.couponOffers || [],
+        discount: Number(serviceData.discount) || 0,
+      }
+    });
+
+    console.log("API Response:", res);
+
+    const newService = {
+      ...res.data,
+      id: res.data._id || res.data.id,
+    };
+
+    setRows((prev) => [...prev, newService]);
+    alert("Service added successfully!");
+  } catch (err) {
+    alert("Failed to add service: " + (err?.message || JSON.stringify(err)));
+  }
+};
+
+
   return (
     <Box sx={{ height: 500, width: '100%', mt: 3 }}>
       <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
@@ -150,9 +189,15 @@ const Service = () => {
           autoHeight
         />
         <ServiceDetail open={detailOpen} onClose={handleDetailClose} row={selectedRow} />
-        {addModalOpen && (
-          <ServiceModal closeModal={handleAddModalClose} addService={() => {}} updateService={() => {}} />
-        )}
+
+{addModalOpen && (
+  <ServiceModal
+    closeModal={handleAddModalClose}
+    addService={addService}   // ✅ real function
+    updateService={() => {}}  // abhi edit use nahi kar rahe ho
+    editingService={selectedRow} // agar edit mode chahiye future me
+  />
+)}
       </Paper>
     </Box>
   );
