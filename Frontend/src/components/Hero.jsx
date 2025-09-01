@@ -275,10 +275,10 @@ const Hero = () => {
                     return;
                   }
 
-                  navigate("/Servicessection");
+                  navigate("/client/dashboard");
                 }}
               >
-                Check Price
+                Select Vandor
               </motion.button>
             </div>
 
