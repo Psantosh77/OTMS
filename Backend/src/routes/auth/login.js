@@ -28,4 +28,5 @@ router.post('/check-token', verifyToken, checkTokenController);
 router.post('/get-user-info', verifyToken, getUserInfoController);
 router.post('/get-user-role', verifyToken, getUserRoleController);
 
+
 module.exports = router;

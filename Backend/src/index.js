@@ -17,7 +17,9 @@ const winston = require('winston');
 const { sendResponse } = require('./utils/response');
 const connectDB = require('./database/mongodb');
 const cookieParser = require('cookie-parser');
+
 const authRoutes = require('./routes/auth/login');
+const adminAuthRoutes = require('./routes/auth/admin');
 
 
 const dashboardRoutes = require('./routes/Home/FaqRoutes');
@@ -26,6 +28,7 @@ const userRoutes = require('./routes/updateUserRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const FaqRoutes = require('./routes/Home/FaqRoutes');
 const serviceRoutes = require('./routes/serviceRoute/serviceRoutes');
+const locationRoutes = require('./routes/Location/locationRoutes');
 
 
 
@@ -89,12 +92,14 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 // Routes
 
 app.use('/api/auth', authRoutes);
+app.use('/api/auth', adminAuthRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/cardata', carManufacturerRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/faq', FaqRoutes );
 app.use('/api/services', serviceRoutes );
+app.use('/api/locations', locationRoutes );
 
 // Health check route for Render
 app.get('/health', (req, res) => {

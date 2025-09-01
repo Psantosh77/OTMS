@@ -1,3 +1,25 @@
+// --- Admin Seeder ---
+const mongoose = require('mongoose');
+const Admin = require("../../../model/userModels/adminModel");
+
+async function seedAdmin() {
+  await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/otms');
+  const email = 'admin@otms.com';
+  const password = 'StrongPassword123';
+  const name = 'Super Admin';
+  const existing = await Admin.findOne({ email });
+  if (existing) {
+    console.log('Admin already exists.');
+    return mongoose.disconnect();
+  }
+  await Admin.create({ email, password, name });
+  console.log('Admin seeded successfully.');
+  mongoose.disconnect();
+}
+
+// Uncomment to run once:
+//  seedAdmin();
+
 const { sendError, sendResponse } = require("../../../utils/response");
 const yup = require("yup");
 const Otp = require("../../../model/authModel/optModel");
