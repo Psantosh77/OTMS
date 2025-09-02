@@ -62,14 +62,14 @@ const getActiveServices = async (req, res) => {
     return sendError(res, 500, 'Failed to fetch active services', error);
   }
 };
-// Add a new service
+// Add or update a service
 const addService = async (req, res) => {
   try {
-    const { name, description, price, image, active, discount, subServices, couponOffers, showInHome, showInService } = req.body;
+    const { serviceId, name, description, price, image, active, discount, subServices, couponOffers, showInHome, showInService } = req.body;
     if (!name || typeof price !== 'number') {
       return sendError(res, 400, 'Service name and price are required');
     }
-    const service = new Service({
+    const serviceData = {
       name,
       description,
       price,
@@ -80,15 +80,27 @@ const addService = async (req, res) => {
       couponOffers: couponOffers || [],
       showInHome: showInHome !== undefined ? showInHome : false,
       showInService: showInService !== undefined ? showInService : false
-    });
-    await service.save();
-    return sendResponse(res, {
-      message: 'Service added successfully',
-      data: service,
-      status: 201
-    });
+    };
+    let service;
+    if (serviceId) {
+      service = await Service.findByIdAndUpdate(serviceId, serviceData, { new: true });
+      if (!service) return sendError(res, 404, 'Service not found');
+      return sendResponse(res, {
+        message: 'Service updated successfully',
+        data: service,
+        status: 200
+      });
+    } else {
+      service = new Service(serviceData);
+      await service.save();
+      return sendResponse(res, {
+        message: 'Service added successfully',
+        data: service,
+        status: 201
+      });
+    }
   } catch (error) {
-    return sendError(res, 500, 'Failed to add service', error);
+    return sendError(res, 500, 'Failed to add/update service', error);
   }
 };
 

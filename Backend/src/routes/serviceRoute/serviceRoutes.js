@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const serviceController = require('../../controller/serviceController/serviceController');
+const upload = require('../../middleware/imageMulter');
 
 
 // Get all car services
 router.post('/', serviceController.getCarServices);
 
-router.post("/addService" , serviceController.addService)
+router.post("/addService" , upload.single('image') , serviceController.addService)
 router.post("/getAllServices" , serviceController.getAllServices)
 router.post("/getActiveServices" , serviceController.getActiveServices)
 router.post("/updateServiceActive" , serviceController.updateServiceActive)
