@@ -1,4 +1,4 @@
-const Vendor = require("../models/Vendor");
+const Vendor = require("../../model/userModels/vendorModel");
 const { sendResponse, sendError } = require("../../utils/response");
 
 async function updateVendorProfile(req, res) {

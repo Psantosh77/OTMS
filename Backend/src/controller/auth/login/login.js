@@ -103,16 +103,37 @@ const verifyOtpController = async (req, res) => {
     // if (record.expiresAt < new Date()) { ... }
 
     // 2. Insert/update CommonUser with isVerify: true
-    await commonUserModel.findOneAndUpdate(
+    const updatedCommonUser = await commonUserModel.findOneAndUpdate(
       { email },
-      { isVerified: true , role: role },
+      { isVerified: true, role: role },
       { upsert: true, new: true }
-
     );
+
+    // If vendor, find vendor record and issue tokens + return isProfileComplete
+    if (role === 'vendor') {
+      const vendorRecord = await Vendor.findOne({ email: email.toLowerCase() });
+
+      // create/set tokens (cookies) and also return them in response body
+      const tokens = setTokens(res, { email, role: 'vendor' });
+
+      const isProfileComplete = vendorRecord ? !!vendorRecord.isProfileComplete : false;
+
+      return sendResponse(res, {
+        message: "OTP verified successfully",
+        data: {
+          email,
+          role,
+          tokens,
+          isProfileComplete,
+          commonUser: updatedCommonUser
+        },
+        status: 200
+      });
+    }
 
     return sendResponse(res, {
       message: "OTP verified successfully",
-      data: { email, role },
+      data: { email, role, commonUser: updatedCommonUser },
       status: 200
     });
 
