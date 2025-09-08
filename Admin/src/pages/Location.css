@@ -1,9 +1,14 @@
 .location-page {
-  padding: 20px;
-  width: 100%;
-  max-width: 900px;
-  margin-left: 240px;
-  margin-top: 91px;
+align-items: center;
+    justify-content: center;
+    padding: 20px;
+    flex-direction: column;
+    width: 100%;
+    max-width: 900px;
+    /* margin-left: 240px; */
+    /* margin-top: 91px; */
+    display: flex
+;
 }
 
 .location-header {
