@@ -29,16 +29,16 @@ const Sidebar = () => {
       <ListItem
         button
         component={Link}
-        to="/"
-        selected={location.pathname === '/'}
-        sx={location.pathname === '/' ? {
+        to="/dashboard"
+        selected={location.pathname === '/dashboard'}
+        sx={location.pathname === '/dashboard' ? {
           color: 'orange',
           fontWeight: 700,
           bgcolor: 'rgba(255, 165, 0, 0.15)'
         } : {}}
       >
-        <ListItemIcon sx={location.pathname === '/' ? { color: 'orange' } : {}}><HomeIcon /></ListItemIcon>
-        <ListItemText primary="Home" />
+        <ListItemIcon sx={location.pathname === '/dashboard' ? { color: 'orange' } : {}}><HomeIcon /></ListItemIcon>
+        <ListItemText primary="Dashboard" />
       </ListItem>
       <ListItem button onClick={() => setSubmenuOpen(!submenuOpen)}>
         <ListItemIcon><SupervisorAccountIcon /></ListItemIcon>
@@ -117,6 +117,10 @@ const Sidebar = () => {
           </ListItem>
         </List>
       </Collapse>
+      <ListItem button>
+        <ListItemIcon><ContactPhoneIcon /></ListItemIcon>
+        <ListItemText primary="vender" />
+      </ListItem>
       <ListItem button>
         <ListItemIcon><ContactPhoneIcon /></ListItemIcon>
         <ListItemText primary="Contact" />

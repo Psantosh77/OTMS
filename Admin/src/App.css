@@ -7,3 +7,25 @@ body{
     min-width: 1536px;
     margin: 0 auto;
 }
+
+/* Reset default margin & padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Pure page par background apply kare */
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: "Roboto", sans-serif;
+  background: #f0f2f5;   /* yehi login page ka background poore app me hoga */
+}
+
+/* App container full height ho */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

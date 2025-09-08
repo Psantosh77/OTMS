@@ -19,6 +19,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import './App.css';
 import Service from './pages/service';
+import Login from './pages/Login';
+
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -28,6 +30,14 @@ function App() {
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
   };
+
+   if (location.pathname === "/") {
+    return (
+      <Routes>
+        <Route path="/" element={<Login />} />
+      </Routes>
+    );
+  }
 
   return (
   <Box sx={{ minHeight: '100vh', background: '#f8f9fa', width: '100vw', overflowX: 'hidden', color: '#111' }}>
@@ -62,7 +72,7 @@ function App() {
         )}
   <Box sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, minHeight: '80vh', width: '100%', color: '#111' }}>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/faq" element={<Faq />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/service" element={<Service />} />
