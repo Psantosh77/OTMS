@@ -55,6 +55,10 @@ const vendorSchema = new mongoose.Schema({
     required: true,
     default: "vendor"
   },
+  isProfileComplete: {
+    type: Boolean,
+    default: false
+  },
   isActive: {
     type: Boolean,
     default: true
