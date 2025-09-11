@@ -26,6 +26,7 @@ const userRoutes = require('./routes/updateUserRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const FaqRoutes = require('./routes/Home/FaqRoutes');
 const serviceRoutes = require('./routes/serviceRoute/serviceRoutes');
+const vendorRoutes = require('./routes/vendorRoutes');
 
 
 
@@ -95,6 +96,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/faq', FaqRoutes );
 app.use('/api/services', serviceRoutes );
+app.use('/api/vendor', vendorRoutes );
 
 // Health check route for Render
 app.get('/health', (req, res) => {
