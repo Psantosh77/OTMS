@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import apiService from "../utils/apiService";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -11,27 +13,30 @@ import {
   Stepper,
   Step,
   StepLabel,
+  Dialog,
+  DialogContent,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import Navbar from "./Navbar";
 import StepContent  from './Register';
 
 const steps = ["Basic Info", "Business Details", "Documents", "Optional"]; // ✅ define once
 
 export default function LoginRegister({onLogin  }) {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([
-    { email: "user@test.com", password: "password123" },
+    { countryCode: "+91", mobile: "9876543210" },
   ]);
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loggedInUser, setLoggedInUser] = useState(null);
 
   const [showRegister, setShowRegister] = useState(false);
   const [regForm, setRegForm] = useState({
     name: "",
-    email: "",
-    password: "",
-    phone: "",
+    countryCode: "+91",
+    mobile: "",
     shopName: "",
     businessAddress: "",
     timing: "",
@@ -50,23 +55,83 @@ export default function LoginRegister({onLogin  }) {
   });
 
   // ------------------- LOGIN -------------------
-  function handleLogin(e) {
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
+
+  async function handleSendOtp(e) {
     e.preventDefault();
-    const found = users.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (found) {
-       setLoggedInUser(found.email);   // local state
-  onLogin(found.email);           // parent App ko inform karega
+    try {
+      const payload = {
+        email,
+  role: "vendor"
+      };
+  const res = await apiService.post("auth/sendotp", payload);
+      if (res?.data?.success) {
+        setSnackbar({
+          open: true,
+          message: "OTP sent successfully!",
+          severity: "success",
+        });
+        setOtpSent(true);
+      } else {
+        setSnackbar({
+          open: true,
+          message: res?.data?.message || "Failed to send OTP.",
+          severity: "error",
+        });
+      }
+    } catch (err) {
       setSnackbar({
         open: true,
-        message: "Login successful!",
-        severity: "success",
+        message: "Network error. Please try again.",
+        severity: "error",
       });
-    } else {
+    }
+  }
+
+  async function handleVerifyOtp(e) {
+    e.preventDefault();
+    try {
+      const res = await apiService.post('auth/verifyOpt', { email, otp, role: 'vendor' });
+      if (res?.data?.success) {
+        setSnackbar({
+          open: true,
+          message: "OTP verified! Login successful.",
+          severity: "success",
+        });
+        // Persist login state and tokens if returned
+        try {
+          localStorage.setItem('isLoggedIn', 'true');
+          // backend may return tokens directly or nested under data.tokens
+          const payload = res?.data?.data || {};
+          const returnedTokens = payload.tokens || payload;
+          if (returnedTokens?.accessToken) localStorage.setItem('accessToken', returnedTokens.accessToken);
+          if (returnedTokens?.refreshToken) localStorage.setItem('refreshToken', returnedTokens.refreshToken);
+        } catch (err) {
+          // ignore storage errors  
+        }
+        // If vendor profile is incomplete, navigate to dashboard and open registration
+        const payload = res?.data?.data || {};
+        const isProfileComplete = typeof payload.isProfileComplete !== 'undefined' ? payload.isProfileComplete : (payload?.tokens ? payload.tokens.isProfileComplete : undefined);
+        if (isProfileComplete === false) {
+          // open the in-component register flow and prefill email
+          setRegForm((p) => ({ ...p, email }));
+          setShowRegister(true);
+          return;
+        }
+
+        if (onLogin) onLogin();
+      } else {
+        setSnackbar({
+          open: true,
+          message: res?.data?.message || "Invalid OTP.",
+          severity: "error",
+        });
+      }
+    } catch (err) {
       setSnackbar({
         open: true,
-        message: "Invalid credentials — you can register below.",
+        message: "Network error. Please try again.",
         severity: "error",
       });
     }
@@ -74,27 +139,29 @@ export default function LoginRegister({onLogin  }) {
 
   // ------------------- REGISTER -------------------
   function handleRegisterSubmit() {
-    if (users.find((u) => u.email === regForm.email)) {
-      setSnackbar({
-        open: true,
-        message: "Email already registered.",
-        severity: "error",
-      });
-      return;
-    }
-
-    const newUser = {
-      email: regForm.email,
-      password: regForm.password,
-    };
-    setUsers((prev) => [...prev, newUser]);
-    setLoggedInUser(regForm.email);
-    setShowRegister(false);
-    setSnackbar({
-      open: true,
-      message: "Registered successfully — logged in.",
-      severity: "success",
-    });
+    // submit registration to backend
+    (async () => {
+      try {
+        const payload = {
+          email: regForm.email,
+          name: regForm.name,
+          phone: regForm.phone,
+          businessName: regForm.shopName || regForm.businessName,
+          address: regForm.businessAddress || regForm.address,
+        };
+        const res = await apiService.post('vendor/create', payload);
+        if (res?.data?.success) {
+          setSnackbar({ open: true, message: 'Registered successfully — logged in.', severity: 'success' });
+          setShowRegister(false);
+          try { localStorage.setItem('isLoggedIn', 'true'); } catch(e){}
+          if (onLogin) onLogin();
+        } else {
+          setSnackbar({ open: true, message: res?.data?.message || 'Registration failed', severity: 'error' });
+        }
+      } catch (err) {
+        setSnackbar({ open: true, message: err?.response?.data?.message || 'Network error', severity: 'error' });
+      }
+    })();
   }
 
   // ------------------- STEP FORM CONTENT -------------------
@@ -108,8 +175,9 @@ export default function LoginRegister({onLogin  }) {
     loggedInUser={loggedInUser}
     onLogout={() => {
       setLoggedInUser(null);
-      setEmail("");
-      setPassword("");
+  setCountryCode("+91");
+  setMobile("");
+  // setPassword("");
       setSnackbar({
         open: true,
         message: "Logged out.",
@@ -119,71 +187,102 @@ export default function LoginRegister({onLogin  }) {
   />
 )}
      {!loggedInUser && (
-  <Container
-    maxWidth="sm"
+  <Box
     sx={{
       minHeight: "100vh",
+      width: "100vw",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
+      bgcolor: "background.default"
     }}
   >
-    <Paper elevation={3} sx={{ p: 4, width: "100%" }}>
-      <Typography variant="h5" gutterBottom align="center">
-        {showRegister ? "Register" : "Login"}
-      </Typography>
+    <Box sx={{
+      boxShadow: 6,
+      borderRadius: 4,
+      bgcolor: "background.paper",
+      p: 0,
+      width: "100vw",
+      maxWidth: "100vw",
+      height: "100vh",
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "stretch"
+    }}>
+      {/* Left: Image */}
+      <Box sx={{
+        flex: 2,
+        bgcolor: '#e0e7ff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderTopLeftRadius: 16,
+        borderBottomLeftRadius: 16,
+        p: 3
+      }}>
+        <img src="https://source.unsplash.com/400x400/?car,service" alt="Login Visual" style={{ width: '100%', maxWidth: 220, borderRadius: 12 }} />
+      </Box>
+      {/* Right: Login Form */}
+      <Box sx={{
+        flex: 1,
+        p: 4,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <Typography variant="h4" fontWeight={700} color="primary" gutterBottom align="center">
+          {showRegister ? "Register" : "Login"}
+        </Typography>
 
-      {showRegister ? (
-        <>
-          <Stepper activeStep={activeStep} alternativeLabel>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-
-          <Box sx={{ display: "grid", gap: 2, mt: 3 }}>
-            <StepContent
-             activeStep={activeStep} 
-  regForm={regForm} 
-  setRegForm={setRegForm}  />
+        {showRegister ? (
+        <Dialog open={showRegister} onClose={() => setShowRegister(false)} maxWidth="sm" fullWidth>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
+            <IconButton onClick={() => setShowRegister(false)}>
+              <CloseIcon />
+            </IconButton>
           </Box>
+          <DialogContent>
+            <Box>
+              <Stepper activeStep={activeStep} alternativeLabel>
+                {steps.map((label) => (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
 
-          <Box
-            sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}
-          >
-            <Button
-              disabled={activeStep === 0}
-              onClick={() => setActiveStep((s) => s - 1)}
-            >
-              Back
-            </Button>
-            {activeStep === steps.length - 1 ? (
-              <Button variant="contained" onClick={handleRegisterSubmit}>
-                Submit
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                onClick={() => setActiveStep((s) => s + 1)}
-              >
-                Next
-              </Button>
-            )}
-          </Box>
+              <Box sx={{ display: "grid", gap: 2, mt: 3 }}>
+                <StepContent activeStep={activeStep} regForm={regForm} setRegForm={setRegForm} />
+              </Box>
 
-          <Box sx={{ textAlign: "center", mt: 2 }}>
-            <Button onClick={() => setShowRegister(false)}>
-              Already have account? Login
-            </Button>
-          </Box>
-        </>
+              <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+                <Button disabled={activeStep === 0} onClick={() => setActiveStep((s) => s - 1)}>Back</Button>
+                {activeStep === steps.length - 1 ? (
+                  <Button variant="contained" onClick={handleRegisterSubmit}>Submit</Button>
+                ) : (
+                  <Button variant="contained" onClick={() => setActiveStep((s) => s + 1)}>Next</Button>
+                )}
+              </Box>
+
+              <Box sx={{ textAlign: "center", mt: 2 }}>
+                <Button onClick={() => setShowRegister(false)}>Already have account? Login</Button>
+              </Box>
+            </Box>
+          </DialogContent>
+        </Dialog>
       ) : (
         <Box
           component="form"
-          onSubmit={handleLogin}
-          sx={{ display: "grid", gap: 2 }}
+          onSubmit={handleSendOtp}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+            mt: 2,
+            alignItems: "center",
+            width: '100%'
+          }}
         >
           <TextField
             label="Email"
@@ -191,26 +290,38 @@ export default function LoginRegister({onLogin  }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            sx={{ width: '100%', bgcolor: '#f3f4f6', borderRadius: 2 }}
           />
-          <TextField
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Button type="submit" variant="contained">
-            Login
-          </Button>
+          {!otpSent && (
+            <Button type="submit" variant="contained" size="large" sx={{ mt: 2, borderRadius: 2, fontWeight: 600, width: '100%' }}>
+              Send OTP
+            </Button>
+          )}
+          {otpSent && (
+            <>
+              <TextField
+                label="Enter OTP"
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+                sx={{ width: '100%', bgcolor: '#f3f4f6', borderRadius: 2, mt: 2 }}
+              />
+              <Button onClick={handleVerifyOtp} variant="contained" size="large" sx={{ mt: 2, borderRadius: 2, fontWeight: 600, width: '100%' }}>
+                Verify OTP
+              </Button>
+            </>
+          )}
           <Box sx={{ textAlign: "center", mt: 1 }}>
-            <Button variant="text" onClick={() => setShowRegister(true)}>
+            <Button variant="text" onClick={() => setShowRegister(true)} sx={{ fontWeight: 500 }}>
               New? Register here
             </Button>
           </Box>
         </Box>
-      )}
-    </Paper>
-  </Container>
+  )}
+  </Box>
+  </Box>
+  </Box>
   
 )}
  {/* ✅ Snackbar always at bottom */}

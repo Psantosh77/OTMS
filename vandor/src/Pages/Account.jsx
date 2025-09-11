@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Grid,
@@ -10,10 +10,43 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Dialog,
+  DialogContent,
+  IconButton,
 } from "@mui/material";
+import { useLocation } from "react-router-dom";
+import StepContent from "../Component/Register";
+import apiService from '../utils/apiService';
+import CloseIcon from '@mui/icons-material/Close';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 
 const Account = () => {
+  const location = useLocation();
+  const [openRegister, setOpenRegister] = useState(false);
+  const [regForm, setRegForm] = useState({
+    email: '',
+    name: '',
+    phone: '',
+    businessName: '',
+    address: '',
+    license: '',
+    vat: null,
+    bankInfo: '',
+    logo: null
+  });
+
+  useEffect(() => {
+    if (location && location.state && location.state.openRegister) {
+      setOpenRegister(true);
+      if (location.state.email) setRegForm((p) => ({ ...p, email: location.state.email }));
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (location && location.state && location.state.openRegister) {
+      setOpenRegister(true);
+    }
+  }, [location]);
   // 🔹 Dummy Stats
   const stats = [
     { title: "Total Income", value: "₹1,20,000" },
@@ -41,7 +74,8 @@ const Account = () => {
   ];
 
   return (
-    <Box sx={{ p: 2 }}>
+  <>
+  <Box sx={{ p: 2 }}>
       {/* Top Stats */}
       <Grid container spacing={2}>
         {stats.map((stat, index) => (
@@ -107,6 +141,40 @@ const Account = () => {
         </Card>
       </Box>
     </Box>
+    {/* Registration Dialog (opens when navigated after OTP) */}
+    <Dialog open={openRegister} onClose={() => setOpenRegister(false)} maxWidth="md" fullWidth>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
+        <IconButton onClick={() => setOpenRegister(false)}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+      <DialogContent>
+        <Box sx={{ p: 2 }}>
+          <Typography variant="h6">Complete your Vendor Registration</Typography>
+          <Box sx={{ display: 'grid', gap: 2, mt: 2 }}>
+            <input value={regForm.email} readOnly style={{ padding: 10, borderRadius: 8, border: '1px solid #ccc' }} />
+            <input placeholder="Full name" value={regForm.name} onChange={(e) => setRegForm((p) => ({ ...p, name: e.target.value }))} style={{ padding: 10, borderRadius: 8, border: '1px solid #ccc' }} />
+            <input placeholder="Phone" value={regForm.phone} onChange={(e) => setRegForm((p) => ({ ...p, phone: e.target.value }))} style={{ padding: 10, borderRadius: 8, border: '1px solid #ccc' }} />
+            <input placeholder="Business Name" value={regForm.businessName} onChange={(e) => setRegForm((p) => ({ ...p, businessName: e.target.value }))} style={{ padding: 10, borderRadius: 8, border: '1px solid #ccc' }} />
+            <textarea placeholder="Address" value={regForm.address} onChange={(e) => setRegForm((p) => ({ ...p, address: e.target.value }))} style={{ padding: 10, borderRadius: 8, border: '1px solid #ccc' }} />
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button variant="contained" onClick={async () => {
+                try {
+                  // call createVendor (open endpoint) if needed
+                  const res = await apiService.post('vendor/create', regForm);
+                  if (res?.data?.success) {
+                    setOpenRegister(false);
+                  }
+                } catch (err) {
+                  console.error(err);
+                }
+              }}>Submit</Button>
+            </Box>
+          </Box>
+        </Box>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 };
 
