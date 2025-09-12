@@ -1,5 +1,5 @@
 // src/components/Testimonials.jsx
-import React from "react";
+import React, { useEffect } from "react";
 
 const testimonials = [
   {
@@ -26,15 +26,31 @@ const testimonials = [
 ];
 
 const Testimonials = () => {
+  useEffect(() => {
+    // initialize owl after DOM renders
+    window.$(".owl-carousel").owlCarousel({
+      loop: true,
+      margin: 20,
+      dots: true,
+      autoplay: true,
+      autoplayTimeout: 2500,
+      responsive: {
+        0: { items: 1 },
+        768: { items: 2 },
+        1200: { items: 3 },
+      },
+    });
+  }, []);
+
   return (
     <section className="py-5" id="testimonials">
       <div className="container text-center">
         <h2 className="fw-bold display-6 mb-3 text-dark">What Our Customers Say</h2>
         <p className="text-muted mb-5">Real reviews from real users across India.</p>
 
-        <div className="row g-4">
+        <div className="owl-carousel owl-theme">
           {testimonials.map((user, index) => (
-            <div key={index} className="col-12 col-md-6 col-lg-4">
+            <div key={index} className="item px-2">
               <div className="card h-100 shadow-sm border-0 text-start">
                 <div className="card-body">
                   <div className="d-flex align-items-center mb-3">

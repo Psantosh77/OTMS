@@ -1,7 +1,7 @@
 
 import React from "react";
 import StarIcon from '@mui/icons-material/Star';
-import CustomerDashboardHeader from "./CustomerDashboardHeader";
+// import CustomerDashboardHeader from "./CustomerDashboardHeader";
 import VendorCatalogCard from "../../components/VendorCatalogCard";
 import FilterBar from "../../components/FilterBar";
 import { useState, useEffect } from "react";
@@ -77,17 +77,23 @@ const Dashboard = () => {
 
   return (
     <>
-      <CustomerDashboardHeader />
+    
       <div
         style={{
           padding: '32px 0',
-          background: 'linear-gradient(90deg, #fff1eb 0%, #ffecd2 100%)',
           borderRadius: 24,
           fontFamily: 'Inter, Roboto, Arial, sans-serif',
           minHeight: '100vh',
+        
         }}
       >
-        <FilterBar filters={filters} setFilters={setFilters} onFilter={handleFilter} />
+       <div style={{ marginTop: "5rem" }}>
+  <FilterBar
+    filters={filters}
+    setFilters={setFilters}
+    onFilter={handleFilter}
+  />
+</div>
         <div
           style={{
             display: 'flex',
@@ -96,6 +102,8 @@ const Dashboard = () => {
             margin: '0 auto',
             maxWidth: 900,
             width: '100%',
+              marginBlock: "4rem",
+              
           }}
         >
           {filteredVendors.map((vendor, idx) => (

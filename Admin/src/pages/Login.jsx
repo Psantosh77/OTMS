@@ -17,10 +17,7 @@ export default function Login() {
   e.preventDefault();
 
   if (email === "admin@gmail.com" && password === "12345") {
-    // Ye page reload karke /dashboard par bhej dega
     window.location.href = "/dashboard";
-    // ya fir
-    // window.location.replace("/dashboard");
   } else {
     alert("Invalid email or password");
   }

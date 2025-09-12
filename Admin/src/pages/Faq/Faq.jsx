@@ -8,9 +8,12 @@ function Faq() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [faqData, setFaqData] = useState([]);
+    const [loading, setLoading] = useState(false);
+    
 
   // Function to fetch FAQ data from API
   const getFaq = async () => {
+     setLoading(true);
     try {
       const { postApi } = await import("../../utils/apiConfig/apiService");
       const res = await postApi({ url: "faq/getAllfaqs" });
@@ -19,6 +22,9 @@ function Faq() {
       setFaqData([]);
       console.error("Error fetching FAQ:", err);
     }
+    finally {
+        setLoading(false);
+      }
   };
 
   // Fetch FAQ data on mount
@@ -44,8 +50,11 @@ function Faq() {
     } catch (err) {
       alert("Error adding FAQ: " + (err?.message || JSON.stringify(err)));
     }
+    
     setEditData(null);
   };
+if (loading) return <p className="text-center  text-white">Loading FAQs...</p>;
+  
 
   return (
     <>
