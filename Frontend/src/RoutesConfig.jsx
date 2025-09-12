@@ -5,6 +5,7 @@ import Servicesetion from "./pages/Client/Servicessection"
 import About from "./pages/Client/About";
 import Contact from "./pages/Client/Contact";
 import Services from "./pages/Client/Services";
+
 import ServiceDetails from "./pages/Client/ServiceDetails";
 import Blog from "./pages/Client/Blog";
 import Faq from './pages/Client/Faq'
@@ -35,6 +36,8 @@ import DashboardRouter from "./components/DashboardRouter";
 import { getUserInfo, getDashboardPathForRole } from "./utils/auth";
 import UpdateUser from "./pages/Client/UpdateUser";
 import OrderStatusWrapper from "./pages/Client/OrderStatusWrapper";
+import OnsiteServices from "./pages/Client/Onsite";
+import OffsiteServices from "./pages/Client/Offsitesevises";
 
 
 
@@ -62,6 +65,8 @@ const RoutesConfig = () => {
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/Servicessection" element={<Servicesetion/>} />
+          <Route path="/onsite" element={<OnsiteServices />} />
+          <Route path="/offsite" element={<OffsiteServices />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />

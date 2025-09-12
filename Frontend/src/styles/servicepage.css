@@ -114,19 +114,20 @@
 .service-icon {
   font-size: 50px;
   margin-bottom: 16px;
-  color: #f0ebea;
+  color: #0e0d0d;
 }
 
 /* Glass effect for cards */
 .glass-card {
- background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
+ /* background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%); */
+ background-color: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
   overflow: hidden;
 }
 
 /* Shine effect on hover */
-.shine-effect {
+/* .shine-effect {
   position: absolute;
   top: -50%;
   left: -50%;
@@ -151,7 +152,7 @@
   to {
     transform: translateX(150%) rotate(25deg);
   }
-}
+} */
 
 /* Responsive tweaks */
 @media (max-width: 992px) {

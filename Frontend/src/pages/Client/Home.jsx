@@ -9,6 +9,7 @@ import Testimonials from '../../components/Testimonials';
 import CTA from '../../components/CTA';
 import Header from '../../components/Header';
 import FAQSection from '../Client/Faq';
+import ServicesOverview from '../../components/Serivesoverview';
 
 const Home = () => {
   return (
@@ -334,6 +335,9 @@ const Home = () => {
           </div>
           <div className="fade-in-up stagger-3">
             <WhyChooseUs />
+          </div>
+            <div className="fade-in-up stagger-3">
+            <ServicesOverview/>
           </div>
           <div className="fade-in-up stagger-4">
             <Testimonials />
