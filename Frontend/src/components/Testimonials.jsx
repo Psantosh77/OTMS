@@ -51,7 +51,10 @@ const Testimonials = () => {
         <div className="owl-carousel owl-theme">
           {testimonials.map((user, index) => (
             <div key={index} className="item px-2">
-              <div className="card h-100 shadow-sm border-0 text-start">
+              <div
+                className="card h-100 shadow-sm border-0 text-start"
+                style={{ backgroundColor: "#EFEFEF" }}
+              >
                 <div className="card-body">
                   <div className="d-flex align-items-center mb-3">
                     <img

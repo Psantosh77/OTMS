@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { apiService } from '../../utils/apiService';
 import { useNavigate } from 'react-router-dom';
@@ -30,34 +30,66 @@ import { useLocation } from "react-router-dom";
 import { Box, Typography, Card, Checkbox, FormControlLabel, Divider, List, ListItem, ListItemText, Paper, Button } from "@mui/material";
 import 'date-fns';
 
-// Mock service data for demo, now with subServices
-const mockServices = [
-  {
-    name: "Car Spa",
-    price: 499,
-    subServices: [
-      { name: "Interior Cleaning", price: 199 },
-      { name: "Exterior Polish", price: 299 },
-      { name: "Engine Bay Cleaning", price: 149 },
-    ],
-  },
-  {
-    name: "Repair",
-    price: 1299,
-    subServices: [
-      { name: "Brake Repair", price: 499 },
-      { name: "AC Repair", price: 399 },
-      { name: "Suspension Repair", price: 599 },
-    ],
-  },
-  { name: "Inspection", price: 799, subServices: [ { name: "Emission Test", price: 199 }, { name: "Safety Check", price: 149 } ] },
-  { name: "Emergency", price: 999, subServices: [ { name: "Towing", price: 299 }, { name: "Jump Start", price: 199 } ] },
-  { name: "Car Rentals", price: 1499, subServices: [ { name: "With Driver", price: 499 }, { name: "Without Driver", price: 0 } ] },
-  { name: "Scheduled Maintenance", price: 899, subServices: [ { name: "Oil Change", price: 299 }, { name: "Filter Replacement", price: 199 } ] },
-  { name: "Vehicle Inspection", price: 699, subServices: [ { name: "Full Body Check", price: 299 } ] },
-];
+// // Mock service data for demo, now with subServices
+// const mockServices = [
+//   {
+//     name: "Car Spa",
+//     price: 499,
+//     subServices: [
+//       { name: "Interior Cleaning", price: 199 },
+//       { name: "Exterior Polish", price: 299 },
+//       { name: "Engine Bay Cleaning", price: 149 },
+//     ],
+//   },
+//   {
+//     name: "Repair",
+//     price: 1299,
+//     subServices: [
+//       { name: "Brake Repair", price: 499 },
+//       { name: "AC Repair", price: 399 },
+//       { name: "Suspension Repair", price: 599 },
+//     ],
+//   },
+//   { name: "Inspection", price: 799, subServices: [ { name: "Emission Test", price: 199 }, { name: "Safety Check", price: 149 } ] },
+//   { name: "Emergency", price: 999, subServices: [ { name: "Towing", price: 299 }, { name: "Jump Start", price: 199 } ] },
+//   { name: "Car Rentals", price: 1499, subServices: [ { name: "With Driver", price: 499 }, { name: "Without Driver", price: 0 } ] },
+//   { name: "Scheduled Maintenance", price: 899, subServices: [ { name: "Oil Change", price: 299 }, { name: "Filter Replacement", price: 199 } ] },
+//   { name: "Vehicle Inspection", price: 699, subServices: [ { name: "Full Body Check", price: 299 } ] },
+// ];
 
 const ServiceDetails = () => {
+ 
+  // ===================================api data fetch ---------------------
+
+  const [services, setServices] = useState([]);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState("");
+
+useEffect(() => {
+  const fetchServices = async () => {
+    setLoading(true);
+    try {
+      const res = await apiService.post("/services/getAllServices", {});
+      console.log("Services API Response:", res.data);
+
+      if (res?.data?.success) {
+        setServices(res.data.data); // 👈 real services set
+      } else {
+        setError("Failed to fetch services Data");
+      }
+    } catch (err) {
+      console.error("services Fetch Error:", err);
+      setError("Something went wrong while fetching services.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchServices();
+}, []);
+
+
+
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const vendorId = params.get("vendorId");
@@ -130,7 +162,7 @@ const ServiceDetails = () => {
         return prev.filter((s) => s !== service);
       } else {
         // Select service: add to selected and select all sub-services if any
-        const found = mockServices.find((s) => s.name === service);
+        const found = services.find((s) => s.name === service);
         if (found && found.subServices && found.subServices.length > 0) {
           setSelectedSub((subPrev) => ({ ...subPrev, [service]: found.subServices.map((ss) => ss.name) }));
         }
@@ -161,7 +193,7 @@ const ServiceDetails = () => {
   };
 
   // Selected main services
-  const selectedServices = mockServices.filter((s) => selected.includes(s.name));
+  const selectedServices = services.filter((s) => selected.includes(s.name));
   // Selected sub-services (flattened)
   const selectedSubServices = selectedServices.flatMap((service) => {
     const subList = service.subServices || [];
@@ -286,8 +318,8 @@ const ServiceDetails = () => {
           <Typography variant="h6" fontWeight={600} mb={2}>Select Services</Typography>
           <Divider sx={{ mb: 2 }} />
           <List>
-            {mockServices.map((service) => (
-              <React.Fragment key={service.name}>
+            {services.map((service) => (
+              <React.Fragment  key={service._id}>
                 <ListItem disablePadding sx={{ display: 'flex', alignItems: 'center', width: '100%', pr: 0 }}>
                   {/* Checkbox - first column */}
                   <Checkbox
@@ -299,12 +331,12 @@ const ServiceDetails = () => {
                   {/* Service name - second column */}
                   <span style={{ flex: 1, minWidth: 0, fontWeight: 500 }}>{service.name}</span>
                   {/* Image - third column */}
-                  <img
-                    src={`https://source.unsplash.com/40x40/?${encodeURIComponent(service.name)}&sig=${Math.floor(Math.random()*10000)}`}
-                    alt={service.name}
-                    style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', marginLeft: 12, background: '#eee' }}
-                    loading="lazy"
-                  />
+                 {/* Service image */}
+        <img
+          src={service.image || `https://source.unsplash.com/40x40/?${encodeURIComponent(service.name)}`}
+          alt={service.name}
+          style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'cover', marginLeft: 12, background: '#eee' }}
+        />
                   {/* Price - always right aligned */}
                   <span style={{ color: '#888', minWidth: 60, textAlign: 'right', marginLeft: 16, fontWeight: 600 }}>₹{service.price}</span>
                 </ListItem>

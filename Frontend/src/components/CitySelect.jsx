@@ -60,6 +60,7 @@ const CityModal = ({ isOpen, onClose, setSelectedCity }) => {
           width: "80%",
           maxWidth: "700px",
           boxShadow: "0 8px 25px rgba(0,0,0,0.2)",
+          marginTop:"9rem"
         }}
       >
         {/* Header */}
@@ -98,7 +99,7 @@ const CityModal = ({ isOpen, onClose, setSelectedCity }) => {
                   height: "80px",
                   margin: "auto",
                   borderRadius: "50%",
-                  background: "#ff3b3b",
+                 
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
@@ -124,6 +125,7 @@ const CityModal = ({ isOpen, onClose, setSelectedCity }) => {
               cursor: "pointer",
               background: "transparent",
               fontWeight: "600",
+              color:"black"
             }}
           >
             <MapPin size={18} style={{ marginRight: "8px" }} />

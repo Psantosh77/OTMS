@@ -65,47 +65,46 @@ const [services, setservices] = useState([]);
           Everything your car needs, including rentals – all in one place.
         </p>
 
-        <div className="row gy-4 align-items-stretch">
+    <div className="row gy-4 align-items-stretch">
   {services.map((service, index) => (
-   <div key={index} className="col-12 col-sm-6 col-md-4 d-flex">
-  <Zoom 
-    triggerOnce={false}
-    duration={800}
-    delay={index * 100}
-    fraction={0.2}
-    className="w-100"
-  >
-    {/* Added h-100 here */}
-    <div className="card shadow-sm border-0 w-100 h-100 d-flex flex-column"
-    onClick={() => navigate('/Servicessection')} 
-                  style={{ cursor: "pointer" }} 
-    >
-      <div className="card-body text-center d-flex flex-column">
-    <div className="fs-1 mb-3">
-  {service.image && service.image.trim() !== "" ? (
-    <img
-      src={service.image}
-      // alt="img missing"
-      style={{
-        width: "80px",
-        height: "80px",
-        objectFit: "cover",
-        borderRadius: "50%",
-      }}
-    />
-  ) : (
-    <i className="fas fa-tools text-primary" style={{ fontSize: "80px" }}></i>
-  )}
-</div>
-        <h5 className="card-title fw-semibold">{service.name}</h5>
-        {/* flex-grow-1 ensures desc takes space but equalizes height */}
-        <p className="card-text text-muted flex-grow-1">{service.description}</p>
+    <div key={index} className="col-12 col-sm-6 col-md-4 d-flex">
+      <div 
+        className="card shadow-sm border-0 w-100 h-100 d-flex flex-column "
+        onClick={() => navigate('/Servicessection')} 
+        style={{ cursor: "pointer", backgroundColor:'#EFEFEF' }}
+      >
+        <div className="card-body text-center d-flex flex-column">
+          {/* Image */}
+          <div className="fs-1 mb-3">
+            {service.image && service.image.trim() !== "" ? (
+              <img
+                src={service.image}
+                // alt={service.name}
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                }}
+              />
+            ) : (
+              <i className="fas fa-tools text-primary" style={{ fontSize: "80px" }}></i>
+            )}
+          </div>
+
+          {/* Title */}
+          <h5 className="card-title fw-semibold">{service.name}</h5>
+
+          {/* Description → flex-grow + minHeight */}
+          <p className="card-text text-muted flex-grow-1" style={{ minHeight: "40px" }}>
+            {service.description || "No description"}
+          </p>
+        </div>
       </div>
     </div>
-  </Zoom>
-</div>
   ))}
 </div>
+
 
       </div>
     </section>

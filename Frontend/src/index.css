@@ -1,6 +1,6 @@
 /* Add 2px padding to the whole page */
 body {
-   font-family: 'Poppins', sans-serif;
+ 
   box-sizing: border-box;
 }
 
@@ -29,9 +29,8 @@ body {
 
 body, #root {
 
-  background: linear-gradient(270deg, #ff7eb3, #65d6ce, #ffc371 );
-  background-size: 600% 600%;
-  animation: gradientAnimation 15s ease infinite;
+  background-color:  white !important;
+   font-family: "Roboto Slab", serif ,'Poppins', sans-serif;;
   
 }
 /* .animated-bg {
@@ -40,11 +39,7 @@ body, #root {
   animation: gradientAnimation 15s ease infinite;
 } */
 
-@keyframes gradientAnimation {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
+
 a {
   font-weight: 500;
   color: var(--color-link);

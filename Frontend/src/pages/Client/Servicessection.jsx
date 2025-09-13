@@ -63,15 +63,16 @@ const ServicePage = () => {
         </div>
       </div>
 
-      <section className="container">
+      <section className="container" style={{marginTop:"1rem"}}>
+        <h4 style={{fontWeight:"700" , fontSize:'1.2rem'}}>Choose a service (On Site) - Mobile VAN</h4>
         <div className="service-cards">
           
          {services.map((service, index) => (
-  <motion.div
+  <div
     key={index}
     className={`service-card glass-card ${activeCard === index ? "is-active" : ""}`}
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.98 }}
+    // whileHover={{ scale: 1.05 }}
+    // whileTap={{ scale: 0.98 }}
     onClick={() => {
       if (isTouch) {
         // mobile/tablet par tap se hover jaisa effect
@@ -89,7 +90,40 @@ const ServicePage = () => {
     </div>
     <h5>{service.title}</h5>
     <p>{service.desc}</p>
-  </motion.div>
+  </div>
+))}
+        </div>
+      </section>
+
+
+        <section className="container">
+      <h4  style={{fontWeight:"700" , fontSize:'1.2rem'}}>Choose a service (At Garage)</h4> 
+        <div className="service-cards">
+          
+         {services.map((service, index) => (
+  <div
+    key={index}
+    className={`service-card glass-card ${activeCard === index ? "is-active" : ""}`}
+    // whileHover={{ scale: 1.05 }}
+    // whileTap={{ scale: 0.98 }}
+    onClick={() => {
+      if (isTouch) {
+        // mobile/tablet par tap se hover jaisa effect
+        setActiveCard(activeCard === index ? null : index);
+      }
+        // ✅ Redirect to ServiceDetails page
+            navigate("/update-user");
+    }}
+    role="button"
+    tabIndex={0}
+  >
+    <div className="shine-effect"></div>
+    <div className="service-icon">
+      <i className={service.icon}></i>
+    </div>
+    <h5>{service.title}</h5>
+    <p>{service.desc}</p>
+  </div>
 ))}
         </div>
       </section>

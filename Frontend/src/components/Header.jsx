@@ -21,6 +21,9 @@ const Header = () => {
   // const [accountAnchorEl, setAccountAnchorEl] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // const navigate = useNavigate();
+
+  const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
+
   
 const sidebarVariants = {
   open: {
@@ -118,13 +121,14 @@ const itemVariants = {
     <>
       <style jsx>{`
 .header-modern {
-  background: rgba(255,255,255,0.15); /* transparent white */
+  background: white /* transparent white */
   backdrop-filter: blur(12px);
   box-shadow: 0 4px 24px rgba(255,107,53,0.10);
   border-radius: 0 0 32px 32px;
-  border-bottom: 2px solid #ffe0b2;
+  
   position: relative;
   transition: box-shadow 0.2s, background 0.2s;
+  background-color: white;
 }
 .header-modern.sticky-top {
   position: fixed;
@@ -146,7 +150,7 @@ const itemVariants = {
   display: flex;
   gap: 1.5rem;
   align-items: center;
-  background: rgba(255,255,255,0.85);
+
   border-radius: 18px;
   padding: 4px 18px;
   box-shadow: 0 2px 12px rgba(255,107,53,0.06);
@@ -158,8 +162,7 @@ const itemVariants = {
   position: relative;
   padding: 10px 22px;
   border-radius: 18px;
-  background: transparent;
-  transition: background 0.2s, color 0.2s, font-size 0.2s;
+
   cursor: pointer;
   letter-spacing: 0.5px;
   border: none;
@@ -167,12 +170,8 @@ const itemVariants = {
   text-decoration: none;
 }
 .nav-link-modern:hover, .nav-link-modern.active {
-
- background: linear-gradient(90deg, #ff6b35 0%, #f7931e 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   font-size: 1.22rem;
-  box-shadow: 0 2px 12px rgba(255,107,53,0.10);
+
 }
   .css-1umw9bq-MuiSvgIcon-root {
   font-size: inherit !important;
@@ -336,7 +335,7 @@ transform: translateY(0);
 @media (max-width: 360px) { .logo-modern { font-size: 1.6rem; letter-spacing: 1px; } .container { padding: 0 8px !important; } }
       `}</style>
 
-      <header className="header-modern sticky-top py-3 px-0">
+      <header className="header-modern sticky-top  px-0">
         <div className="container d-flex align-items-center justify-content-between" style={{ minHeight: 70, flexWrap: "wrap" }}>
           {/* Left: Logo only */}
           <div style={{ flex: "0 0 auto", display: 'flex', alignItems: 'center' }}>
@@ -347,29 +346,82 @@ transform: translateY(0);
 
           {/* Right: Desktop Menu + Mobile Menu Button */}
           <div style={{ flex: "1 1 auto", display: "flex", justifyContent: "flex-end", alignItems: 'center' }}>
-         <nav className="nav-modern ">
+        <nav className="nav-modern">
   {[
-    { to: "/", label: "Home", icon: <HomeIcon /> },
-    { to: "/Servicessection", label: "Services", icon: <BuildIcon /> },
-    { to: "/about", label: "About", icon: <InfoIcon /> },
-    { to: "/blog", label: "Blog", icon: <ArticleIcon /> },
-    { to: "/contact", label: "Contact", icon: <ContactMailIcon /> },
-  ].map(({ to, label, icon }, i) => (
-    <motion.div
-      key={i}
-      whileHover={{ scale: 1.1, y: -2 }}
-      animate={{opacity: 1}}
-      style={{ display: "flex", alignItems: "center", gap: 6 }}
+    { to: "/Servicessection", label: "Services", dropdown: true },
+    { to: "/about", label: "News & Media" },
+    { to: "/blog", label: "Join our network" },
+  ].map(({ to, label, dropdown }, i) => (
+   <motion.div
+  key={i}
+  whileHover={{ scale: 1.1, y: -2 }}
+  animate={{ opacity: 1 }}
+  style={{ position: "relative", display: "flex", alignItems: "center", gap: 6 }}
+>
+  {dropdown ? (
+    <button
+      type="button"
+      onClick={() => setServicesDropdownOpen(!servicesDropdownOpen)} // ✅ Click se toggle hoga
+      className="nav-link-modern"
+      style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none" }}
     >
-      <Link to={to} className="nav-link-modern">
-        <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {icon} {label}
-        </span>
+      {label} <span style={{ fontSize: "0.8rem" }}>{servicesDropdownOpen ? "▲" : "▼"}</span>
+    </button>
+  ) : (
+    <Link to={to} className="nav-link-modern" style={{ display: "flex", alignItems: "center", gap: 4 }}>
+      {label}
+    </Link>
+  )}
+
+  {/* Dropdown Menu for Services */}
+  {dropdown && servicesDropdownOpen && (
+    <div
+      style={{
+        position: "absolute",
+        top: "100%",
+        left: 0,
+        background: "#fff",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+        borderRadius: "12px",
+        marginTop: "6px",
+        minWidth: "180px",
+        zIndex: 2000,
+      }}
+    >
+      <Link
+        to="/onsite"
+        className="dropdown-item"
+        style={{
+          display: "block",
+          padding: "10px 16px",
+          color: "#222",
+          textDecoration: "none",
+          borderBottom: "1px solid #eee",
+        }}
+        onClick={() => setServicesDropdownOpen(false)} // ✅ Click karne ke baad close
+      >
+        Onsite Services
       </Link>
-    </motion.div>
+      <Link
+        to="/offsite"
+        className="dropdown-item"
+        style={{
+          display: "block",
+          padding: "10px 16px",
+          color: "#222",
+          textDecoration: "none",
+        }}
+        onClick={() => setServicesDropdownOpen(false)} // ✅ Click karne ke baad close
+      >
+        Offsite Services
+      </Link>
+    </div>
+  )}
+</motion.div>
+
   ))}
 
-  {/* Login Button with icon */}
+  {/* Login Button */}
   <motion.div
     whileHover={{ scale: 1.1, y: -2 }}
     style={{ display: "flex", alignItems: "center", gap: 6 }}
@@ -380,7 +432,6 @@ transform: translateY(0);
     </div>
   </motion.div>
 </nav>
-
 
             {/* Mobile Menu Button (right side) */}
           <button
@@ -438,25 +489,52 @@ transform: translateY(0);
   </button>
 </div>
 
-  <motion.ul className="mobile-menu-nav" variants={navVariants} style={{ listStyle: "none", padding: "20px" }}>
-    {[
-      { to: "/", label: "Home", icon: <HomeIcon style={{ color: "#ff6b35" }} /> },
-      { to: "/Servicessection", label: "Services", icon: <BuildIcon style={{ color: "#ff6b35" }} /> },
-      { to: "/about", label: "About", icon: <InfoIcon style={{ color: "#ff6b35" }} /> },
-      { to: "/blog", label: "Blog", icon: <ArticleIcon style={{ color: "#ff6b35" }} /> },
-      { to: "/contact", label: "Contact", icon: <ContactMailIcon style={{ color: "#ff6b35" }} /> }
-    ].map(({ to, label, icon }, i) => (
-      <motion.li
-        key={i}
-        variants={itemVariants}
-        style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px", cursor: "pointer" }}
-        onClick={closeMobileMenu}
-      >
-        {icon}
-        <Link to={to} className="mobile-nav-link">{label}</Link>
-      </motion.li>
-    ))}
-  </motion.ul>
+<motion.ul className="mobile-menu-nav" variants={navVariants} style={{ listStyle: "none", padding: "20px" }}>
+  <motion.li
+    style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}
+  >
+    <button
+      onClick={() => setServicesDropdownOpen(!servicesDropdownOpen)}
+      style={{
+        background: "none",
+        border: "none",
+        color: "#222",
+        fontWeight: 600,
+        fontSize: "1.1rem",
+        cursor: "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: "100%",
+      }}
+    >
+      Services <span>{servicesDropdownOpen ? "▲" : "▼"}</span>
+    </button>
+
+    {servicesDropdownOpen && (
+      <div style={{ paddingLeft: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
+        <Link to="/onsite" className="mobile-nav-link" onClick={closeMobileMenu}>
+          Onsite Services
+        </Link>
+        <Link to="/offsite" className="mobile-nav-link" onClick={closeMobileMenu}>
+          Offsite Services
+        </Link>
+      </div>
+    )}
+  </motion.li>
+
+  {/* Other links */}
+  <motion.li>
+    <Link to="/about" className="mobile-nav-link" onClick={closeMobileMenu}>
+      News & Media
+    </Link>
+  </motion.li>
+  <motion.li>
+    <Link to="/blog" className="mobile-nav-link" onClick={closeMobileMenu}>
+      Join our network
+    </Link>
+  </motion.li>
+</motion.ul>
 </motion.div>
 
 
