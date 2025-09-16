@@ -1,5 +1,5 @@
 .feature-card {
-  background: #fff;
+  background: #EFEFEF;
   border-radius: 12px;
   padding: 30px 20px;
   perspective: 2000px; /* enable 3D */
@@ -29,6 +29,16 @@
 .feature-card:hover {
   transform: translateY(-12px) scale(1.03);
   box-shadow: 0 12px 25px rgba(0,0,0,0.18);
+}
+
+.How-its-work-cards {
+  background-color: beige;
+  transition: all 0.3s ease;
+}
+
+.How-its-work-cards:hover {
+  transform: translateY(-12px) scale(1.03);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.18);
 }
 
 .feature-card:hover .icon-wrapper {

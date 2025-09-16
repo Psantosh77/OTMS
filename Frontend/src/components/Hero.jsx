@@ -35,6 +35,7 @@ const Hero = () => {
         loop
         muted
         playsInline
+         preload="auto"   // 👈 add this
         style={{
           position: "absolute",
           top: 0,
@@ -46,7 +47,9 @@ const Hero = () => {
           filter: "blur(5px)",
           pointerEvents: "none",
         }}
+        
       >
+         
         <source src="/assets/vedio/herovedio.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
@@ -80,22 +83,13 @@ const Hero = () => {
                 marginRight: "auto",
               }}
             >
-              <ReactTyped
-                strings={[
+             
                   "Drive In, Drive Out: Fast, Reliable Car Repairs.<br/>Your Journey, Our Priority.",
-                ]}
-                typeSpeed={40} // typing speed
-                backSpeed={20} // erase speed
-                backDelay={1500} // delay before erase
-                loop // repeat forever
-                smartBackspace // erase only what's needed
-                contentType="html" // ✅ allow HTML tags in strings
-              />
+             
             </h2>
             <p
               style={{
-                fontSize: "1.15rem",
-                fontFamily: "'Poppins', sans-serif",
+                fontSize: "1.1rem",
                 color: "rgba(255, 255, 255, 0.92)", // softer white for comfort
                 marginBottom: "1.5rem",
                 lineHeight: 1.6,
@@ -152,7 +146,7 @@ const Hero = () => {
                 Explore Services
               </button>
             </div>
-            <div
+            {/* <div
               style={{
                 display: "flex",
                 background: "rgba(255, 255, 255, 0.2)", // transparent white
@@ -170,7 +164,7 @@ const Hero = () => {
               }}
             >
               {/* City Selector */}
-              <div
+              {/* <div
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -202,10 +196,10 @@ const Hero = () => {
                     {selectedCity || "Click to Choose"}
                   </strong>
                 </div>
-              </div>
+              </div> */}
 
               {/* Car Selector */}
-              <div
+              {/* <div
                 style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}
                 onClick={() => setIsBrandModelDialogOpen(true)}
               >
@@ -238,8 +232,8 @@ const Hero = () => {
                       : selectedCar.brand || "Click Here"}
                   </strong>
                 </div>
-              </div>
-              <BrandModelDialog
+              </div> */}
+              {/* <BrandModelDialog
                 open={isBrandModelDialogOpen}
                 onClose={() => setIsBrandModelDialogOpen(false)}
                 email={localStorage.getItem("email") || ""}
@@ -253,9 +247,9 @@ const Hero = () => {
                   });
                   setIsBrandModelDialogOpen(false);
                 }}
-              />
+              /> */}
               {/* Check Price Button */}
-              <motion.button
+              {/* <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 style={{
@@ -280,14 +274,14 @@ const Hero = () => {
               >
                 Select Vandor
               </motion.button>
-            </div>
+            </div> */} 
 
             {/* City Modal */}
-            <CityModal
+            {/* <CityModal
               isOpen={isCityModalOpen}
               onClose={() => setIsCityModalOpen(false)}
               setSelectedCity={setSelectedCity}
-            />
+            /> */}
 
             <style>
               {`

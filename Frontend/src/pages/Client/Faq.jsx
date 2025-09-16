@@ -55,21 +55,22 @@ const FAQSection = () => {
          <h2 className="text-2xl fw-bold text-center text-black mb-3rem">
       Frequently Asked Questions
     </h2>
-  <div className="w-full max-w-2xl rounded-2xl bg-white/10 backdrop-blur-lg shadow-xl border border-white/20 p-6">
+  <div className="w-full max-w-2xl rounded-2xl bg-white/10 backdrop-blur-lg shadow-xl border border-white/20 p-6"style={{marginTop:'3rem'}}>
    
 
     <div className="space-y-4">
       {faqs.map((faq, index) => (
         <div
           key={faq._id}
-          className="rounded-xl border border-white/20 bg-white/5 shadow-sm overflow-hidden transition"
+          className="rounded-xl border border-white/20 bg-black/5 shadow-sm overflow-hidden transition"
         >
           {/* Question Header */}
          <button
-  className="w-full flex items-center justify-between p-4 bg-black/40 backdrop-blur-md rounded-xl hover:bg-black/50 transition w-100"
+  className="w-full flex items-center justify-between p-4  backdrop-blur-md rounded-xl hover:bg-black/50 transition w-100"
   onClick={() => toggleFAQ(index)}
+  style={{backgroundColor:'#EFEFEF', color:'black'}}
 >
-  <span className="font-semibold text-lg text-white">
+  <span className="font-semibold text-lg text-black">
     {faq.question}
   </span>
   <motion.div
