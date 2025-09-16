@@ -69,7 +69,7 @@ const [services, setservices] = useState([]);
   {services.map((service, index) => (
     <div key={index} className="col-12 col-sm-6 col-md-4 d-flex">
       <div 
-        className="card shadow-sm border-0 w-100 h-100 d-flex flex-column "
+        className="card  w-100 h-100 d-flex flex-column p-3 border rounded text-center shadow-sm  "
         onClick={() => navigate('/Servicessection')} 
         style={{ cursor: "pointer", backgroundColor:'#EFEFEF' }}
       >

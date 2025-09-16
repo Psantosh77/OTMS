@@ -45,7 +45,7 @@ const HowItWorks = () => {
         <div className="row g-4" style={{ display: "flex", alignItems: "stretch", justifyContent: "center" }}>
   {steps.map((step, index) => (
     <div key={index} className="col-12 col-sm-6 col-md-3 d-flex">
-      <div className="How-its-work-cards card border-0 w-100 h-100 d-flex flex-column" style={{ backgroundColor: "#EFEFEF" }}>
+      <div className="How-its-work-cards card  w-100 h-100 d-flex flex-column p-3 border rounded text-center shadow-sm " style={{ backgroundColor: "#EFEFEF" }}>
         <div className="card-body text-center d-flex flex-column flex-grow-1">
           <div
             className="mb-3"
