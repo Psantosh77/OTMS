@@ -14,6 +14,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import ArticleIcon from "@mui/icons-material/Article";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import { motion } from "framer-motion";
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaWhatsapp } from "react-icons/fa"; 
 
 
 const Header = () => {
@@ -120,14 +121,53 @@ const itemVariants = {
   return (
     <>
       <style jsx>{`
+
+    .top-bar {
+  background: #ff6b35;
+  color: #fff;
+  font-size: 0.9rem;
+  padding: 6px 16px;
+  display: flex;
+     justify-content: space-around;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200; /* header se upar */
+  height: 32px;  /* ✅ fixed height rakh lo */
+}
+
+.top-bar-left {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.top-bar-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.top-bar a {
+  color: #fff;
+  text-decoration: none;
+  display:flex;
+  align-items: center;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.top-bar a:hover {
+  color: #222;
+}
 .header-modern {
-  background: white /* transparent white */
   backdrop-filter: blur(12px);
   box-shadow: 0 4px 24px rgba(255,107,53,0.10);
   border-radius: 0 0 32px 32px;
-  
-  position: relative;
-  transition: box-shadow 0.2s, background 0.2s;
+  position: fixed;
+ margin-top:2rem;
+  left: 0;
+  right: 0;
+  z-index: 1100;
   background-color: white;
 }
 .header-modern.sticky-top {
@@ -334,8 +374,22 @@ transform: translateY(0);
 @media (max-width: 480px) { .logo-modern { font-size: 1.8rem; letter-spacing: 1.5px; } .header-modern { border-radius: 0 0 16px 16px; } .container { padding: 0 12px !important; min-height: 60px !important; } }
 @media (max-width: 360px) { .logo-modern { font-size: 1.6rem; letter-spacing: 1px; } .container { padding: 0 8px !important; } }
       `}</style>
-
-      <header className="header-modern sticky-top  px-0">
+       {/* ✅ Top Bar */}
+     {/* ✅ Top Bar */}
+<div className="top-bar">
+  <div className="top-bar-left">
+    <span>⏰ Mon - Sat: 9am - 6pm</span>
+    <a href="https://wa.me/971589624430" target="_blank" rel="noopener noreferrer">
+      <FaWhatsapp style={{ marginRight: 6 }} /> +971 58 962 4430
+    </a>
+  </div>
+  <div className="top-bar-right">
+    <a href="https://facebook.com" target="_blank"><FaFacebookF /></a>
+    <a href="https://instagram.com" target="_blank"><FaInstagram /></a>
+    <a href="https://linkedin.com" target="_blank"><FaLinkedinIn /></a>
+  </div>
+</div>
+      <header className="header-modern sticky-top mt-2rem px-0">
         <div className="container d-flex align-items-center justify-content-between" style={{ minHeight: 70, flexWrap: "wrap" }}>
           {/* Left: Logo only */}
           <div style={{ flex: "0 0 auto", display: 'flex', alignItems: 'center' }}>
@@ -349,6 +403,7 @@ transform: translateY(0);
         <nav className="nav-modern">
   {[
     { to: "/Servicessection", label: "Services", dropdown: true },
+     { to: "/about", label: "Our Story" },
     { to: "/about", label: "News & Media" },
     { to: "/blog", label: "Join our network" },
   ].map(({ to, label, dropdown }, i) => (
@@ -527,6 +582,11 @@ transform: translateY(0);
   <motion.li>
     <Link to="/about" className="mobile-nav-link" onClick={closeMobileMenu}>
       News & Media
+    </Link>
+  </motion.li>
+  <motion.li>
+    <Link to="/blog" className="mobile-nav-link" onClick={closeMobileMenu}>
+     Our Story
     </Link>
   </motion.li>
   <motion.li>

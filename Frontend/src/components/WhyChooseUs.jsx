@@ -44,7 +44,7 @@ const WhyChooseUs = () => {
 
        <div className="row g-4 align-items-stretch">
   {features.map((item, index) => (
-    <div key={index} className="col-12 col-sm-6 col-md-4 d-flex">
+    <div key={index} className="col-12 col-sm-6 col-md-4 d-flex p-3 border rounded text-center shadow-sm h-100">
       <div className="feature-card flex-fill">
         {/* 3D icon wrapper */}
         <div className="icon-wrapper">

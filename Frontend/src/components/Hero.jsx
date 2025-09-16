@@ -16,6 +16,25 @@ const Hero = () => {
   const [isBrandModelDialogOpen, setIsBrandModelDialogOpen] = useState(false);
   const [selectedCar, setSelectedCar] = useState({ brand: '', model: '', variant: '', cylinder: '' });
 
+
+
+  const [form, setForm] = useState({
+    service: "",
+    location: "",
+    category: "",
+    make: "",
+    model: "",
+    year: "",
+    engine: "",
+    date: "",
+  });
+
+  const handleSubmit = () => {
+    // Redirect with query params
+    const query = new URLSearchParams(form).toString();
+    navigate(`/services?${query}`);
+  };
+
   return (
     <section
       style={{
@@ -84,7 +103,8 @@ const Hero = () => {
               }}
             >
              
-                  "Drive In, Drive Out: Fast, Reliable Car Repairs.<br/>Your Journey, Our Priority.",
+                Driven By Service, Powered By Convenience! - Tagline (lets make it animative)
+
              
             </h2>
             <p
@@ -110,7 +130,120 @@ const Hero = () => {
               turnaround — so you can get back on the road with confidence.
             </p>
 
-            <div
+           {/* Form Box */}
+<div
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto",
+    background: "rgba(255,255,255,0.15)", // transparent glass effect
+    borderRadius: "16px",
+    padding: "25px 20px",
+    width: "90%",
+    maxWidth: "950px",
+    boxShadow: "0 8px 25px rgba(0,0,0,0.2)",
+    backdropFilter: "blur(10px)", // glass effect
+  }}
+>
+  {/* Grid Inputs */}
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+      gap: "15px",
+      width: "100%",
+    }}
+  >
+    {/* Service */}
+    <select
+      value={form.service}
+      onChange={(e) => setForm({ ...form, service: e.target.value })}
+      style={dropdownStyle}
+    >
+      <option value="">Select Service</option>
+      <option value="onsite">Onsite</option>
+      <option value="offsite">Offsite</option>
+      <option value="remote" disabled>Remote (coming soon)</option>
+    </select>
+
+    {/* Location */}
+    <select
+      value={form.location}
+      onChange={(e) => setForm({ ...form, location: e.target.value })}
+      style={dropdownStyle}
+    >
+      <option value="">Select Location</option>
+      <option value="dubai">Dubai (Onsite & Offsite)</option>
+      <option value="sharjah">Sharjah (Onsite & Offsite)</option>
+      <option value="rak">Ras Al Khaimah (Offsite only)</option>
+      <option value="abu-dhabi" disabled>Abu Dhabi</option>
+      <option value="al-ain" disabled>Al Ain</option>
+      <option value="musaffah" disabled>Musaffah</option>
+    </select>
+
+    {/* Category */}
+    <select
+      value={form.category}
+      onChange={(e) => setForm({ ...form, category: e.target.value })}
+      style={dropdownStyle}
+    >
+      <option value="">Vehicle Category</option>
+      <option value="passenger">Passenger</option>
+      <option value="commercial">Commercial</option>
+      <option value="bike">Bike</option>
+    </select>
+
+    {/* Select Model (popup trigger) */}
+    <input
+      type="text"
+      placeholder="Select Model"
+      readOnly
+      value={
+        selectedCar.brand && selectedCar.model
+          ? `${selectedCar.brand} ${selectedCar.model}`
+          : ""
+      }
+      onClick={() => setIsBrandModelDialogOpen(true)}
+      style={{
+        ...dropdownStyle,
+        cursor: "pointer",
+        background: "white",
+      }}
+    />
+
+    {/* Date */}
+    <input
+      type="date"
+      value={form.date}
+      onChange={(e) => setForm({ ...form, date: e.target.value })}
+      style={dropdownStyle}
+    />
+  </div>
+
+  {/* Submit Button - Centered Below */}
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    style={{
+      background: "linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)",
+      color: "#fff",
+      fontWeight: 600,
+      fontSize: "1rem",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+      padding: "12px 32px",
+      marginTop: "20px",
+    }}
+    onClick={handleSubmit}
+  >
+    Search Services
+  </motion.button>
+</div>
+       
+            {/* <div
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -145,7 +278,7 @@ const Hero = () => {
               >
                 Explore Services
               </button>
-            </div>
+            </div> */}
             {/* <div
               style={{
                 display: "flex",
@@ -305,11 +438,37 @@ const Hero = () => {
             <HeroLoginBrandModel />
           </div>
         </div> */}
+        
+{/* Popup Include */}
+<BrandModelDialog
+  open={isBrandModelDialogOpen}
+  onClose={() => setIsBrandModelDialogOpen(false)}
+  email={localStorage.getItem("email") || ""}
+  selectedCity={selectedCity}
+  onSelect={(data) => {
+    setSelectedCar({
+      brand: data.brand?.display_name || "",
+      model: data.model?.display_name || "",
+      variant: data.variant || "",
+      cylinder: data.cylinder || "",
+    });
+    setIsBrandModelDialogOpen(false);
+  }}
+/>
+
       </div>
     </section>
   );
 };
 
 // Helper component for conditional rendering of LoginModal and BrandModelForm
+
+const dropdownStyle = {
+  padding: "12px",
+  borderRadius: "8px",
+  border: "1px solid #ddd",
+  fontSize: "0.95rem",
+  outline: "none",
+};
 
 export default Hero;

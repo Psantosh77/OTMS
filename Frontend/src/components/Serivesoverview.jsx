@@ -18,8 +18,8 @@ export default function ServicesOverview() {
         "Our technician comes to your location and provides hands-on support for your issues.",
     },
     {
-      id: "online",
-      title: "Online Services",
+      id: "offsite",
+      title: "offsite Services",
       icon: faLaptop,
       image: onlineImg,
       description:
@@ -80,14 +80,16 @@ export default function ServicesOverview() {
         </div>
 
         {/* Center Image */}
-        <div className="col-md-4 text-center">
-          <img
-            src={activeService.image}
-            alt={activeService.title}
-            className="img-fluid rounded shadow"
-            style={{ maxHeight: "280px", objectFit: "cover", marginTop:'2rem' }}
-          />
-        </div>
+        {/* Center Image */}
+<div className="col-md-4 text-center">
+  <img
+    src={activeService.image}
+    alt={activeService.title}
+    className="img-fluid d-block mx-auto rounded shadow w-75"
+    style={{ objectFit: "cover", marginTop: "2rem", maxHeight: "250px" }}
+  />
+</div>
+
 
         {/* Right Content */}
         <div className="col-md-5">
