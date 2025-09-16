@@ -61,7 +61,9 @@ const Service = () => {
   };
 
   const handleEdit = (row) => {
-    alert('Edit Service: ' + row.name);
+  // open modal in edit mode with prefilled row data
+  setSelectedRow(row);
+  setAddModalOpen(true);
   };
 
   const handleDetailClick = (row) => {
@@ -128,6 +130,18 @@ const Service = () => {
   // ------------------------------------------add filed ka liya call api -----------------------------
 
 const addService = async (serviceData) => {
+  // If called by modal after it already uploaded via FormData, it will pass
+  // { __fromFormData: true, data: serviceObj } — handle locally and skip API call.
+  if (serviceData && serviceData.__fromFormData) {
+    const serviceObj = serviceData.data;
+    if (serviceObj.id) {
+      setRows((prev) => prev.map(r => (r.id === serviceObj.id ? serviceObj : r)));
+    } else {
+      setRows((prev) => [...prev, serviceObj]);
+    }
+    return;
+  }
+
   console.log("Submitting Service Data:", serviceData);
 
   try {
@@ -136,6 +150,8 @@ const addService = async (serviceData) => {
     const res = await postApi({
       url: "services/addService",
       payload: {
+  // include id when updating
+  ...(serviceData.id ? { id: serviceData.id } : {}),
         name: serviceData.name,
         description: serviceData.description || "No description",
         price: Number(serviceData.price) || 0,
@@ -151,12 +167,18 @@ const addService = async (serviceData) => {
 
     console.log("API Response:", res);
 
+    const returned = res.data || {};
     const newService = {
-      ...res.data,
-      id: res.data._id || res.data.id,
+      ...returned,
+      id: returned._id || returned.id || serviceData.id || Date.now(),
     };
 
-    setRows((prev) => [...prev, newService]);
+    // if payload had id, update existing row, otherwise append
+    if (serviceData.id) {
+      setRows((prev) => prev.map(r => (r.id === serviceData.id ? newService : r)));
+    } else {
+      setRows((prev) => [...prev, newService]);
+    }
     alert("Service added successfully!");
   } catch (err) {
     alert("Failed to add service: " + (err?.message || JSON.stringify(err)));
@@ -194,7 +216,7 @@ const addService = async (serviceData) => {
   <ServiceModal
     closeModal={handleAddModalClose}
     addService={addService}   // ✅ real function
-    updateService={() => {}}  // abhi edit use nahi kar rahe ho
+  updateService={addService}  // use same function for update so payload includes id
     editingService={selectedRow} // agar edit mode chahiye future me
   />
 )}

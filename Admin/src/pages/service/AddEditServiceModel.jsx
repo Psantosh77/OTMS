@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import Dialog from "@mui/material/Dialog";
@@ -16,6 +16,7 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
+import api from "../../utils/apiConfig/apiconfig";
 
 
 const ServiceModal = ({
@@ -25,10 +26,12 @@ const ServiceModal = ({
   editingService,
 }) => {
   // main fields
-  const [title, setTitle] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [image, setImage] = useState("");
   const [active, setActive] = useState(true);
   const [couponOffers, setCouponOffers] = useState([]);
@@ -36,6 +39,7 @@ const ServiceModal = ({
   const [discount, setDiscount] = useState("");
   const [showInHome, setShowInHome] = useState(false);
 const [showInService, setShowInService] = useState(false);
+  const [serviceType, setServiceType] = useState('garage');
 
 
   // subitems
@@ -48,7 +52,7 @@ const [editingSubitemIndex, setEditingSubitemIndex] = useState(null);
 
   useEffect(() => {
     if (editingService) {
-      setTitle(editingService.title || "");
+  // title removed per spec
       setName(editingService.name || "");
       setDescription(editingService.description || "");
       setPrice(editingService.price || "");
@@ -56,12 +60,42 @@ const [editingSubitemIndex, setEditingSubitemIndex] = useState(null);
       setActive(editingService.active ?? true);
       setCouponOffers(editingService.couponOffers || []);
       setDiscount(editingService.discount || "");
-      setSubitems(editingService.subitems || [{ name: "", price: "" }]);
+      // support backend naming variations and normalize subitems for the UI
+      const incomingSubitems = editingService.subitems || editingService.subServices || [];
+      const normalized = Array.isArray(incomingSubitems)
+        ? incomingSubitems.map((s) => ({
+            name: s.name || s.title || "",
+            price: s.price != null ? s.price : s.amount || 0,
+            isActive: s.isActive ?? true,
+            description: s.description || "",
+          }))
+        : [];
+      setSubitems(normalized);
       setShowInHome(editingService?.showInHome || false);
 setShowInService(editingService?.showInService || false);
+  setServiceType(editingService?.serviceType || 'garage');
+      // initialize preview from existing image
+      if (editingService.image) {
+        setImagePreview(editingService.image);
+      }
 
     }
   }, [editingService]);
+
+  // cleanup object URL when imageFile changes or on unmount
+  // ref to hold the last created object URL so we can revoke it safely
+  const lastObjectUrl = useRef(null);
+  useEffect(() => {
+    return () => {
+      if (lastObjectUrl.current) {
+        try {
+          URL.revokeObjectURL(lastObjectUrl.current);
+        } catch (e) {
+          // ignore
+        }
+      }
+    };
+  }, []);
 
   const handleAddCoupon = () => {
     if (couponInput.trim() !== "") {
@@ -71,18 +105,13 @@ setShowInService(editingService?.showInService || false);
   };
 
   const handleDeleteCoupon = (index) => {
-    setCouponOffers(couponOffers.filter((_, i) => i !== index));
+    setCouponOffers((prev) => prev.filter((_, i) => i !== index));
   };
-
-
-
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newService = {
       id: editingService?.id || Date.now(),
-      title,
       name,
       description,
       price,
@@ -91,16 +120,77 @@ setShowInService(editingService?.showInService || false);
       couponOffers,
       discount,
       subitems,
-       showInHome,
-  showInService,
+      showInHome,
+      showInService,
     };
 
-    if (editingService) {
-      updateService(newService);
-    } else {
-      addService(newService);
-    }
-    closeModal();
+    // If an image file was selected, upload it first to backend which returns the hosted URL
+    (async () => {
+      try {
+        let finalResult = null;
+        if (imageFile) {
+          setUploading(true);
+          // send full payload as multipart/form-data
+          const formData = new FormData();
+          // include id for update if present
+          if (editingService?.id) formData.append('id', editingService.id);
+          formData.append('name', name);
+          formData.append('description', description || '');
+          formData.append('price', String(price || '0'));
+          formData.append('active', String(active));
+          formData.append('serviceType', String(serviceType));
+          formData.append('discount', String(discount || '0'));
+          formData.append('showInHome', String(showInHome));
+          formData.append('showInService', String(showInService));
+          // arrays / objects as JSON strings
+          formData.append('couponOffers', JSON.stringify(couponOffers || []));
+          // backend expects 'subServices'
+          formData.append('subServices', JSON.stringify(subitems || []));
+          // include image file last
+          formData.append('image', imageFile);
+
+          try {
+            const res = await api.post('services/addService', formData, {
+              headers: { 'Content-Type': 'multipart/form-data' },
+              withCredentials: true,
+            });
+            finalResult = res?.data;
+          } finally {
+            setUploading(false);
+          }
+        } else {
+          // no file selected: use JSON-based parent call
+          const payload = { ...newService, image, serviceType };
+          if (editingService) {
+            // call parent update which will post JSON
+            updateService(payload);
+            closeModal();
+            return;
+          } else {
+            addService(payload);
+            closeModal();
+            return;
+          }
+        }
+
+        // If we reached here, we used multipart upload and have server response
+        const returnedData = finalResult?.data || finalResult;
+        const serviceObj = returnedData
+          ? { ...returnedData, id: returnedData._id || returnedData.id || editingService?.id }
+          : { ...newService, id: editingService?.id || Date.now() };
+
+        if (editingService) {
+          // when using multipart, call parent with marker so parent doesn't re-post
+          updateService({ __fromFormData: true, data: serviceObj });
+        } else {
+          addService({ __fromFormData: true, data: serviceObj });
+        }
+        closeModal();
+      } catch (err) {
+        console.error('Image upload or save failed', err);
+        setUploading(false);
+      }
+    })();
   };
 
   // ---------------------------subitem funtions --------------------------
@@ -154,14 +244,6 @@ const handleDeleteSubitem = (index) => {
         <DialogContent>
           {/* main fields */}
           <TextField
-            label="Service Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
             label="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -185,13 +267,60 @@ const handleDeleteSubitem = (index) => {
             fullWidth
             margin="normal"
           />
-          <TextField
-            label="Image URL"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
+          {/* Image upload and preview */}
+          <Box mb={2}>
+            <label htmlFor="service-image" style={{ display: "block", marginBottom: 8 }}>
+              <Typography variant="subtitle2">Service Image</Typography>
+            </label>
+            <input
+              id="service-image"
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files && e.target.files[0];
+                if (file) {
+                  setImageFile(file);
+                  // revoke previous object URL if exists
+                  if (lastObjectUrl.current) {
+                    try {
+                      URL.revokeObjectURL(lastObjectUrl.current);
+                    } catch (err) {}
+                  }
+                  // create a preview URL
+                  const url = URL.createObjectURL(file);
+                  lastObjectUrl.current = url;
+                  setImagePreview(url);
+                  // clear any manual image URL so the uploaded file takes precedence
+                  setImage("");
+                }
+              }}
+            />
+            {/* show selected filename */}
+            {imageFile && (
+              <Typography variant="caption" display="block" mt={0.5}>
+                {imageFile.name}
+              </Typography>
+            )}
+
+            {/* preview: prefer selected file preview, fallback to existing image URL */}
+            {imagePreview ? (
+              <Box mt={1}>
+                <img
+                  src={imagePreview}
+                  alt="preview"
+                  style={{ maxWidth: "100%", maxHeight: 200, borderRadius: 8 }}
+                />
+              </Box>
+            ) : image ? (
+              <Box mt={1}>
+                <img
+                  src={image}
+                  alt="existing"
+                  style={{ maxWidth: "100%", maxHeight: 200, borderRadius: 8 }}
+                />
+              </Box>
+            ) : null}
+          </Box>
           <TextField
             select
             label="Active"
@@ -202,6 +331,19 @@ const handleDeleteSubitem = (index) => {
           >
             <MenuItem value="true">True</MenuItem>
             <MenuItem value="false">False</MenuItem>
+          </TextField>
+
+          <TextField
+            select
+            label="Service Type"
+            value={serviceType}
+            onChange={(e) => setServiceType(e.target.value)}
+            fullWidth
+            margin="normal"
+          >
+            <MenuItem value="garage">Garage</MenuItem>
+            <MenuItem value="onsite">Onsite</MenuItem>
+            <MenuItem value="remote">Remote</MenuItem>
           </TextField>
 
           {/* coupon offers */}
@@ -232,7 +374,11 @@ const handleDeleteSubitem = (index) => {
                   gap: 1,
                 }}
               >
-                <Typography>{coupon}</Typography>
+                <Typography>
+                  {typeof coupon === 'string'
+                    ? coupon
+                    : (coupon.code ? `${coupon.code} — ${coupon.value ?? ''}${coupon.discountType ? ' ('+coupon.discountType+')' : ''}` : JSON.stringify(coupon))}
+                </Typography>
                 <IconButton
                   size="small"
                   color="error"

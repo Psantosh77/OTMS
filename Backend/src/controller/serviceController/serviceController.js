@@ -35,6 +35,7 @@ const updateServiceActive = async (req, res) => {
 // Get all services (active and inactive)
 const Service = require('../../model/serviceModel/serviceModel');
 const { sendResponse, sendError } = require('../../utils/response');
+const { uploadToCloudinary } = require('../../middleware/cloudaniry');
 
 const getAllServices = async (req, res) => {
   try {
@@ -65,10 +66,57 @@ const getActiveServices = async (req, res) => {
 // Add or update a service
 const addService = async (req, res) => {
   try {
-    const { serviceId, name, description, price, image, active, discount, subServices, couponOffers, showInHome, showInService } = req.body;
-    if (!name || typeof price !== 'number') {
-      return sendError(res, 400, 'Service name and price are required');
+    // Support both JSON body and multipart/form-data where fields are strings
+    const body = req.body || {};
+    const serviceId = body.serviceId || body.id || body.serviceId;
+    const name = body.name;
+    const description = body.description || '';
+    // price may come as string when sent via FormData
+    const price = body.price != null ? Number(body.price) : undefined;
+    // image may be provided as a URL or uploaded file (req.file)
+    let image = body.image || '';
+    if (req.file && req.file.path) {
+      // upload file to cloudinary and use returned secure URL
+      try {
+        const result = await uploadToCloudinary(req.file.path);
+        image = result?.secure_url || req.file.path;
+      } catch (err) {
+        // fallback to local path if upload fails
+        image = req.file.path;
+      }
     }
+
+  // parse booleans and numbers from strings
+    const active = body.active !== undefined ? (String(body.active) === 'true' || body.active === true) : true;
+    const discount = body.discount != null ? Number(body.discount) : 0;
+    const showInHome = body.showInHome !== undefined ? (String(body.showInHome) === 'true' || body.showInHome === true) : false;
+    const showInService = body.showInService !== undefined ? (String(body.showInService) === 'true' || body.showInService === true) : false;
+  const serviceType = body.serviceType ? String(body.serviceType).toLowerCase() : 'garage';
+
+    // Parse arrays which may be JSON strings when coming from FormData
+    let subServices = [];
+    try {
+      if (body.subServices) {
+        subServices = typeof body.subServices === 'string' ? JSON.parse(body.subServices) : body.subServices;
+      }
+    } catch (e) {
+      // ignore parse error, default to empty
+      subServices = [];
+    }
+
+    let couponOffers = [];
+    try {
+      if (body.couponOffers) {
+        couponOffers = typeof body.couponOffers === 'string' ? JSON.parse(body.couponOffers) : body.couponOffers;
+      }
+    } catch (e) {
+      couponOffers = [];
+    }
+
+    if (!name || price === undefined || Number.isNaN(price)) {
+      return sendError(res, 400, 'Service name and numeric price are required');
+    }
+
     const serviceData = {
       name,
       description,
@@ -78,9 +126,11 @@ const addService = async (req, res) => {
       discount: discount || 0,
       subServices: subServices || [],
       couponOffers: couponOffers || [],
+  serviceType,
       showInHome: showInHome !== undefined ? showInHome : false,
       showInService: showInService !== undefined ? showInService : false
     };
+
     let service;
     if (serviceId) {
       service = await Service.findByIdAndUpdate(serviceId, serviceData, { new: true });

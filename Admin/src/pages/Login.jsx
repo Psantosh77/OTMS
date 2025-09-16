@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/apiConfig/apiconfig";
 import {
   Box,
   Button,
@@ -13,18 +14,32 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
-  e.preventDefault();
-
-  if (email === "admin@gmail.com" && password === "12345") {
-    // Ye page reload karke /dashboard par bhej dega
-    window.location.href = "/dashboard";
-    // ya fir
-    // window.location.replace("/dashboard");
-  } else {
-    alert("Invalid email or password");
-  }
-};
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.post('auth/admin-login', { email, password });
+      if (res?.data?.success) {
+        const tokens = res.data.data || {};
+        // Save tokens (access/refresh) if returned
+        if (tokens.accessToken) {
+          localStorage.setItem('token', tokens.accessToken);
+          try { api.defaults.headers.common['Authorization'] = `Bearer ${tokens.accessToken}`; } catch(e){}
+        }
+        if (tokens.refreshToken) localStorage.setItem('refreshToken', tokens.refreshToken);
+  // Save admin info for later use in the admin UI
+  if (tokens.admin) localStorage.setItem('admin', JSON.stringify(tokens.admin));
+        // Optional: also set a flag
+        localStorage.setItem('isAdminLoggedIn', 'true');
+        // Redirect to dashboard
+        window.location.href = '/dashboard';
+      } else {
+        alert(res?.data?.message || 'Login failed');
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err?.response?.data?.message || 'Network or server error');
+    }
+  };
 
   return (
     <Box

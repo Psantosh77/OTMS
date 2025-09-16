@@ -5,7 +5,7 @@ import Sidebar from './Components/Sidebar';
 import Dashboard from "./pages/Dashboard";
 import Faq from "./pages/Faq/Faq";
 import Blog from "./pages/Blog";
-import Location from './pages/Location';
+import Location from './pages/Location/Location';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
@@ -18,7 +18,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import './App.css';
-import Service from './pages/service';
+import Service from './pages/service/index';
 import Login from './pages/Login';
 
 

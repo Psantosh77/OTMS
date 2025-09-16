@@ -15,6 +15,7 @@ const serviceSchema = new mongoose.Schema({
   active: { type: Boolean, default: true },
   showInHome: { type: Boolean, default: false },
   showInService: { type: Boolean, default: false },
+  serviceType: { type: String, enum: ['garage', 'onsite', 'remote'], default: 'garage' },
   couponOffers: [{
     code: { type: String, required: true },
     discountType: { type: String, enum: ['percentage', 'fixed'], default: 'percentage' },

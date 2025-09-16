@@ -15,9 +15,8 @@ import {
   StepLabel,
   Dialog,
   DialogContent,
-  IconButton,
 } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+// CloseIcon removed: dialog will not show a close button
 import Navbar from "./Navbar";
 import StepContent  from './Register';
 
@@ -209,18 +208,40 @@ export default function LoginRegister({onLogin  }) {
       flexDirection: "row",
       alignItems: "stretch"
     }}>
-      {/* Left: Image */}
+      {/* Left: Illustration */}
       <Box sx={{
         flex: 2,
-        bgcolor: '#e0e7ff',
-        display: 'flex',
+        bgcolor: '#eef2ff',
+        display: { xs: 'none', md: 'flex' },
         alignItems: 'center',
         justifyContent: 'center',
         borderTopLeftRadius: 16,
         borderBottomLeftRadius: 16,
         p: 3
       }}>
-        <img src="https://source.unsplash.com/400x400/?car,service" alt="Login Visual" style={{ width: '100%', maxWidth: 220, borderRadius: 12 }} />
+        {/* Inline SVG illustration — light, no external deps */}
+        <Box sx={{ width: 320, textAlign: 'center' }}>
+          <svg viewBox="0 0 600 400" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Car service illustration">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1">
+                <stop offset="0%" stopColor="#7c3aed" />
+                <stop offset="100%" stopColor="#60a5fa" />
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="600" height="400" rx="20" fill="#fff" stroke="#e6eefc" />
+            <g transform="translate(40,50)">
+              <rect x="0" y="160" width="520" height="160" rx="12" fill="#f8fafc" stroke="#e6eefc" />
+              <g transform="translate(40,20)">
+                <rect x="0" y="40" width="320" height="80" rx="10" fill="url(#g1)" opacity="0.12" />
+                <circle cx="80" cy="140" r="28" fill="#111827" opacity="0.08" />
+                <circle cx="260" cy="140" r="28" fill="#111827" opacity="0.08" />
+                <rect x="30" y="20" width="260" height="40" rx="8" fill="#fff" stroke="#c7ddff" />
+              </g>
+              <text x="40" y="30" fill="#0f172a" fontSize="20" fontFamily="Arial, Helvetica, sans-serif">Fast Car Service</text>
+              <text x="40" y="52" fill="#475569" fontSize="12" fontFamily="Arial, Helvetica, sans-serif">Quick, reliable maintenance & repair</text>
+            </g>
+          </svg>
+        </Box>
       </Box>
       {/* Right: Login Form */}
       <Box sx={{
@@ -236,12 +257,7 @@ export default function LoginRegister({onLogin  }) {
         </Typography>
 
         {showRegister ? (
-        <Dialog open={showRegister} onClose={() => setShowRegister(false)} maxWidth="sm" fullWidth>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
-            <IconButton onClick={() => setShowRegister(false)}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
+  <Dialog open={showRegister} onClose={(e, reason) => { if (reason === 'backdropClick') return; setShowRegister(false); }} maxWidth="sm" fullWidth>
           <DialogContent>
             <Box>
               <Stepper activeStep={activeStep} alternativeLabel>
