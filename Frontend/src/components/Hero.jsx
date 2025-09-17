@@ -103,7 +103,7 @@ const Hero = () => {
               }}
             >
              
-                Driven By Service, Powered By Convenience! - Tagline (lets make it animative)
+                Driven By Service, Powered By Convenience! 
 
              
             </h2>
