@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance
 const api = axios.create({
-  baseURL:  'http://localhost:9000/api/',
+  baseURL:  'https://otms.onrender.com/api/',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
