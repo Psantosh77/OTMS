@@ -31,7 +31,15 @@ const CTA = () => {
     <div className="request">
       <h1>Request a quote button</h1>
       <p>Need one service or multiple? Get a quick quote in minutes.</p>
-      <a href="#">Request</a>
+      <a href="#" style={{  background: "linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)",
+      color: "#fff",
+      fontWeight: 600,
+      fontSize: "1rem",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+      padding: "12px 32px",
+      marginTop: "20px",}}>Request</a>
     </div>
   );
 };

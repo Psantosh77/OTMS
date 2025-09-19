@@ -345,9 +345,7 @@ const Home = () => {
           <div className="fade-in-up stagger-5">
             <FAQSection />
           </div>
-          <div className="fade-in-up stagger-5">
-            <CTA />
-          </div>
+        
         </div>
       </div>
     </>

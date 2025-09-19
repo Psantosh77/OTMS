@@ -197,7 +197,7 @@ export default function OnsiteServices() {
 
       {/* Services Section */}
       <div className="container py-5">
-        <h2 className="fw-bold text-center mb-4">Pick Your Services</h2>
+        <h2 className="fw-bold text-center mb-4">Pick Your OnSite Services</h2>
         <div className="row g-4">
           {/* LEFT: Services */}
           <div className="col-12 col-lg-7">

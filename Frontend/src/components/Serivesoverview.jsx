@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLaptop, faUserTie, faGlobe } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom"; // ✅ import
 
 // yaha import karo
 import onsiteImg from "../assets/onsite.jpg";
@@ -8,22 +9,26 @@ import onlineImg from "../assets/online.png";
 import remoteImg from "../assets/remote.jpg";
 
 export default function ServicesOverview() {
+  const navigate = useNavigate(); // ✅ hook
+
   const services = [
     {
       id: "onsite",
       title: "Onsite Services",
       icon: faUserTie,
-      image: onsiteImg, // imported image
+      image: onsiteImg,
       description:
         "Our technician comes to your location and provides hands-on support for your issues.",
+      path: "/onsite", // ✅ navigation path
     },
     {
       id: "offsite",
-      title: "offsite Services",
+      title: "Offsite Services",
       icon: faLaptop,
       image: onlineImg,
       description:
         "Get instant support via online sessions, chat, or video call from our experts.",
+      path: "/offsite",
     },
     {
       id: "remote",
@@ -32,6 +37,7 @@ export default function ServicesOverview() {
       image: remoteImg,
       description:
         "We connect to your system remotely and fix problems without needing to visit.",
+      path: "/remote",
     },
   ];
 
@@ -80,43 +86,48 @@ export default function ServicesOverview() {
         </div>
 
         {/* Center Image */}
-        {/* Center Image */}
-<div className="col-md-4 text-center">
-  <img
-    src={activeService.image}
-    alt={activeService.title}
-    className="img-fluid d-block mx-auto rounded shadow w-75"
-    style={{ objectFit: "cover", marginTop: "2rem", maxHeight: "250px" }}
-  />
-</div>
-
+        <div className="col-md-4 text-center">
+          <img
+            src={activeService.image}
+            alt={activeService.title}
+            className="img-fluid d-block mx-auto rounded shadow w-75"
+            style={{ objectFit: "cover", marginTop: "2rem", maxHeight: "250px" }}
+          />
+        </div>
 
         {/* Right Content */}
         <div className="col-md-5">
-            <div
-                key={activeService.id}
-                className="d-flex align-items-center p-3 rounded shadow-sm "style={{marginBottom:'2rem'}}
-              >
-                <FontAwesomeIcon
-                  icon={activeService.icon}
-                  className="me-2"
-                  style={{
-                    color: activeService.id === activeService.id ? "red" : "#444",
-                  }}
-                />
-                <span
-                  className={`fw-semibold ${
-                    activeService.id === activeService.id
-                      ? "text-danger"
-                      : "text-dark"
-                  }`}
-                >
-                  {activeService.title}
-                </span>
-              </div>
+          <div
+            key={activeService.id}
+            className="d-flex align-items-center p-3 rounded shadow-sm "
+            style={{ marginBottom: "2rem" }}
+          >
+            <FontAwesomeIcon
+              icon={activeService.icon}
+              className="me-2"
+              style={{ color: "red" }}
+            />
+            <span className="fw-semibold text-danger">
+              {activeService.title}
+            </span>
+          </div>
           <h3 className="fw-bold mb-3">{activeService.title}</h3>
           <p className="text-muted mb-4">{activeService.description}</p>
-          <button className="btn btn-danger px-4 py-2 fw-semibold">
+          
+          {/* ✅ Navigate dynamically */}
+          <button
+            className="btn  px-4 py-2 fw-semibold"
+            onClick={() => navigate(activeService.path)}
+            style={{   background: "linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)",
+      color: "#fff",
+      fontWeight: 600,
+      fontSize: "1rem",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+      padding: "12px 32px",
+      marginTop: "20px",}}
+          >
             Book Now
           </button>
         </div>
