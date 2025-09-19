@@ -7,7 +7,7 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import SwipeableViews from "react-swipeable-views-react-18-fix"
+import SwipeableViews from "react-swipeable-views"
 import './LoginModal.scss';
 import { apiService } from '../utils/apiService';
 
