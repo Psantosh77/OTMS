@@ -1,31 +1,36 @@
 const mongoose = require('mongoose');
 
-// UAE-focused Address subdocument
+// Address subdocument matching client payload
 const AddressSchema = new mongoose.Schema({
-  area: { type: String }, // e.g., Al Barsha
-  district: { type: String },
-  street: { type: String },
-  building: { type: String },
-  floor: { type: String },
-  apartment: { type: String },
-  po_box: { type: String },
+  building_no: { type: String },
+  street_no: { type: String },
+  address1: { type: String },
+  address2: { type: String },
   makani_number: { type: String },
-  landmark: { type: String },
   gps: {
-    lat: { type: Number },
-    lng: { type: Number }
+    lat: { type: Number, default: null },
+    lng: { type: Number, default: null }
   }
 }, { _id: false });
 
 // City subdocument
 const CitySchema = new mongoose.Schema({
   name: { type: String, required: true },
-  postal_code: { type: String, required: true },
-  icon: { type: String },
-  location_file: { type: String },
-  makani_number: { type: String },
-  // Address can be an array of Address subdocuments (to support multiple addresses per city)
-  address: { type: [AddressSchema], default: [] }
+  // optional per-city location_type (can inherit top-level if empty)
+  location_type: {
+    type: String,
+    enum: ['onsite', 'offsite', 'remote'],
+    lowercase: true,
+    trim: true,
+    set: v => {
+      // normalize empty string/undefined to null so enum doesn't reject
+      if (v === undefined || v === null) return null;
+      const s = String(v).trim().toLowerCase();
+      return s === '' ? null : s;
+    }
+  },
+  // Address is a single Address subdocument per city
+  address: { type: AddressSchema, default: null }
 }, { _id: false });
 
 // Top-level Location schema (emirate-level)
@@ -39,7 +44,12 @@ const LocationSchema = new mongoose.Schema({
     enum: ['onsite', 'offsite', 'remote'],
     lowercase: true,
     trim: true,
-    default: 'onsite'
+    default: 'onsite',
+    set: v => {
+      if (v === undefined || v === null) return null;
+      const s = String(v).trim().toLowerCase();
+      return s === '' ? null : s;
+    }
   },
   cities: { type: [CitySchema], default: [] }
 }, { timestamps: true });

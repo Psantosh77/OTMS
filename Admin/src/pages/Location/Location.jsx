@@ -3,15 +3,14 @@ import api from '../../utils/apiConfig/apiconfig';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+// Button removed - no longer used
 import IconButton from '@mui/material/IconButton';
-import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import UndoIcon from '@mui/icons-material/Undo';
 import InfoIcon from '@mui/icons-material/Info';
+import AddIcon from '@mui/icons-material/Add';
 import { DataGrid } from '@mui/x-data-grid';
 import LocationModal from './LocationModal';
+import { Button } from '@mui/material';
 
 const Location = () => {
   const [rows, setRows] = useState([]);
@@ -44,30 +43,13 @@ const Location = () => {
     fetchLocations();
   }, []);
 
-  const handleAddClick = () => {
-    setSelectedRow(null);
-    setAddModalOpen(true);
-  };
-
-  const handleEdit = (row) => {
-    setSelectedRow(row);
-    setAddModalOpen(true);
-  };
-
   const handleDetailClick = (row) => {
     setSelectedRow(row);
     setDetailOpen(true);
   };
-
-  const callLocationActiveApi = async (id, isActive) => {
-    // optimistic update
-    setRows(prev => prev.map(r => r.id === id ? { ...r, isActive } : r));
-    try {
-      const { postApi } = await import('../../utils/apiConfig/apiService');
-      await postApi({ url: 'locations/update-active', payload: { id, isActive } });
-    } catch (err) {
-      console.error('Failed to update active state', err);
-    }
+  const handleEdit = (row) => {
+    setSelectedRow(row);
+    setAddModalOpen(true);
   };
 
   const columns = [
@@ -76,7 +58,7 @@ const Location = () => {
     { field: 'cities_join', headerName: 'Cities', flex: 2 },
     { field: 'cities_count', headerName: 'Cities #', flex: 0.6 },
     { field: 'isActive', headerName: 'Active', flex: 0.6, renderCell: (params) => params.value ? 'True' : 'False' },
-    { field: 'createdAt', headerName: 'Created', flex: 1, valueGetter: (params) => params.row.createdAt ? new Date(params.row.createdAt).toLocaleString() : '' },
+    // { field: 'createdAt', headerName: 'Created', flex: 1, valueGetter: (params) => params.row.createdAt ? new Date(params.row.createdAt).toLocaleString() : '' },
     {
       field: 'actions',
       headerName: 'Action',
@@ -91,15 +73,6 @@ const Location = () => {
           <IconButton color="primary" size="small" onClick={() => handleEdit(params.row)}>
             <EditIcon />
           </IconButton>
-          {params.row.isActive ? (
-            <IconButton color="error" size="small" onClick={() => callLocationActiveApi(params.row.id, false)}>
-              <DeleteIcon />
-            </IconButton>
-          ) : (
-            <IconButton color="primary" size="small" onClick={() => callLocationActiveApi(params.row.id, true)}>
-              <UndoIcon />
-            </IconButton>
-          )}
         </>
       )
     }
@@ -148,8 +121,8 @@ const Location = () => {
             color="primary"
             startIcon={<AddIcon />}
             size="medium"
-            sx={{ alignSelf: 'flex-start' }}
-            onClick={handleAddClick}
+            sx={{ alignSelf: 'flex-start', mt: 1 }}
+            onClick={() => { setSelectedRow(null); setAddModalOpen(true); }}
           >
             Add Location
           </Button>
@@ -164,13 +137,14 @@ const Location = () => {
           autoHeight
         />
 
+      
+        {/* Modal dialog for Add/Edit */}
         {addModalOpen && (
           <LocationModal
-            isOpen={addModalOpen}
+            isOpen={true}
             onClose={() => { setAddModalOpen(false); setSelectedRow(null); }}
-            onSubmit={addOrUpdateLocation}
+            onSubmit={(payload) => { addOrUpdateLocation(payload); setAddModalOpen(false); }}
             initialData={selectedRow}
-            mode={selectedRow ? 'edit' : 'add'}
           />
         )}
       </Paper>

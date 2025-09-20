@@ -8,6 +8,7 @@ import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -15,18 +16,25 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+// delete/add icons removed - single-city form
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 function makeEmptyAddress() {
   return {
-    area: '', district: '', street: '', building: '', floor: '', apartment: '', po_box: '', landmark: '', makani_number: '', gps: { lat: '', lng: '' }
+    building_no: '',
+    street_no: '',
+    address1: '',
+    address2: '',
+    makani_number: '',
+    gps: { lat: '', lng: '' }
   };
 }
-
 function makeEmptyCity() {
   return {
-    name: '', postal_code: '', icon: '', makani_number: '', location_type: '', location_file: '', address: [ makeEmptyAddress() ]
+    name: '',
+    location_type: '',
+    address: makeEmptyAddress()
   };
 }
 
@@ -39,6 +47,12 @@ function LocationModal({ isOpen, onClose, onSubmit, initialData }) {
     cities: [ makeEmptyCity() ]
   });
   const [saving, setSaving] = useState(false);
+  // simple in-memory mapping for emirate->cities (adjust as needed or fetch from API)
+  const emirateCities = {
+    'Abu Dhabi': ['Abu Dhabi City', 'Al Ain', 'Madinat Zayed'],
+    'Dubai': ['Dubai', 'Deira', 'Jumeirah'],
+    'Sharjah': ['Sharjah City', 'Khor Fakkan']
+  };
 
   useEffect(() => {
     if (initialData) {
@@ -64,9 +78,10 @@ function LocationModal({ isOpen, onClose, onSubmit, initialData }) {
     });
   };
 
-  const addCity = () => setForm(prev => ({ ...prev, cities: [ ...prev.cities, makeEmptyCity() ] }));
-  const removeCity = (index) => setForm(prev => ({ ...prev, cities: prev.cities.filter((c,i) => i !== index) }));
+  // Single-city mode: always keep exactly one city in the form
+  // add/remove city functions intentionally removed to prevent deleting or adding cities
   const addAddress = (cityIdx) => setForm(prev => { const copy = JSON.parse(JSON.stringify(prev)); copy.cities[cityIdx].address.push(makeEmptyAddress()); return copy; });
+  // keep removeAddress for compatibility but don't expose UI to remove addresses
   const removeAddress = (cityIdx, addrIdx) => setForm(prev => { const copy = JSON.parse(JSON.stringify(prev)); copy.cities[cityIdx].address = copy.cities[cityIdx].address.filter((a,i) => i !== addrIdx); return copy; });
 
   const handleSubmit = async (e) => {
@@ -80,18 +95,20 @@ function LocationModal({ isOpen, onClose, onSubmit, initialData }) {
         const payload = JSON.parse(JSON.stringify(form));
         // normalize location_type to lowercase where present
         if (payload.location_type) payload.location_type = String(payload.location_type).trim().toLowerCase();
-        payload.cities = payload.cities.map(city => {
+
+        // Ensure we send a single city object in cities[] and address is an object (not array)
+        payload.cities = (payload.cities && payload.cities.length) ? payload.cities.map(city => {
           const c = { ...city };
           if (c.location_type) c.location_type = String(c.location_type).trim().toLowerCase();
-          // coerce empty gps strings to numbers or null
-          if (Array.isArray(c.address)) {
-            c.address = c.address.map(a => ({
-              ...a,
-              gps: a.gps && a.gps.lat !== '' ? { lat: Number(a.gps.lat), lng: Number(a.gps.lng) } : undefined
-            }));
+          // coerce gps to numbers or null if present
+          if (c.address && c.address.gps) {
+            c.address.gps = {
+              lat: c.address.gps.lat != null && c.address.gps.lat !== '' ? Number(c.address.gps.lat) : null,
+              lng: c.address.gps.lng != null && c.address.gps.lng !== '' ? Number(c.address.gps.lng) : null
+            };
           }
           return c;
-        });
+        }) : [ makeEmptyCity() ];
 
         // Return payload to parent and let parent handle posting
         if (onSubmit) onSubmit(payload);
@@ -104,99 +121,101 @@ function LocationModal({ isOpen, onClose, onSubmit, initialData }) {
       }
   };
 
-  return (
-    <Dialog open={!!isOpen} onClose={onClose} maxWidth="lg" fullWidth>
-      <form onSubmit={handleSubmit}>
-        <DialogTitle>{initialData ? 'Edit Location' : 'Add Location'}</DialogTitle>
-        <DialogContent>
-          <Box display="flex" flexDirection="column" gap={2} mt={1}>
-            <TextField label="Emirate" value={form.emirate} onChange={e => updateField('emirate', e.target.value)} required />
-            <TextField label="Icon URL" value={form.icon} onChange={e => updateField('icon', e.target.value)} placeholder="https://..." />
-            <FormControl fullWidth>
+  const formMarkup = (
+    <Box component="form" onSubmit={handleSubmit} sx={{ mb: 2, p: 2, borderRadius: 2, border: '1px solid #eee' }}>
+      <Typography variant="h6" mb={1}>{initialData ? 'Edit Location' : 'Add Location'}</Typography>
+      <Box display="flex" flexDirection="column" gap={2} mt={1}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <FormControl sx={{ width: 320 }}>
+              <InputLabel id="emirate-label">Emirate</InputLabel>
+              <Select labelId="emirate-label" value={form.emirate || ''} label="Emirate" onChange={e => {
+                const val = e.target.value;
+                // set emirate and reset city to first option for that emirate
+                const cities = emirateCities[val] || [];
+                setForm(prev => ({ ...prev, emirate: val, cities: [ { ...makeEmptyCity(), name: cities[0] || '' } ] }));
+              }}>
+                <MenuItem value={''}><em>None</em></MenuItem>
+                {Object.keys(emirateCities).map(em => <MenuItem key={em} value={em}>{em}</MenuItem>)}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <FormControl sx={{ width: 320 }}>
+              <InputLabel id="city-label">City</InputLabel>
+              <Select labelId="city-label" value={(form.cities && form.cities[0] && form.cities[0].name) || ''} label="City" onChange={e => updateField('cities.0.name', e.target.value)}>
+                <MenuItem value={''}><em>None</em></MenuItem>
+                {(emirateCities[form.emirate] || []).map(cn => <MenuItem key={cn} value={cn}>{cn}</MenuItem>)}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={6}><TextField sx={{ width: 320 }} label="Building / House No" value={form.cities[0].address.building_no} onChange={e => updateField('cities.0.address.building_no', e.target.value)} /></Grid>
+          <Grid item xs={12} sm={6}><TextField sx={{ width: 320 }} label="Street No" value={form.cities[0].address.street_no} onChange={e => updateField('cities.0.address.street_no', e.target.value)} /></Grid>
+
+          <Grid item xs={12} sm={6}><TextField sx={{ width: 320 }} label="Address 1" value={form.cities[0].address.address1} onChange={e => updateField('cities.0.address.address1', e.target.value)} /></Grid>
+          <Grid item xs={12} sm={6}><TextField sx={{ width: 320 }} label="Address 2 (optional)" value={form.cities[0].address.address2} onChange={e => updateField('cities.0.address.address2', e.target.value)} /></Grid>
+
+          <Grid item xs={12} sm={6}><TextField sx={{ width: 320 }} label="Makani Number" value={form.cities[0].address.makani_number} onChange={e => updateField('cities.0.address.makani_number', e.target.value)} /></Grid>
+
+          <Grid item xs={12} sm={6}>
+            <FormControl sx={{ width: 320 }}>
               <InputLabel id="loc-type-label">Location Type</InputLabel>
-              <Select labelId="loc-type-label" value={form.location_type || ''} label="Location Type" onChange={e => updateField('location_type', e.target.value)}>
+              <Select sx={{ width: '100%' }} labelId="loc-type-label" value={form.location_type || ''} label="Location Type" onChange={e => updateField('location_type', e.target.value)}>
                 <MenuItem value={''}><em>None</em></MenuItem>
                 <MenuItem value={'onsite'}>Onsite</MenuItem>
                 <MenuItem value={'offsite'}>Offsite</MenuItem>
                 <MenuItem value={'remote'}>Remote</MenuItem>
               </Select>
             </FormControl>
+          </Grid>
 
-            <FormControl>
+          <Grid item xs={12} sm={6}>
+            <FormControl sx={{ width: 320 }}>
               <InputLabel id="isActive-label">Is Active</InputLabel>
-              <Select labelId="isActive-label" value={form.isActive ? 'true' : 'false'} onChange={e => updateField('isActive', e.target.value === 'true')}>
+              <Select sx={{ width: '100%' }} labelId="isActive-label" value={form.isActive ? 'true' : 'false'} onChange={e => updateField('isActive', e.target.value === 'true')}>
                 <MenuItem value={'true'}>True</MenuItem>
                 <MenuItem value={'false'}>False</MenuItem>
               </Select>
             </FormControl>
+          </Grid>
+        </Grid>
 
-            <Box>
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography variant="h6">Cities</Typography>
-                <IconButton size="small" onClick={addCity}><AddIcon /></IconButton>
-              </Stack>
 
-              {form.cities.map((city, ci) => (
-                <Box key={ci} mt={2} p={2} borderRadius={1} style={{ border: '1px solid #eee' }}>
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <TextField label="Name" value={city.name} onChange={e => updateField(`cities.${ci}.name`, e.target.value)} required />
-                    <TextField label="Postal Code" value={city.postal_code} onChange={e => updateField(`cities.${ci}.postal_code`, e.target.value)} />
-                    <TextField label="Icon URL" value={city.icon} onChange={e => updateField(`cities.${ci}.icon`, e.target.value)} />
-                    <TextField label="Makani Number" value={city.makani_number} onChange={e => updateField(`cities.${ci}.makani_number`, e.target.value)} />
-                    <TextField label="Location File URL" value={city.location_file} onChange={e => updateField(`cities.${ci}.location_file`, e.target.value)} />
-                    <FormControl sx={{ minWidth: 140 }}>
-                      <InputLabel id={`city-type-${ci}`}>City Type</InputLabel>
-                      <Select labelId={`city-type-${ci}`} value={city.location_type || ''} label="City Type" onChange={e => updateField(`cities.${ci}.location_type`, e.target.value)}>
-                        <MenuItem value={''}><em>None</em></MenuItem>
-                        <MenuItem value={'onsite'}>Onsite</MenuItem>
-                        <MenuItem value={'offsite'}>Offsite</MenuItem>
-                        <MenuItem value={'remote'}>Remote</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <IconButton onClick={() => removeCity(ci)}><DeleteIcon /></IconButton>
-                  </Stack>
-
-                  <Box mt={2}>
-                    <Stack direction="row" alignItems="center" justifyContent="space-between">
-                      <Typography variant="subtitle1">Addresses</Typography>
-                      <IconButton size="small" onClick={() => addAddress(ci)}><AddIcon /></IconButton>
-                    </Stack>
-
-                    {city.address && city.address.map((addr, ai) => (
-                      <Box key={ai} mt={1} p={1} style={{ border: '1px dashed #ddd' }}>
-                        <Stack spacing={1}>
-                          <TextField label="Area" value={addr.area} onChange={e => updateField(`cities.${ci}.address.${ai}.area`, e.target.value)} />
-                          <TextField label="District" value={addr.district} onChange={e => updateField(`cities.${ci}.address.${ai}.district`, e.target.value)} />
-                          <TextField label="Street" value={addr.street} onChange={e => updateField(`cities.${ci}.address.${ai}.street`, e.target.value)} />
-                          <TextField label="Building" value={addr.building} onChange={e => updateField(`cities.${ci}.address.${ai}.building`, e.target.value)} />
-                          <Stack direction="row" spacing={1}>
-                            <TextField label="Floor" value={addr.floor} onChange={e => updateField(`cities.${ci}.address.${ai}.floor`, e.target.value)} />
-                            <TextField label="Apartment" value={addr.apartment} onChange={e => updateField(`cities.${ci}.address.${ai}.apartment`, e.target.value)} />
-                            <TextField label="PO Box" value={addr.po_box} onChange={e => updateField(`cities.${ci}.address.${ai}.po_box`, e.target.value)} />
-                          </Stack>
-                          <TextField label="Landmark" value={addr.landmark} onChange={e => updateField(`cities.${ci}.address.${ai}.landmark`, e.target.value)} />
-                          <TextField label="Makani Number" value={addr.makani_number} onChange={e => updateField(`cities.${ci}.address.${ai}.makani_number`, e.target.value)} />
-                          <Stack direction="row" spacing={1}>
-                            <TextField label="GPS Lat" value={addr.gps?.lat} onChange={e => updateField(`cities.${ci}.address.${ai}.gps.lat`, e.target.value)} />
-                            <TextField label="GPS Lng" value={addr.gps?.lng} onChange={e => updateField(`cities.${ci}.address.${ai}.gps.lng`, e.target.value)} />
-                            <IconButton onClick={() => removeAddress(ci, ai)}><DeleteIcon /></IconButton>
-                          </Stack>
-                        </Stack>
-                      </Box>
-                    ))}
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button type="submit" variant="contained" color="primary" disabled={saving}>{saving ? 'Saving...' : (initialData ? 'Update' : 'Save')}</Button>
-          <Button type="button" variant="outlined" color="secondary" onClick={onClose}>Cancel</Button>
-        </DialogActions>
-      </form>
-    </Dialog>
+        {/* Inline-only buttons (when not rendering inside Dialog) */}
+        {!isOpen && (
+          <Grid container spacing={2} mt={2}>
+            <Grid item xs={12} sm={6}>
+                <Button sx={{ width: 320 }} type="submit" variant="contained" color="primary" disabled={saving}>{saving ? 'Saving...' : (initialData ? 'Update' : 'Save')}</Button>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Button sx={{ width: 320 }} type="button" variant="outlined" color="secondary" onClick={() => { if (onClose) onClose(); setForm({ emirate: '', icon: '', isActive: true, location_type: '', cities: [ makeEmptyCity() ] }); }}>Cancel</Button>
+              </Grid>
+          </Grid>
+        )}
+      </Box>
+    </Box>
   );
+
+  if (isOpen) {
+    return (
+      <Dialog open={true} onClose={onClose} maxWidth="lg" fullWidth>
+        <form onSubmit={handleSubmit}>
+          <DialogTitle>{initialData ? 'Edit Location' : 'Add Location'}</DialogTitle>
+          <DialogContent>
+            {formMarkup}
+          </DialogContent>
+          <DialogActions>
+            <Button type="submit" variant="contained" color="primary" disabled={saving}>{saving ? 'Saving...' : (initialData ? 'Update' : 'Save')}</Button>
+            <Button type="button" variant="outlined" color="secondary" onClick={onClose}>Cancel</Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+    );
+  }
+
+  return formMarkup;
 }
 
 export default LocationModal;
