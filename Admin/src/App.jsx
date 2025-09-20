@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Header from './Components/Header';
 import Sidebar from './Components/Sidebar';
 import Dashboard from "./pages/Dashboard";
@@ -31,7 +31,9 @@ function App() {
     setDrawerOpen(!drawerOpen);
   };
 
-   if (location.pathname === "/") {
+  const location = useLocation();
+
+  if (location.pathname === "/") {
     return (
       <Routes>
         <Route path="/" element={<Login />} />
