@@ -1,13 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../../middleware/imageMulter');
-const { addLocation, getLocations, updateLocationActiveStatus } = require('../../controller/master/location');
 
-// Add new location (with image upload)
+const locationController = require('../../controller/master/location');
 
-router.post('/add', upload.single('image'), addLocation);
-router.post('/getlocation', getLocations);
-// Update isActive status
-router.post('/update-active', updateLocationActiveStatus);
+// Create a new location (accepts multipart/form-data with optional 'icon' file)
+router.post('/add', locationController.addLocation);
+
+// List locations
+router.get('/list', locationController.listLocations);
+
+
+
+// Search by payload (POST body) for { type: 'onsite' }
+router.post('/search', locationController.searchByType);
 
 module.exports = router;

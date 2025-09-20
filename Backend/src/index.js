@@ -30,6 +30,7 @@ const FaqRoutes = require('./routes/Home/FaqRoutes');
 const serviceRoutes = require('./routes/serviceRoute/serviceRoutes');
 const locationRoutes = require('./routes/Location/locationRoutes');
 const vendorRoutes = require('./routes/vendorRoutes');
+const LocationRoutes = require('./routes/Location/locationRoutes');
 
 
 
@@ -90,6 +91,10 @@ app.use(cors({
 }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
+
+
+
+
 // Routes
 
 app.use('/api/auth', authRoutes);
@@ -102,6 +107,7 @@ app.use('/api/faq', FaqRoutes );
 app.use('/api/services', serviceRoutes );
 app.use('/api/locations', locationRoutes );
 app.use('/api/vendor', vendorRoutes );
+app.use('/api/location', LocationRoutes);
 
 // Health check route for Render
 app.get('/health', (req, res) => {
