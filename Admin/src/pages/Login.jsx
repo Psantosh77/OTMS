@@ -30,8 +30,8 @@ export default function Login() {
   if (tokens.admin) localStorage.setItem('admin', JSON.stringify(tokens.admin));
         // Optional: also set a flag
         localStorage.setItem('isAdminLoggedIn', 'true');
-        // Redirect to dashboard
-        window.location.href = '/dashboard';
+  // Redirect to dashboard using react-router navigate to avoid full page reload
+  navigate('/dashboard', { replace: true });
       } else {
         alert(res?.data?.message || 'Login failed');
       }
