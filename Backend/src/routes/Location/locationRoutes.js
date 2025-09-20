@@ -7,7 +7,7 @@ const locationController = require('../../controller/master/location');
 router.post('/add', locationController.addLocation);
 
 // List locations
-router.get('/list', locationController.listLocations);
+router.post('/list', locationController.listLocations);
 
 
 
