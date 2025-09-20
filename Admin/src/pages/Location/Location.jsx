@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../../utils/apiConfig/apiconfig';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -23,12 +24,15 @@ const Location = () => {
     const fetchLocations = async () => {
       setLoading(true);
       try {
-        const { postApi } = await import('../../utils/apiConfig/apiService');
-  const res = await postApi({ url: 'locations/getlocation', payload: {} });
-  // postApi returns response.data (which may be { success,message,status,data })
-  // or some backends might return the array directly. Normalize both shapes.
-  const raw = Array.isArray(res) ? res : (res?.data ?? res);
-  const data = Array.isArray(raw) ? raw.map(loc => ({ ...loc, id: loc._id || loc.id })) : [];
+        const res = await api.post('location/list');
+        const body = res?.data || {};
+        const arr = Array.isArray(body.data) ? body.data : (Array.isArray(body) ? body : []);
+        const data = arr.map(loc => ({
+          ...loc,
+          id: loc._id || loc.id,
+          cities_join: Array.isArray(loc.cities) ? loc.cities.map(c => c.name).join(', ') : '',
+          cities_count: Array.isArray(loc.cities) ? loc.cities.length : 0
+        }));
         setRows(data);
       } catch (err) {
         console.error('Failed to fetch locations', err);
@@ -67,11 +71,12 @@ const Location = () => {
   };
 
   const columns = [
-    { field: 'locationName', headerName: 'Location Name', flex: 1 },
-    { field: 'locationCode', headerName: 'Location Code', flex: 1 },
-    { field: 'stateName', headerName: 'State', flex: 1 },
-    { field: 'district', headerName: 'City/District', flex: 1 },
+    { field: 'emirate', headerName: 'Emirate', flex: 1 },
+    { field: 'location_type', headerName: 'Location Type', flex: 0.8 },
+    { field: 'cities_join', headerName: 'Cities', flex: 2 },
+    { field: 'cities_count', headerName: 'Cities #', flex: 0.6 },
     { field: 'isActive', headerName: 'Active', flex: 0.6, renderCell: (params) => params.value ? 'True' : 'False' },
+    { field: 'createdAt', headerName: 'Created', flex: 1, valueGetter: (params) => params.row.createdAt ? new Date(params.row.createdAt).toLocaleString() : '' },
     {
       field: 'actions',
       headerName: 'Action',
@@ -111,11 +116,16 @@ const Location = () => {
     }
 
     try {
-      const { postApi } = await import('../../utils/apiConfig/apiService');
       const payload = locationData.id ? { id: locationData.id, ...locationData } : locationData;
-      const res = await postApi({ url: 'locations/add', payload });
-      const returned = res.data || {};
-      const newLoc = { ...returned, id: returned._id || returned.id || locationData.id || Date.now() };
+      // use Axios api instance to post to backend
+      const res = await api.post('location/add', payload);
+      const returned = res?.data?.data || res?.data || {};
+      const newLoc = {
+        ...returned,
+        id: returned._id || returned.id || locationData.id || Date.now(),
+        cities_join: Array.isArray(returned.cities) ? returned.cities.map(c => c.name).join(', ') : '',
+        cities_count: Array.isArray(returned.cities) ? returned.cities.length : 0
+      };
       if (locationData.id) {
         setRows(prev => prev.map(r => r.id === locationData.id ? newLoc : r));
       } else {

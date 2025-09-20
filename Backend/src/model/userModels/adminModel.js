@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+// Try to load native bcrypt, fallback to bcryptjs if not installed (avoids crash on Windows dev machines)
+let bcrypt;
+try {
+  bcrypt = require('bcrypt');
+} catch (e) {
+  bcrypt = require('bcryptjs');
+}
 
 const adminSchema = new mongoose.Schema({
   name: {
@@ -17,14 +23,26 @@ const adminSchema = new mongoose.Schema({
   }
 });
 
-adminSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
+adminSchema.pre('save', function (next) {
+  try {
+    if (!this.isModified('password')) return next();
+    // Use synchronous API to be compatible across bcrypt and bcryptjs
+    const salt = bcrypt.genSaltSync(10);
+    this.password = bcrypt.hashSync(this.password, salt);
+    return next();
+  } catch (err) {
+    return next(err);
+  }
 });
 
-adminSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
+adminSchema.methods.comparePassword = function (candidatePassword) {
+  try {
+    // returns boolean
+    return bcrypt.compareSync(candidatePassword, this.password);
+  } catch (err) {
+    // On error, return false
+    return false;
+  }
 };
 
 module.exports = mongoose.model('Admin', adminSchema);
