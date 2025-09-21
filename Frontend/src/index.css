@@ -1,4 +1,9 @@
 /* Add 2px padding to the whole page */
+
+@import url('https://fonts.googleapis.com/css2?family=Anta&family=Baloo+Bhaijaan+2:wght@400..800&family=Barriecito&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Mozilla+Headline:wght@200..700&family=Outfit:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+
 body {
  
   box-sizing: border-box;
@@ -30,8 +35,7 @@ body {
 body, #root {
 
   background-color:  white !important;
-   font-family: "Roboto Slab", serif ,'Poppins', sans-serif;;
-  
+     font-family: "Roboto", sans-serif;
 }
 /* .animated-bg {
   background: linear-gradient(270deg, #ff7eb3, #65d6ce, #ffc371 ,  #ffb400);

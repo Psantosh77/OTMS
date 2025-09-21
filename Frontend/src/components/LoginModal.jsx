@@ -7,7 +7,7 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import SwipeableViews from "react-swipeable-views"
+
 import './LoginModal.scss';
 import { apiService } from '../utils/apiService';
 
@@ -135,7 +135,7 @@ const LoginModal = () => {
       </Tabs>
 
       {/* ✅ Swipeable Views */}
-      <SwipeableViews index={tabIndex} onChangeIndex={setTabIndex}>
+      <div index={tabIndex} onChangeIndex={setTabIndex}>
         {[0, 1].map((i) => (
           <form
             key={i}
@@ -218,7 +218,7 @@ const LoginModal = () => {
             </Button>
           </form>
         ))}
-      </SwipeableViews>
+      </div>
 
       {/* ✅ Snackbar */}
       <Snackbar

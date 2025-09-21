@@ -135,7 +135,7 @@ const itemVariants = {
   left: 0;
   right: 0;
   z-index: 1200; /* header se upar */
-  height: 32px;  /* ✅ fixed height rakh lo */
+  height: 40px;  /* ✅ fixed height rakh lo */
 }
 
 .top-bar-left {
@@ -162,7 +162,7 @@ const itemVariants = {
 .header-modern {
   backdrop-filter: blur(12px);
   box-shadow: 0 4px 24px rgba(255,107,53,0.10);
-  border-radius: 0 0 32px 32px;
+ 
   position: fixed;
  margin-top:2rem;
   left: 0;
@@ -379,11 +379,11 @@ transform: translateY(0);
 <div className="top-bar">
   <div className="top-bar-left">
     <span>⏰ Mon - Sat: 9am - 6pm</span>
-    <a href="https://wa.me/971589624430" target="_blank" rel="noopener noreferrer">
-      <FaWhatsapp style={{ marginRight: 6 }} /> +971 58 962 4430
-    </a>
   </div>
   <div className="top-bar-right">
+     <a href="https://wa.me/971589624430" target="_blank" rel="noopener noreferrer">
+      <FaWhatsapp style={{ marginRight: 6 }} /> +971 58 962 4430
+    </a>
     <a href="https://facebook.com" target="_blank"><FaFacebookF /></a>
     <a href="https://instagram.com" target="_blank"><FaInstagram /></a>
     <a href="https://linkedin.com" target="_blank"><FaLinkedinIn /></a>

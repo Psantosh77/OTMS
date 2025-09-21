@@ -31,8 +31,9 @@ const Hero = () => {
 
   const handleSubmit = () => {
     // Redirect with query params
-    const query = new URLSearchParams(form).toString();
-    navigate(`/services?${query}`);
+    // const query = new URLSearchParams(form).toString();
+    // navigate(`/services?${query}`);
+    alert("slect servises ")
   };
 
   return (

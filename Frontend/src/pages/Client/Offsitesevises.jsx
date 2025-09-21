@@ -48,11 +48,12 @@ export default function OffsiteServices() {
         engine: "",
         date: "",
       });
-      const navigate = useNavigate();
+      // const navigate = useNavigate();
       const handleSubmit = () => {
         // Redirect with query params
-        const query = new URLSearchParams(form).toString();
-        navigate(`/services?${query}`);
+        // const query = new URLSearchParams(form).toString();
+        // navigate(`/services?${query}`);
+        alert("you are already in servises page")
       };
     
 

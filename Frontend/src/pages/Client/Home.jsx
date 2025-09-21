@@ -327,9 +327,9 @@ const Home = () => {
           <div className="fade-in-up">
             <Hero  />
           </div>
-          <div className="fade-in-up stagger-1">
+          {/* <div className="fade-in-up stagger-1">
             <Services />
-          </div>
+          </div> */}
           <div className="fade-in-up stagger-2">
             <HowItWorks />
           </div>

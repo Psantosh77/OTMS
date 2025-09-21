@@ -54,10 +54,11 @@ export default function OnsiteServices() {
     engine: "",
     date: "",
   });
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const handleSubmit = () => {
-    const query = new URLSearchParams(form).toString();
-    navigate(`/services?${query}`);
+    // const query = new URLSearchParams(form).toString();
+    // navigate(`/services?${query}`);
+    alert("you are already in servises page")
   };
 
   return (
