@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import BrandModelForm from "./BrandModelForm";
 import { ReactTyped } from "react-typed";
@@ -12,6 +12,7 @@ import { apiService } from '../utils/apiService';
 
 const Hero = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isCityModalOpen, setIsCityModalOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState("");
   const [isBrandModelDialogOpen, setIsBrandModelDialogOpen] = useState(false);
@@ -44,6 +45,91 @@ const Hero = () => {
       });
     return () => { mounted = false; };
   }, []);
+
+  // Prefill form and selected values from router location.state when available
+  React.useEffect(() => {
+    if (!location || !location.state) return;
+    const s = location.state || {};
+    console.log('Hero: route state detected for prefill:', s);
+    const parse = (v) => {
+      if (v === undefined || v === null) return v;
+      if (typeof v === 'string') {
+        const trimmed = v.trim();
+        if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+          try { return JSON.parse(trimmed); } catch (e) { return v; }
+        }
+        return v;
+      }
+      return v;
+    };
+
+    const serviceVal = parse(s.service);
+    const locationVal = parse(s.location);
+    const carVal = parse(s.car);
+
+    if (serviceVal) {
+      console.log('Hero: prefill service ->', serviceVal);
+      setForm(prev => ({ ...prev, service: serviceVal }));
+      console.log('Hero: set form.service ->', serviceVal);
+      // fetch locations for this service so location options are populated
+      fetchLocationsByService(serviceVal);
+    }
+
+    if (locationVal) {
+      if (typeof locationVal === 'object') {
+        // prefer emirate string if available; fall back to first city name when emirate missing
+        const emirate = locationVal.emirate || locationVal.name || (Array.isArray(locationVal.cities) && locationVal.cities.length ? (locationVal.cities[0].emirate || locationVal.cities[0].name || '') : '');
+  console.log('Hero: prefill location object -> emirate:', emirate, 'raw:', locationVal);
+  setForm(prev => ({ ...prev, location: emirate }));
+  console.log('Hero: set form.location ->', emirate);
+  setSelectedCity(emirate || '');
+  console.log('Hero: set selectedCity ->', emirate || '');
+      } else {
+  console.log('Hero: prefill location string ->', locationVal);
+  setForm(prev => ({ ...prev, location: String(locationVal) }));
+  console.log('Hero: set form.location ->', String(locationVal));
+  setSelectedCity(String(locationVal));
+  console.log('Hero: set selectedCity ->', String(locationVal));
+      }
+    }
+
+    if (carVal && typeof carVal === 'object') {
+      console.log('Hero: prefill car object ->', carVal);
+      const newCar = {
+        brand: carVal.brand || (carVal.brand && carVal.brand.display_name) || '',
+        model: carVal.model || (carVal.model && carVal.model.display_name) || '',
+        variant: carVal.variant || '',
+        cylinder: carVal.cylinder || ''
+      };
+      setSelectedCar(newCar);
+      console.log('Hero: set selectedCar ->', newCar);
+    } else {
+      // fallback to flattened keys
+      const brand = parse(s.brand) || parse(s.brand_display) || parse(s.brand_display_name);
+      const model = parse(s.model) || parse(s.display_name);
+      const variant = parse(s.variant);
+      const cylinder = parse(s.cylinder);
+      if (brand || model || variant || cylinder) {
+        console.log('Hero: prefill flattened car fields ->', { brand, model, variant, cylinder });
+        const newCar = {
+          brand: brand || '',
+          model: model || '',
+          variant: variant || '',
+          cylinder: cylinder || ''
+        };
+        setSelectedCar(prev => ({
+          brand: newCar.brand || prev.brand,
+          model: newCar.model || prev.model,
+          variant: newCar.variant || prev.variant,
+          cylinder: newCar.cylinder || prev.cylinder
+        }));
+        console.log('Hero: set selectedCar ->', newCar);
+      }
+    }
+    // Note: reading `form`, `selectedCity`, `selectedCar` immediately after setState will show
+    // previous values because state updates are asynchronous. Use the logs above to verify
+    // what values we attempted to set.
+  }, [location]);
 
   const fetchLocationsByService = (serviceType) => {
     if (!serviceType) {
@@ -97,8 +183,9 @@ const Hero = () => {
       if (typeof v === 'object') flat[k] = JSON.stringify(v);
       else flat[k] = String(v);
     });
-    const query = new URLSearchParams(flat).toString();
-    navigate(`/services`);
+ 
+      console.log('Navigating to /services with query:', flat);
+      navigate(`/${flat.service}`, { state: flat });
   };
 
   return (
