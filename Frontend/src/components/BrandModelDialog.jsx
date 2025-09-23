@@ -28,9 +28,13 @@ const BrandModelDialog = ({ open, onClose, email, selectedCity, onSelect }) => {
   const [selectedCylinder, setSelectedCylinder] = useState('');
 
   useEffect(() => {
-    if (open && email) {
+    // Fetch manufacturers when dialog opens. Previously we required `email` to be present
+    // before fetching; on Render deployments localStorage may not contain email, causing
+    // the fetch not to run. Fetch unconditionally when `open` is true and send an empty
+    // payload (server handles missing email).
+    if (open) {
       setLoadingBrands(true);
-      apiService.post('/cardata/getallmanufacturers')
+      apiService.post('/cardata/getallmanufacturers', {})
         .then(res => {
           const brands = res.data?.data?.manufacturers || [];
           setBrandList(brands);
@@ -38,7 +42,7 @@ const BrandModelDialog = ({ open, onClose, email, selectedCity, onSelect }) => {
         .catch(() => setBrandList([]))
         .finally(() => setLoadingBrands(false));
     }
-  }, [open, email]);
+  }, [open]);
 
   // Ensure dialog always opens on the Brand selection step with fresh state
   useEffect(() => {
