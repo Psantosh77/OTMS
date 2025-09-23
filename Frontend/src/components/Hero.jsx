@@ -33,7 +33,7 @@ const Hero = () => {
     // Redirect with query params
     // const query = new URLSearchParams(form).toString();
     // navigate(`/services?${query}`);
-    alert("slect servises ")
+    alert("select services ")
   };
 
   return (

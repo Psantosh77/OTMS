@@ -49,3 +49,16 @@
   transform: translate3d(0, -15px, 40px);
   text-shadow: 0 12px 20px rgba(0,0,0,0.35);
 }
+.mySwiper {
+  padding-bottom: 50px;
+}
+
+.swiper-slide {
+  transition: transform 0.5s ease;
+}
+
+
+
+
+
+

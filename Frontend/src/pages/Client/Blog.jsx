@@ -1,177 +1,123 @@
-// src/components/BlogPage.jsx
-import React, { useState , useEffect } from "react";
-import "../../styles/Blog.css"; // aap apna existing CSS yahan import kar sakte ho
-import { useNavigate } from "react-router-dom";
+// src/pages/BlogPage.jsx
+import React, { useState, useEffect } from "react";
+import "../../styles/Blog.css"; // CSS import
+
 const blogData = [
   {
     img: "/assets/image/blog_card1.png",
     category: "Electric Cars",
     title: "Top 5 Electric Cars of 2025",
-    desc: "Discover the most advanced electric cars of 2025 with extended range and eco-friendly performance."
+    desc: "Discover the most advanced electric cars of 2025 with extended range and eco-friendly performance.",
+    details:
+      "The top 5 electric cars of 2025 come with extended battery ranges, AI-assisted driving, and eco-friendly technology. Models include Tesla Model Z, Rivian X2, Lucid Air GT, and more."
   },
   {
     img: "/assets/image/blog_card2.png",
     category: "Luxury",
     title: "Best Luxury Sedans",
-    desc: "Explore top sedans designed for unmatched comfort, elegance, and smooth driving."
+    desc: "Explore top sedans designed for unmatched comfort, elegance, and smooth driving.",
+    details:
+      "Luxury sedans like Mercedes S-Class, BMW 7 Series, and Audi A8 continue to dominate with premium comfort, smart interiors, and cutting-edge features."
   },
   {
     img: "/assets/image/blog_card3.png",
     category: "SUVs",
     title: "Top SUVs for Adventure",
-    desc: "Check out the most rugged SUVs ready to conquer any terrain in 2025."
+    desc: "Check out the most rugged SUVs ready to conquer any terrain in 2025.",
+    details:
+      "Adventure SUVs like Land Rover Defender 2025, Jeep Wrangler EV, and Ford Bronco Hybrid bring power, durability, and off-road excellence."
   },
   {
     img: "/assets/image/blog_card4.png",
     category: "Sports Cars",
     title: "Fastest Cars of the Year",
-    desc: "Experience the thrill with the fastest sports cars hitting the roads this year."
-  },
-  {
-    img: "/assets/image/blog_card5.png",
-    category: "Hybrids",
-    title: "Best Hybrid Models",
-    desc: "Find the perfect balance of fuel efficiency and performance with these hybrids."
-  },
-  {
-    img: "/assets/image/blog_card6.png",
-    category: "Concept Cars",
-    title: "Future of Automobiles",
-    desc: "Take a peek into the future with groundbreaking concept cars."
-  },
-  {
-    img: "/assets/image/blog_card7.png",
-    category: "Off-Road",
-    title: "Best Off-Road Vehicles",
-    desc: "Discover machines built to handle the toughest terrains."
-  },
-  {
-    img: "/assets/image/blog_card8.png",
-    category: "Classic Cars",
-    title: "Timeless Classics",
-    desc: "Relive the golden era of automobiles with these timeless classics."
+    desc: "Experience the thrill with the fastest sports cars hitting the roads this year.",
+    details:
+      "Sports cars such as Ferrari SF90, Lamborghini Revuelto, and Porsche 911 GT3 RS deliver unmatched speed, aerodynamics, and luxury performance."
   }
 ];
 
 const BlogPage = () => {
-  const [modalData, setModalData] = useState(null);
-    const [flippedCard, setFlippedCard] = useState(null);
-      const navigate = useNavigate();
+  const [selectedBlog, setSelectedBlog] = useState(null);
 
-  const openModal = (blog) => {
-    setModalData(blog);
-    document.body.style.overflow = "hidden";
-  };
-
-  const closeModal = () => {
-    setModalData(null);
-    document.body.style.overflow = "auto";
-  };
-
-useEffect(() => {
-  if (window.innerWidth <= 768) { // Mobile/tablet
-    const cards = document.querySelectorAll(".flip-card");
-    cards.forEach(card => {
-      card.addEventListener("click", () => {
-        card.classList.toggle("flipped");
-      });
-    });
-  }
-}, []);
+  // scroll lock when modal is open
+  useEffect(() => {
+    if (selectedBlog !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [selectedBlog]);
 
   return (
     <div>
       {/* Banner */}
       <div className="service-banner">
-        <img src="/assets/image/blog_banner.webp"alt="Car Blog Banner" style={{loading:"lazy"}} />
+        <img
+          src="/assets/image/blog_banner.webp"
+          alt="Car Blog Banner"
+          loading="lazy"
+        />
         <div className="service-banner-txt">
-          <p style={{color:"white"}}>Your Daily Dose of Auto Trends</p>
+          <p style={{ color: "white" }}>Your Daily Dose of Auto Trends</p>
           <h1>Latest Car News & Reviews</h1>
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '18px' }}>
-    <button
-  onClick={() => navigate('/service-details')}
-      style={{
-        background: 'linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)', // orange gradient
-        color: '#fff',
-        fontWeight: 600,
-        fontSize: '1.08rem',
-       
-        border: 'none',
-        borderRadius: '8px',
-        boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
-        cursor: 'pointer',
-        transition: 'background 0.2s',
-        letterSpacing: '0.5px',
-      }}
-      aria-label="Explore Services"
-      onMouseOver={e => e.currentTarget.style.background = 'linear-gradient(90deg, #fff 0%, #ff8800 100%)'}
-      onMouseOut={e => e.currentTarget.style.background = 'linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)'}
-    >
-      Explore Blog
-    </button>
-  </div>
-
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "18px" }}>
+            <button
+              style={{
+                background: "linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)",
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: "1.08rem",
+                border: "none",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
+                cursor: "pointer",
+                letterSpacing: "0.5px"
+              }}
+            >
+              Explore Blog
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Blog Cards */}
-      <section>
-        <div className="blog-cards">
-          {blogData.map((blog, idx) => (
-           <div
-  className={`flip-card ${flippedCard === idx ? "flipped" : ""}`}
-  key={idx}
-  onClick={() => {
-    if (window.innerWidth <= 768) { // sirf mobile/tablet pe click flip
-      setFlippedCard(flippedCard === idx ? null : idx);
-    }
-  }}
->
-  <div className="flip-card-inner">
-    {/* Tumhara front side */}
-    <div className="flip-card-front">
-      <img src={blog.img} alt={blog.title} style={{loading:"lazy"}} />
-      <h3>{blog.title}</h3>
-    </div>
-
-    {/* Tumhara back side */}
-    <div className="flip-card-back">
-      <span className="category">{blog.category}</span> <h3>{blog.title}</h3> <p style={{color:'black'}}> {blog.desc}</p>
-      <button className="read-me"
-        onClick={(e) => {
-          e.stopPropagation(); // flip na ho jab button click ho
-          openModal(blog);
-        }}
-      >
-        Read More
-      </button>
-    </div>
-  </div>
-</div>
-
-          ))}
-        </div>
+      <section className="blog-cards">
+        {blogData.map((blog, idx) => (
+          <div className="blog-card" key={idx}>
+            <img src={blog.img} alt={blog.title} loading="lazy" />
+            <div className="blog-content">
+              <span className="category">{blog.category}</span>
+              <h3>{blog.title}</h3>
+              <p>{blog.desc}</p>
+              <button
+                className="read-more"
+                onClick={() => setSelectedBlog(blog)}
+              >
+                Read More
+              </button>
+            </div>
+          </div>
+        ))}
       </section>
 
-      {/* Modal */}
-      {modalData && (
-        <div className="modal" style={{ display: "flex" }} onClick={closeModal}>
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button className="close-btn" onClick={closeModal}>
-              Close
+      {/* Popup Modal */}
+      {selectedBlog && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <button className="close-btn text-danger" onClick={() => setSelectedBlog(null)}>
+              &times;
             </button>
-            <img src={modalData.img} alt={modalData.title} />
-            <h3>{modalData.title}</h3>
-            <p>{modalData.desc}</p>
+            <img src={selectedBlog.img} alt={selectedBlog.title} />
+            <h2>{selectedBlog.title}</h2>
+            <p><strong>{selectedBlog.category}</strong></p>
+            <p>{selectedBlog.details}</p>
           </div>
         </div>
       )}
     </div>
   );
 };
-
 
 export default BlogPage;
