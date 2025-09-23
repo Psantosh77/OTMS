@@ -21,7 +21,7 @@ const VehicalDetails = () => {
     const fetchManufacturers = async () => {
       try {
         const { postApi } = await import('../../utils/apiConfig/apiService');
-        const res = await postApi({ url: 'carData/getallmanufacturers', payload: {} });
+  const res = await postApi({ url: 'cardata/getallmanufacturers', payload: {} });
         const manufacturers = res?.data?.manufacturers || [];
         const mapped = manufacturers.map(m => ({ ...m, id: m._id || m.id }));
         setRows(mapped);
@@ -95,7 +95,7 @@ const VehicalDetails = () => {
           <AddEditManufacturer open={addEditOpen} onClose={() => setAddEditOpen(false)} initialData={selectedRow} onSave={async (payload) => {
             try {
               const { postApi } = await import('../../utils/apiConfig/apiService');
-              const res = await postApi({ url: 'carData/addmanufacturer', payload });
+              const res = await postApi({ url: 'cardata/addmanufacturer', payload });
               const saved = res.data && Array.isArray(res.data) ? res.data[0] : res.data;
               const newRow = { ...saved, id: saved._id || saved.id || Date.now() };
                 // If selectedRow exists we treated this as an edit; match by selectedRow.id

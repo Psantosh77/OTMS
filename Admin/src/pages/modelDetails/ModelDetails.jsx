@@ -23,7 +23,7 @@ const ModelDetails = () => {
     const fetchModels = async () => {
       try {
         const { postApi } = await import('../../utils/apiConfig/apiService');
-        const res = await postApi({ url: 'carData/getallmanufacturers', payload: {} });
+  const res = await postApi({ url: 'cardata/getallmanufacturers', payload: {} });
         const manufacturers = res?.data?.manufacturers || [];
         // Flatten car_models into a single array of models, injecting brand info
         const models = [];
@@ -109,7 +109,7 @@ const ModelDetails = () => {
         <AddEditModel open={addEditOpen} onClose={() => setAddEditOpen(false)} initialData={selectedRow} onSave={async (payload) => {
           try {
             const { postApi } = await import('../../utils/apiConfig/apiService');
-            const res = await postApi({ url: 'carData/addcarmodellist', payload });
+            const res = await postApi({ url: 'cardata/addcarmodellist', payload });
             const saved = res.data && Array.isArray(res.data) ? res.data[0] : res.data;
             const newRow = { ...saved, id: saved._id || saved.id || Date.now() };
             setRows(prev => selectedRow ? prev.map(r => r.id === (selectedRow.id || selectedRow._id) ? newRow : r) : [...prev, newRow]);

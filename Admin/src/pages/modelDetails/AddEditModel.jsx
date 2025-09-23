@@ -39,7 +39,7 @@ const AddEditModel = ({ open, onClose, onSave, initialData }) => {
     const fetchBrands = async () => {
       try {
         const { postApi } = await import('../../utils/apiConfig/apiService');
-        const res = await postApi({ url: 'carData/getallmanufacturers', payload: {} });
+  const res = await postApi({ url: 'cardata/getallmanufacturers', payload: {} });
         const manufacturers = res?.data?.manufacturers || [];
         setBrands(manufacturers.map(m => ({ id: m.id || m._id, display_name: m.display_name || m.name })));
       } catch (err) {
