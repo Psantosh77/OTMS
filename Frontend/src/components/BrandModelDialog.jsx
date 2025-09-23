@@ -4,6 +4,9 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import CircularProgress from '@mui/material/CircularProgress';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
 import { apiService } from '../utils/apiService';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -15,6 +18,7 @@ const BrandModelDialog = ({ open, onClose, email, selectedCity, onSelect }) => {
   const [brandSearch, setBrandSearch] = useState('');
   const [modelList, setModelList] = useState([]);
   const [modelSearch, setModelSearch] = useState('');
+  const [vehicleTab, setVehicleTab] = useState('Passenger');
   const [selectedBrand, setSelectedBrand] = useState('');
   const [selectedBrandObj, setSelectedBrandObj] = useState(null);
   const [selectedModel, setSelectedModel] = useState('');
@@ -26,7 +30,7 @@ const BrandModelDialog = ({ open, onClose, email, selectedCity, onSelect }) => {
   useEffect(() => {
     if (open && email) {
       setLoadingBrands(true);
-      apiService.post('/cardata/getallmanufacturers', { email })
+      apiService.post('/cardata/getallmanufacturers')
         .then(res => {
           const brands = res.data?.data?.manufacturers || [];
           setBrandList(brands);
@@ -36,10 +40,30 @@ const BrandModelDialog = ({ open, onClose, email, selectedCity, onSelect }) => {
     }
   }, [open, email]);
 
+  // Ensure dialog always opens on the Brand selection step with fresh state
+  useEffect(() => {
+    if (open) {
+      setStep(0);
+      setBrandSearch('');
+      setModelSearch('');
+      setSelectedBrand('');
+      setSelectedBrandObj(null);
+      setModelList([]);
+      setSelectedModel('');
+      setSelectedModelObj(null);
+      setSelectedVariant('');
+      setSelectedCylinder('');
+      setVehicleTab('Passenger');
+    }
+  }, [open]);
+
   const handleBrandSelect = (brand) => {
     setSelectedBrand(brand.display_name);
     setSelectedBrandObj(brand);
     setModelList(brand.car_models || []);
+    // default vehicle tab to first model's vehicle_type or Passenger
+    const firstType = (brand.car_models && brand.car_models.length && (brand.car_models[0].vehicle_type || 'Passenger')) || 'Passenger';
+    setVehicleTab(firstType);
     setModelSearch('');
     setStep(1);
   };
@@ -127,6 +151,20 @@ const BrandModelDialog = ({ open, onClose, email, selectedCity, onSelect }) => {
         {step === 1 && selectedBrandObj && (
           <>
             <h3 style={{ margin: '24px 0 16px', fontWeight: 500 }}>Select Model</h3>
+            <Box sx={{ mb: 1 }}>
+              <Tabs
+                value={vehicleTab}
+                onChange={(e, val) => setVehicleTab(val)}
+                variant="scrollable"
+                scrollButtons="auto"
+                aria-label="vehicle type tabs"
+                sx={{ mb: 1 }}
+              >
+                <Tab label="Passenger" value="Passenger" />
+                <Tab label="Commercial" value="Commercial" />
+                <Tab label="Bike" value="Bike" />
+              </Tabs>
+            </Box>
             <input
               type="text"
               placeholder="Search model..."
@@ -139,7 +177,7 @@ const BrandModelDialog = ({ open, onClose, email, selectedCity, onSelect }) => {
             ) : (
               <Grid container spacing={2}>
                 {modelList
-                  .filter(model => model.display_name.toLowerCase().includes(modelSearch.toLowerCase()))
+                  .filter(model => ((model.vehicle_type || 'Passenger') === vehicleTab) && model.display_name.toLowerCase().includes(modelSearch.toLowerCase()))
                   .map((model) => (
                     <Grid item xs={4} sm={3} md={2} key={model._id}>
                       <Button

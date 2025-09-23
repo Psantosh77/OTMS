@@ -8,6 +8,7 @@ import { MapPin, Car, Compass } from "lucide-react"; // animated icons ke liye
 import "./LoginModal.scss"; // Adjust the import path as necessary
 import CityModal from "./CitySelect";
 import BrandModelDialog from "./BrandModelDialog";
+import { apiService } from '../utils/apiService';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -28,12 +29,76 @@ const Hero = () => {
     engine: "",
     date: "",
   });
+  const [locations, setLocations] = useState([]);
+
+  React.useEffect(() => {
+    let mounted = true;
+    apiService.post('/locations/list')
+      .then(res => {
+        const data = res?.data?.data || res?.data || [];
+        if (mounted) setLocations(Array.isArray(data) ? data : []);
+      })
+      .catch(err => {
+        console.error('Failed to fetch locations', err);
+        if (mounted) setLocations([]);
+      });
+    return () => { mounted = false; };
+  }, []);
+
+  const fetchLocationsByService = (serviceType) => {
+    if (!serviceType) {
+      // fallback to full list
+      apiService.post('/locations/list')
+        .then(res => {
+          const data = res?.data?.data || res?.data || [];
+          setLocations(Array.isArray(data) ? data : []);
+        })
+        .catch(() => setLocations([]));
+      return;
+    }
+
+    apiService.post('/locations/search', { type: serviceType })
+      .then(res => {
+        const data = res?.data?.data || res?.data || [];
+        setLocations(Array.isArray(data) ? data : []);
+      })
+      .catch(err => {
+        console.error('Failed to search locations by service', err);
+        setLocations([]);
+      });
+  };
 
   const handleSubmit = () => {
-    // Redirect with query params
-    // const query = new URLSearchParams(form).toString();
-    // navigate(`/services?${query}`);
-    alert("select services ")
+    // Build full payload from form, selected location, and selected car
+    const selectedLocationObj = locations.find(l => l.emirate === form.location) || null;
+    const payload = {
+      ...form,
+      location: selectedLocationObj ? {
+        _id: selectedLocationObj._id,
+        emirate: selectedLocationObj.emirate,
+        location_type: selectedLocationObj.location_type,
+        cities: selectedLocationObj.cities || []
+      } : form.location,
+      car: {
+        brand: selectedCar.brand || null,
+        model: selectedCar.model || null,
+        variant: selectedCar.variant || null,
+        cylinder: selectedCar.cylinder || null
+      }
+    };
+
+    console.log('Search payload:', payload);
+
+    // Navigate with payload encoded as query params
+    const flat = {};
+    Object.keys(payload).forEach(k => {
+      const v = payload[k];
+      if (v === null || v === undefined) return;
+      if (typeof v === 'object') flat[k] = JSON.stringify(v);
+      else flat[k] = String(v);
+    });
+    const query = new URLSearchParams(flat).toString();
+    navigate(`/services`);
   };
 
   return (
@@ -160,7 +225,11 @@ const Hero = () => {
     {/* Service */}
     <select
       value={form.service}
-      onChange={(e) => setForm({ ...form, service: e.target.value })}
+      onChange={(e) => {
+        const val = e.target.value;
+        setForm({ ...form, service: val, location: '' });
+        fetchLocationsByService(val);
+      }}
       style={dropdownStyle}
     >
       <option value="">Select Service</option>
@@ -176,16 +245,17 @@ const Hero = () => {
       style={dropdownStyle}
     >
       <option value="">Select Location</option>
-      <option value="dubai">Dubai (Onsite & Offsite)</option>
-      <option value="sharjah">Sharjah (Onsite & Offsite)</option>
-      <option value="rak">Ras Al Khaimah (Offsite only)</option>
-      <option value="abu-dhabi" disabled>Abu Dhabi</option>
-      <option value="al-ain" disabled>Al Ain</option>
-      <option value="musaffah" disabled>Musaffah</option>
+      {locations.length === 0 ? (
+        <option value="loading" disabled>Loading locations...</option>
+      ) : (
+        locations.map(loc => (
+          <option key={loc._id} value={loc.emirate} disabled={!loc.isActive}>{loc.emirate}{!loc.isActive ? ' (inactive)' : ''}</option>
+        ))
+      )}
     </select>
 
     {/* Category */}
-    <select
+    {/* <select
       value={form.category}
       onChange={(e) => setForm({ ...form, category: e.target.value })}
       style={dropdownStyle}
@@ -194,23 +264,27 @@ const Hero = () => {
       <option value="passenger">Passenger</option>
       <option value="commercial">Commercial</option>
       <option value="bike">Bike</option>
-    </select>
+    </select> */}
 
     {/* Select Model (popup trigger) */}
     <input
       type="text"
       placeholder="Select Model"
       readOnly
-      value={
-        selectedCar.brand && selectedCar.model
-          ? `${selectedCar.brand} ${selectedCar.model}`
-          : ""
-      }
+      value={(() => {
+        const parts = [];
+        if (selectedCar.brand) parts.push(selectedCar.brand);
+        if (selectedCar.model) parts.push(selectedCar.model);
+        if (selectedCar.variant) parts.push(selectedCar.variant);
+        if (selectedCar.cylinder) parts.push(typeof selectedCar.cylinder === 'number' ? `${selectedCar.cylinder} Cyl` : `${selectedCar.cylinder}`);
+        return parts.length ? parts.join(' - ') : '';
+      })()}
       onClick={() => setIsBrandModelDialogOpen(true)}
       style={{
         ...dropdownStyle,
         cursor: "pointer",
-        background: "white",
+    
+        
       }}
     />
 
