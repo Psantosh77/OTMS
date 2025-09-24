@@ -154,40 +154,21 @@ const Hero = () => {
       });
   };
 
-  const handleSubmit = () => {
-    // Build full payload from form, selected location, and selected car
-    const selectedLocationObj = locations.find(l => l.emirate === form.location) || null;
-    const payload = {
-      ...form,
-      location: selectedLocationObj ? {
-        _id: selectedLocationObj._id,
-        emirate: selectedLocationObj.emirate,
-        location_type: selectedLocationObj.location_type,
-        cities: selectedLocationObj.cities || []
-      } : form.location,
-      car: {
-        brand: selectedCar.brand || null,
-        model: selectedCar.model || null,
-        variant: selectedCar.variant || null,
-        cylinder: selectedCar.cylinder || null
-      }
-    };
-
-    console.log('Search payload:', payload);
-
-    // Navigate with payload encoded as query params
-    const flat = {};
-    Object.keys(payload).forEach(k => {
-      const v = payload[k];
-      if (v === null || v === undefined) return;
-      if (typeof v === 'object') flat[k] = JSON.stringify(v);
-      else flat[k] = String(v);
-    });
  
-      console.log('Navigating to /services with query:', flat);
-      navigate(`/${flat.service}`, { state: flat });
-  };
 
+const handleSubmit = () => {
+  const query = new URLSearchParams({
+    service: form.service,
+    location: form.location,
+    date: form.date,
+    brand: selectedCar.brand,
+    model: selectedCar.model,
+    variant: selectedCar.variant,
+    cylinder: selectedCar.cylinder,
+  }).toString();
+
+  navigate(`/offsite?${query}`);
+};
   return (
     <section
       style={{

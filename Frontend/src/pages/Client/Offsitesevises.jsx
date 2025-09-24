@@ -12,9 +12,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import onsiteVideo from "../../assets/onsite.mp4";
 import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import BrandModelDialog from "../../components/BrandModelDialog";
 import ServiceDetailsPopup from "../../components/ServiceDetailsPopup"; // ✅ NEW IMPORT
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 
 export default function OffsiteServices() {
@@ -56,6 +59,30 @@ export default function OffsiteServices() {
         alert("you are already in servises page")
       };
     
+      const location = useLocation();
+      const [searchParams] = useSearchParams();
+
+React.useEffect(() => {
+  const service = searchParams.get("service");
+  const loc = searchParams.get("location");
+  const date = searchParams.get("date");
+  const brand = searchParams.get("brand");
+  const model = searchParams.get("model");
+  const variant = searchParams.get("variant");
+  const cylinder = searchParams.get("cylinder");
+
+  if (service) setForm(prev => ({ ...prev, service }));
+  if (loc) {
+    setForm(prev => ({ ...prev, location: loc }));
+    setSelectedCity(loc);
+  }
+  if (date) setForm(prev => ({ ...prev, date }));
+  if (brand || model) {
+    setSelectedCar({ brand, model, variant, cylinder });
+  }
+}, [searchParams]);
+
+
 
   return (
     <div className="container-fluid p-0">
