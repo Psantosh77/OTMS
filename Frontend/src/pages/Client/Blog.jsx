@@ -80,7 +80,7 @@ const BlogPage = () => {
               }}
               href="#blog"
             >
-              Explore b
+              Explore Blog
             </a>
           </div>
         </div>
