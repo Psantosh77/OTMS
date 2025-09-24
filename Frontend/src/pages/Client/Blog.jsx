@@ -1,6 +1,7 @@
 // src/pages/BlogPage.jsx
 import React, { useState, useEffect } from "react";
 import "../../styles/Blog.css"; // CSS import
+import { faBorderNone } from "@fortawesome/free-solid-svg-icons";
 
 const blogData = [
   {
@@ -60,30 +61,33 @@ const BlogPage = () => {
         />
         <div className="service-banner-txt">
           <p style={{ color: "white" }}>Your Daily Dose of Auto Trends</p>
-          <h1>Latest Car News & Reviews</h1>
+          <h1 style={{fontSize: "80px"}}>Latest Car News & Media</h1>
           <div style={{ display: "flex", justifyContent: "center", marginTop: "18px" }}>
-            <button
+            <a
               style={{
                 background: "linear-gradient(90deg, #ff8800 0%, #ffb84d 100%)",
                 color: "#fff",
                 fontWeight: 600,
                 fontSize: "1.08rem",
                 border: "none",
+                textDecoration: "none",
                 borderRadius: "8px",
                 padding: "10px 20px",
                 boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
                 cursor: "pointer",
-                letterSpacing: "0.5px"
+                letterSpacing: "0.5px",
+               
               }}
+              href="#blog"
             >
-              Explore Blog
-            </button>
+              Explore b
+            </a>
           </div>
         </div>
       </div>
 
       {/* Blog Cards */}
-      <section className="blog-cards">
+      <section className="blog-cards" id="blog">
         {blogData.map((blog, idx) => (
           <div className="blog-card" key={idx}>
             <img src={blog.img} alt={blog.title} loading="lazy" />

@@ -53,7 +53,7 @@ export default function OffsiteServices() {
         // Redirect with query params
         // const query = new URLSearchParams(form).toString();
         // navigate(`/services?${query}`);
-        alert("you are already in servises page")
+        alert("you are already in service page")
       };
     
 

@@ -58,7 +58,7 @@ export default function OnsiteServices() {
   const handleSubmit = () => {
     // const query = new URLSearchParams(form).toString();
     // navigate(`/services?${query}`);
-    alert("you are already in servises page")
+    alert("you are already in service page")
   };
 
   return (
@@ -169,7 +169,10 @@ export default function OnsiteServices() {
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
                 style={dropdownStyle}
               />
+
+              
             </div>
+            
 
             {/* Submit Button */}
             <div className="text-center">

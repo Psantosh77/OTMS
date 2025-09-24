@@ -217,6 +217,7 @@ const Hero = () => {
     {/* Date */}
     <input
       type="date"
+      placeholder="Date"
       value={form.date}
       onChange={(e) => setForm({ ...form, date: e.target.value })}
       style={dropdownStyle}

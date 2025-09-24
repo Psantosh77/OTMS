@@ -1,0 +1,105 @@
+/* Banner Styles */
+.service-banner {
+  position: relative;
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+.service-banner-img {
+  width: 100%;
+  height: 60vh;
+  object-fit: cover;
+}
+
+.service-banner-txt {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+  padding: 0 15px;
+}
+
+.about-banner-txt p {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.service-banner-txt h1 {
+  font-size: 7.5rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.banner-btn-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.banner-btn {
+  background: linear-gradient(90deg, #ff8800 0%, #ffb84d 100%);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.08rem;
+  border: none;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease-in-out;
+}
+
+
+/* About Section */
+.about-section {
+  position: relative;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.about-lead {
+  color: black;
+}
+
+/* 🔹 Responsive Design */
+@media (max-width: 768px) {
+  .service-banner-img {
+    height: 40vh;
+  }
+
+  .service-banner-txt h1 {
+    font-size: 1.8rem;
+  }
+
+  .service-banner-txt p {
+    font-size: 0.95rem;
+  }
+
+  .banner-btn {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .service-banner-img {
+    height: 30vh;
+  }
+
+  .service-banner-txt h1 {
+    font-size: 1.5rem;
+  }
+
+  .service-banner-txt p {
+    font-size: 0.85rem;
+  }
+
+  .banner-btn {
+    font-size: 0.85rem;
+    padding: 7px 14px;
+  }
+}
