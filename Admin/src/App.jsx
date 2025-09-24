@@ -6,6 +6,8 @@ import Dashboard from "./pages/Dashboard";
 import Faq from "./pages/Faq/Faq";
 import Blog from "./pages/Blog";
 import Location from './pages/Location/Location';
+import VehicalDetails from './pages/vechicalDetails/VehicalDetails';
+import ModelDetails from './pages/modelDetails/ModelDetails';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
@@ -78,6 +80,8 @@ function App() {
             <Route path="/faq" element={<Faq />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/service" element={<Service />} />
+            <Route path="/vehicalDetails" element={<VehicalDetails />} />
+            <Route path="/modelDetails" element={<ModelDetails />} />
             <Route path="/location" element={<Location />} />
           </Routes>
         </Box>

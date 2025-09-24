@@ -13,6 +13,8 @@ import BuildIcon from '@mui/icons-material/Build';
 import BookIcon from '@mui/icons-material/Book';
 import HelpIcon from '@mui/icons-material/Help';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import LayersIcon from '@mui/icons-material/Layers';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
@@ -114,6 +116,40 @@ const Sidebar = () => {
           >
             <ListItemIcon sx={location.pathname === '/location' ? { color: 'orange' } : {}}><LocationOnIcon /></ListItemIcon>
             <ListItemText primary="Location" />
+          </ListItem>
+          <ListItem
+            button
+            component={Link}
+            to="/vehicalDetails"
+            selected={location.pathname === '/vehicalDetails'}
+            sx={{
+              pl: 4,
+              ...(location.pathname === '/vehicalDetails' ? {
+                color: 'orange',
+                fontWeight: 700,
+                bgcolor: 'rgba(255, 165, 0, 0.15)'
+              } : {})
+            }}
+          >
+            <ListItemIcon sx={location.pathname === '/vehicalDetails' ? { color: 'orange' } : {}}><DirectionsCarIcon /></ListItemIcon>
+            <ListItemText primary="Vehical Details" />
+          </ListItem>
+          <ListItem
+            button
+            component={Link}
+            to="/modelDetails"
+            selected={location.pathname === '/modelDetails'}
+            sx={{
+              pl: 4,
+              ...(location.pathname === '/modelDetails' ? {
+                color: 'orange',
+                fontWeight: 700,
+                bgcolor: 'rgba(255, 165, 0, 0.15)'
+              } : {})
+            }}
+          >
+            <ListItemIcon sx={location.pathname === '/modelDetails' ? { color: 'orange' } : {}}><LayersIcon /></ListItemIcon>
+            <ListItemText primary="Model Details" />
           </ListItem>
         </List>
       </Collapse>

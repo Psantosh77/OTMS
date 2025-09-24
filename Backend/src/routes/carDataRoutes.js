@@ -9,6 +9,8 @@ router.post('/addmanufacturer', carDataController.manufacturer);
 router.post('/addcarmodellist', carDataController.carModelList);
 
 router.post('/getallmanufacturers', carDataController.getAllManufacturers);
+// Route to get car models by brand_id (accepts brand_id in body or query)
+router.post('/getcarmodelsbybrand', carDataController.getCarModelsByBrand);
 
 
 module.exports = router;

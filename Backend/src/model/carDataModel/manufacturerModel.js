@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const ManufacturerSchema = new mongoose.Schema({
     id: { type: Number, required: true, unique: true },
     display_name: { type: String, required: true },
+    // vehicle_type indicates the broad vehicle category for this manufacturer
+    // Acceptable values: 'Passenger', 'Commercial', 'Bike'
+    vehicle_type: { type: String, enum: ['Passenger', 'Commercial', 'Bike'], default: 'Passenger' },
     is_procurable: { type: Boolean, default: false },
     is_usable: { type: Boolean, default: false },
     logo_url: { type: String },

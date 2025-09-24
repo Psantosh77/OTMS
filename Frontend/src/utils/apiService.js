@@ -5,6 +5,7 @@ import axios from "axios";
 // Get environment variables with fallbacks
 const getApiBaseUrl = () => {
   // Check if we're in production mode
+
   const isProd = import.meta.env.MODE === 'production' || import.meta.env.PROD;
 
   if (isProd) {
@@ -12,6 +13,8 @@ const getApiBaseUrl = () => {
   }
 
   return import.meta.env.VITE_API_BASE_URL || 'http://localhost:9000/api';
+
+  
 };
 
 const api = axios.create({

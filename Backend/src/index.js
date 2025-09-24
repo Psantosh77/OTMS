@@ -31,6 +31,7 @@ const serviceRoutes = require('./routes/serviceRoute/serviceRoutes');
 const locationRoutes = require('./routes/Location/locationRoutes');
 const vendorRoutes = require('./routes/vendorRoutes');
 const LocationRoutes = require('./routes/Location/locationRoutes');
+const { default: mongoose } = require('mongoose');
 
 
 
@@ -168,4 +169,28 @@ connectDB()
     logger.error('Failed to connect to MongoDB:', err);
     process.exit(1);
   });
+
+async function run() {
+  await connectDB();
+
+  const CarModel = require('../src/model/carDataModel/carModelListModel');
+
+  try {
+    console.log('Starting migration: set default vehicle_type on CarModel documents where missing');
+
+    const res = await CarModel.updateMany(
+      { $or: [ { vehicle_type: { $exists: false } }, { vehicle_type: null }, { vehicle_type: '' } ] },
+      { $set: { vehicle_type: 'Passenger' } }
+    );
+
+    console.log('Migration complete. Matched:', res.matchedCount, 'Modified:', res.modifiedCount);
+  } catch (err) {
+    console.error('Migration failed:', err);
+    process.exit(1);
+  } finally {
+    await mongoose.connection.close();
+    process.exit(0);
+  }
+}
+
 

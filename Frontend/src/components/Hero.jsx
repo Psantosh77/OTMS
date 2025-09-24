@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import BrandModelForm from "./BrandModelForm";
 import { ReactTyped } from "react-typed";
@@ -8,9 +8,11 @@ import { MapPin, Car, Compass } from "lucide-react"; // animated icons ke liye
 import "./LoginModal.scss"; // Adjust the import path as necessary
 import CityModal from "./CitySelect";
 import BrandModelDialog from "./BrandModelDialog";
+import { apiService } from '../utils/apiService';
 
 const Hero = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isCityModalOpen, setIsCityModalOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState("");
   const [isBrandModelDialogOpen, setIsBrandModelDialogOpen] = useState(false);
@@ -28,12 +30,162 @@ const Hero = () => {
     engine: "",
     date: "",
   });
+  const [locations, setLocations] = useState([]);
+
+  React.useEffect(() => {
+    let mounted = true;
+    apiService.post('/locations/list')
+      .then(res => {
+        const data = res?.data?.data || res?.data || [];
+        if (mounted) setLocations(Array.isArray(data) ? data : []);
+      })
+      .catch(err => {
+        console.error('Failed to fetch locations', err);
+        if (mounted) setLocations([]);
+      });
+    return () => { mounted = false; };
+  }, []);
+
+  // Prefill form and selected values from router location.state when available
+  React.useEffect(() => {
+    if (!location || !location.state) return;
+    const s = location.state || {};
+    console.log('Hero: route state detected for prefill:', s);
+    const parse = (v) => {
+      if (v === undefined || v === null) return v;
+      if (typeof v === 'string') {
+        const trimmed = v.trim();
+        if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+          try { return JSON.parse(trimmed); } catch (e) { return v; }
+        }
+        return v;
+      }
+      return v;
+    };
+
+    const serviceVal = parse(s.service);
+    const locationVal = parse(s.location);
+    const carVal = parse(s.car);
+
+    if (serviceVal) {
+      console.log('Hero: prefill service ->', serviceVal);
+      setForm(prev => ({ ...prev, service: serviceVal }));
+      console.log('Hero: set form.service ->', serviceVal);
+      // fetch locations for this service so location options are populated
+      fetchLocationsByService(serviceVal);
+    }
+
+    if (locationVal) {
+      if (typeof locationVal === 'object') {
+        // prefer emirate string if available; fall back to first city name when emirate missing
+        const emirate = locationVal.emirate || locationVal.name || (Array.isArray(locationVal.cities) && locationVal.cities.length ? (locationVal.cities[0].emirate || locationVal.cities[0].name || '') : '');
+  console.log('Hero: prefill location object -> emirate:', emirate, 'raw:', locationVal);
+  setForm(prev => ({ ...prev, location: emirate }));
+  console.log('Hero: set form.location ->', emirate);
+  setSelectedCity(emirate || '');
+  console.log('Hero: set selectedCity ->', emirate || '');
+      } else {
+  console.log('Hero: prefill location string ->', locationVal);
+  setForm(prev => ({ ...prev, location: String(locationVal) }));
+  console.log('Hero: set form.location ->', String(locationVal));
+  setSelectedCity(String(locationVal));
+  console.log('Hero: set selectedCity ->', String(locationVal));
+      }
+    }
+
+    if (carVal && typeof carVal === 'object') {
+      console.log('Hero: prefill car object ->', carVal);
+      const newCar = {
+        brand: carVal.brand || (carVal.brand && carVal.brand.display_name) || '',
+        model: carVal.model || (carVal.model && carVal.model.display_name) || '',
+        variant: carVal.variant || '',
+        cylinder: carVal.cylinder || ''
+      };
+      setSelectedCar(newCar);
+      console.log('Hero: set selectedCar ->', newCar);
+    } else {
+      // fallback to flattened keys
+      const brand = parse(s.brand) || parse(s.brand_display) || parse(s.brand_display_name);
+      const model = parse(s.model) || parse(s.display_name);
+      const variant = parse(s.variant);
+      const cylinder = parse(s.cylinder);
+      if (brand || model || variant || cylinder) {
+        console.log('Hero: prefill flattened car fields ->', { brand, model, variant, cylinder });
+        const newCar = {
+          brand: brand || '',
+          model: model || '',
+          variant: variant || '',
+          cylinder: cylinder || ''
+        };
+        setSelectedCar(prev => ({
+          brand: newCar.brand || prev.brand,
+          model: newCar.model || prev.model,
+          variant: newCar.variant || prev.variant,
+          cylinder: newCar.cylinder || prev.cylinder
+        }));
+        console.log('Hero: set selectedCar ->', newCar);
+      }
+    }
+    // Note: reading `form`, `selectedCity`, `selectedCar` immediately after setState will show
+    // previous values because state updates are asynchronous. Use the logs above to verify
+    // what values we attempted to set.
+  }, [location]);
+
+  const fetchLocationsByService = (serviceType) => {
+    if (!serviceType) {
+      // fallback to full list
+      apiService.post('/locations/list')
+        .then(res => {
+          const data = res?.data?.data || res?.data || [];
+          setLocations(Array.isArray(data) ? data : []);
+        })
+        .catch(() => setLocations([]));
+      return;
+    }
+
+    apiService.post('/locations/search', { type: serviceType })
+      .then(res => {
+        const data = res?.data?.data || res?.data || [];
+        setLocations(Array.isArray(data) ? data : []);
+      })
+      .catch(err => {
+        console.error('Failed to search locations by service', err);
+        setLocations([]);
+      });
+  };
 
   const handleSubmit = () => {
-    // Redirect with query params
-    // const query = new URLSearchParams(form).toString();
-    // navigate(`/services?${query}`);
-    alert("select services ")
+    // Build full payload from form, selected location, and selected car
+    const selectedLocationObj = locations.find(l => l.emirate === form.location) || null;
+    const payload = {
+      ...form,
+      location: selectedLocationObj ? {
+        _id: selectedLocationObj._id,
+        emirate: selectedLocationObj.emirate,
+        location_type: selectedLocationObj.location_type,
+        cities: selectedLocationObj.cities || []
+      } : form.location,
+      car: {
+        brand: selectedCar.brand || null,
+        model: selectedCar.model || null,
+        variant: selectedCar.variant || null,
+        cylinder: selectedCar.cylinder || null
+      }
+    };
+
+    console.log('Search payload:', payload);
+
+    // Navigate with payload encoded as query params
+    const flat = {};
+    Object.keys(payload).forEach(k => {
+      const v = payload[k];
+      if (v === null || v === undefined) return;
+      if (typeof v === 'object') flat[k] = JSON.stringify(v);
+      else flat[k] = String(v);
+    });
+ 
+      console.log('Navigating to /services with query:', flat);
+      navigate(`/${flat.service}`, { state: flat });
   };
 
   return (
@@ -160,7 +312,11 @@ const Hero = () => {
     {/* Service */}
     <select
       value={form.service}
-      onChange={(e) => setForm({ ...form, service: e.target.value })}
+      onChange={(e) => {
+        const val = e.target.value;
+        setForm({ ...form, service: val, location: '' });
+        fetchLocationsByService(val);
+      }}
       style={dropdownStyle}
     >
       <option value="">Select Service</option>
@@ -176,16 +332,17 @@ const Hero = () => {
       style={dropdownStyle}
     >
       <option value="">Select Location</option>
-      <option value="dubai">Dubai (Onsite & Offsite)</option>
-      <option value="sharjah">Sharjah (Onsite & Offsite)</option>
-      <option value="rak">Ras Al Khaimah (Offsite only)</option>
-      <option value="abu-dhabi" disabled>Abu Dhabi</option>
-      <option value="al-ain" disabled>Al Ain</option>
-      <option value="musaffah" disabled>Musaffah</option>
+      {locations.length === 0 ? (
+        <option value="loading" disabled>Loading locations...</option>
+      ) : (
+        locations.map(loc => (
+          <option key={loc._id} value={loc.emirate} disabled={!loc.isActive}>{loc.emirate}{!loc.isActive ? ' (inactive)' : ''}</option>
+        ))
+      )}
     </select>
 
     {/* Category */}
-    <select
+    {/* <select
       value={form.category}
       onChange={(e) => setForm({ ...form, category: e.target.value })}
       style={dropdownStyle}
@@ -194,23 +351,27 @@ const Hero = () => {
       <option value="passenger">Passenger</option>
       <option value="commercial">Commercial</option>
       <option value="bike">Bike</option>
-    </select>
+    </select> */}
 
     {/* Select Model (popup trigger) */}
     <input
       type="text"
       placeholder="Select Model"
       readOnly
-      value={
-        selectedCar.brand && selectedCar.model
-          ? `${selectedCar.brand} ${selectedCar.model}`
-          : ""
-      }
+      value={(() => {
+        const parts = [];
+        if (selectedCar.brand) parts.push(selectedCar.brand);
+        if (selectedCar.model) parts.push(selectedCar.model);
+        if (selectedCar.variant) parts.push(selectedCar.variant);
+        if (selectedCar.cylinder) parts.push(typeof selectedCar.cylinder === 'number' ? `${selectedCar.cylinder} Cyl` : `${selectedCar.cylinder}`);
+        return parts.length ? parts.join(' - ') : '';
+      })()}
       onClick={() => setIsBrandModelDialogOpen(true)}
       style={{
         ...dropdownStyle,
         cursor: "pointer",
-        background: "white",
+    
+        
       }}
     />
 
