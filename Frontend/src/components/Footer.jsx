@@ -105,7 +105,7 @@ const Footer = () => {
               </li>
               <li className="mb-2">
                 <a
-                  href="/join-network"
+                  href="/joinpartner"
                   className="text-decoration-none text-white d-flex align-items-center gap-2"
                 >
                   <FaUsers /> Join our Network
@@ -179,6 +179,19 @@ const Footer = () => {
               </li>
             </ul>
           </div>
+        </div>
+      </div>
+      <hr></hr>
+      <div className="bottom-footer">
+        <div className="container">
+            <div className="row">
+              <div className="col-lg-8">
+                  <p>©2025 by technauto. All Rights Reserved.</p>
+              </div>
+              <div className="col-lg-4">
+                  <p className="">privacy policy, terms & conditions , Cookie policy</p>
+              </div>
+            </div>
         </div>
       </div>
     </footer>
