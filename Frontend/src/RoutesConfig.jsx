@@ -38,6 +38,7 @@ import UpdateUser from "./pages/Client/UpdateUser";
 import OrderStatusWrapper from "./pages/Client/OrderStatusWrapper";
 import OnsiteServices from "./pages/Client/Onsite";
 import OffsiteServices from "./pages/Client/Offsitesevises";
+import JoinPartner from "./pages/Client/JoinPartner";
 
 
 
@@ -71,6 +72,7 @@ const RoutesConfig = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/faq" element={< Faq/>} />
+        <Route path="/joinpartner" element={< JoinPartner/>} />
 
       </Route>
       {/* Protected Client Routes */}

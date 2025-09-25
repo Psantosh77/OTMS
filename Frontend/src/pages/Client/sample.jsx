@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+make this component herosection responsive make it full responsive full in show in proper in mobile devises , tablet import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCar,
@@ -89,16 +89,13 @@ React.useEffect(() => {
       {/* Hero Section */}
       <div
         className="position-relative text-white text-center"
-        style={{ height: "100vh", overflow: "hidden" }}
+        style={{ height: "90vh", overflow: "hidden" }}
       >
-        <video autoPlay loop muted   className="w-100 h-100 "
-    style={{ objectFit: "cover", zIndex: -1 }}>
+        <video autoPlay loop muted className="w-100 h-100" style={{ objectFit: "cover" }}>
                  <source src={onsiteVideo} type="video/mp4" />
                </video>
-         <div 
-           className="position-absolute top-50 start-50 translate-middle bg-dark bg-opacity-50 p-3 p-md-4 rounded w-100"
-    style={{ maxWidth: "1000px", marginTop: "2rem" }}>
-          <h1 className="fw-bold display-6 display-md-5">Car Service at Your Doorstep</h1>
+         <div className="position-absolute top-50 start-50 translate-middle bg-dark bg-opacity-50 p-4 rounded"style={{marginTop:'4rem'}}>
+          <h1 className="fw-bold display-5">Car Service at Your Doorstep</h1>
           <p className="lead" style={{color:'white'}}>Fast, Reliable, Certified.</p>
                     {/* Form Box */}
           <div
@@ -208,7 +205,7 @@ React.useEffect(() => {
 
       {/* Service Categories */}
       <div className="container py-5">
-        <h2 className="fw-bold text-center mb-4 mt-4">Pick Your Offsite Services</h2>
+        <h2 className="fw-bold text-center mb-4">Pick Your Offsite Services</h2>
         <div className="row g-4">
                  
                  {/* LEFT: Services Box */}
@@ -317,20 +314,18 @@ React.useEffect(() => {
         </div>
       </div>
 
-     {/* Sticky Quote Bar */}
-{selectedServices.length > 0 && (
-  <div
-    className="position-fixed bottom-0 start-50 translate-middle-x bg-danger text-white py-3 px-3 px-sm-4 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 rounded-top shadow"
-    style={{ width: "90%", maxWidth: "600%", borderRadius: "12px 12px 0 0" }}
-  >
-    <span className="text-center text-sm-start">
-      ✅ You have selected <b>{selectedServices.length}</b> service(s)
-    </span>
-    <button className="btn btn-light fw-semibold ">
-      Request a Quote
-    </button>
-  </div>
-)}
+      {/* Sticky Quote Bar */}
+      {selectedServices.length > 0 && (
+        <div
+          className="position-fixed bottom-0 start-50 translate-middle-x bg-danger text-white py-3 px-4 d-flex justify-content-between align-items-center rounded-top shadow"
+          style={{ width: "90%", maxWidth: "600px" }}
+        >
+          <span>
+            ✅ You have selected <b>{selectedServices.length}</b> service(s)
+          </span>
+          <button className="btn btn-light fw-semibold">Request a Quote</button>
+        </div>
+      )}
        {/* Popup Include */}
 <BrandModelDialog
   open={isBrandModelDialogOpen}
