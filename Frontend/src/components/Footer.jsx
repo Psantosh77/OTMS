@@ -15,13 +15,17 @@ const Footer = () => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (
-    <footer className="bg-dark text-white">
+    <footer className="bg-dark text-white py-5">
       <div className="container py-5">
         <div className="row">
           {/* Logo & About */}
           <div className="col-lg-3 mb-3">
             <a href="/" className="text-decoration-none">
-              <span className="h1 text-white">OTGMS</span>
+              <span className="h1 text-white" style={{
+                background: "linear-gradient(90deg, #ff7e5f, #feb47b)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontWeight: "800"}}>OTGMS</span>
             </a>
             <p className="text-white my-3 small">
               Your all-in-one platform for car servicing, repair, and rentals —
@@ -85,7 +89,7 @@ const Footer = () => {
 
               <li className="mb-2">
                 <a
-                  href="/our-story"
+                  href="/about"
                   className="text-decoration-none text-white d-flex align-items-center gap-2"
                 >
                   <FaInfoCircle /> Our Story
@@ -93,7 +97,7 @@ const Footer = () => {
               </li>
               <li className="mb-2">
                 <a
-                  href="/news-media"
+                  href="/blog"
                   className="text-decoration-none text-white d-flex align-items-center gap-2"
                 >
                   <FaNewspaper /> News & Media
