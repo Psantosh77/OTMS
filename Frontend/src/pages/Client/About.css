@@ -1,105 +1,72 @@
-/* Banner Styles */
-.service-banner {
+
+.about-banner {
   position: relative;
-  text-align: center;
-  width: 100%;
   overflow: hidden;
+  height: 100vh;
 }
-
-.service-banner-img {
+.about-banner img {
   width: 100%;
-  height: 60vh;
+  height: 100%;
   object-fit: cover;
+  display: block;
 }
-
-.service-banner-txt {
+.about-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+}
+.about-banner-txt {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
   text-align: center;
+  z-index: 2;
   padding: 0 15px;
 }
-
 .about-banner-txt p {
-  font-size: 1.1rem;
+  font-size: 20px;
   margin-bottom: 10px;
 }
-
-.service-banner-txt h1 {
-  font-size: 7.5rem;
-  font-weight: 700;
-  margin-bottom: 18px;
+.about-banner-txt h1 {
+  font-size: 75px;
+  margin: 0 0 20px 0;
+  text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
 }
 
-.banner-btn-wrap {
-  display: flex;
-  justify-content: center;
+/* Button */
+
+@media (max-width: 992px) {
+  .about-banner-txt h1 {
+    font-size: 25px;
+  }
+  .about-banner-txt p {
+    font-size: 18px;
+  }
+  .service-btn{
+   padding: 0.6em 0.35em;
+  }
 }
-
-.banner-btn {
-  background: linear-gradient(90deg, #ff8800 0%, #ffb84d 100%);
-  color: #fff;
-  font-weight: 600;
-  font-size: 1.08rem;
-  border: none;
-  text-decoration: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
-  cursor: pointer;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease-in-out;
-}
-
-
-/* About Section */
-.about-section {
-  position: relative;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-}
-
-.about-lead {
-  color: black;
-}
-
-/* 🔹 Responsive Design */
 @media (max-width: 768px) {
-  .service-banner-img {
-    height: 40vh;
+  .about-banner {
+    height: 70vh;
   }
-
-  .service-banner-txt h1 {
-    font-size: 1.8rem;
+  .about-banner-txt h1 {
+    font-size: 35px;
   }
-
-  .service-banner-txt p {
-    font-size: 0.95rem;
+  .about-banner-txt p {
+    font-size: 16px;
   }
-
-  .banner-btn {
-    font-size: 0.9rem;
-    padding: 8px 16px;
+  .about-banner-txt h1 {
+  font-size: 25px !important;
+  margin: 0 0 20px 0;
+  text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+}
+ .service-btn{
+    padding: 0.6em 0.35em;
   }
 }
 
-@media (max-width: 480px) {
-  .service-banner-img {
-    height: 30vh;
-  }
-
-  .service-banner-txt h1 {
-    font-size: 1.5rem;
-  }
-
-  .service-banner-txt p {
-    font-size: 0.85rem;
-  }
-
-  .banner-btn {
-    font-size: 0.85rem;
-    padding: 7px 14px;
-  }
-}

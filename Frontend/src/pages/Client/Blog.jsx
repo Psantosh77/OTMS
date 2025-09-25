@@ -53,13 +53,14 @@ const BlogPage = () => {
   return (
     <div>
       {/* Banner */}
-      <div className="service-banner">
+      <div className="blog-banner">
         <img
+         className=".blog-banner-img"
           src="/assets/image/blog_banner.webp"
           alt="Car Blog Banner"
           loading="lazy"
         />
-        <div className="service-banner-txt">
+        <div className="blog-banner-txt">
           <p style={{ color: "white" }}>Your Daily Dose of Auto Trends</p>
           <h1 style={{fontSize: "80px"}}>Latest Car News & Media</h1>
           <div style={{ display: "flex", justifyContent: "center", marginTop: "18px" }}>
@@ -90,7 +91,7 @@ const BlogPage = () => {
       <section className="blog-cards" id="blog">
         {blogData.map((blog, idx) => (
           <div className="blog-card" key={idx}>
-            <img src={blog.img} alt={blog.title} loading="lazy" />
+            <img src={blog.img} alt={blog.title} loading="lazy" /> 
             <div className="blog-content">
               <span className="category">{blog.category}</span>
               <h3>{blog.title}</h3>

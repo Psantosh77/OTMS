@@ -376,7 +376,7 @@ transform: translateY(0);
       `}</style>
        {/* ✅ Top Bar */}
      {/* ✅ Top Bar */}
-<div className="top-bar">
+<div className="top-bar" >
   <div className="top-bar-left">
     <span>⏰ Mon - Sat: 9am - 6pm</span>
   </div>
@@ -404,8 +404,8 @@ transform: translateY(0);
   {[
     { to: "/Servicessection", label: "Services", dropdown: true },
      { to: "/about", label: "Our Story" },
-    { to: "/about", label: "News & Media" },
-    { to: "/blog", label: "Join our network" },
+    { to: "/blog", label: "News & Media" },
+    { to: "/joinpartner", label: "Join our network" },
   ].map(({ to, label, dropdown }, i) => (
    <motion.div
   key={i}
@@ -581,16 +581,16 @@ transform: translateY(0);
   {/* Other links */}
   <motion.li>
     <Link to="/about" className="mobile-nav-link" onClick={closeMobileMenu}>
-      News & Media
-    </Link>
-  </motion.li>
-  <motion.li>
-    <Link to="/blog" className="mobile-nav-link" onClick={closeMobileMenu}>
      Our Story
     </Link>
   </motion.li>
   <motion.li>
     <Link to="/blog" className="mobile-nav-link" onClick={closeMobileMenu}>
+      News & Media
+    </Link>
+  </motion.li>
+  <motion.li>
+    <Link to="/joinpartner" className="mobile-nav-link" onClick={closeMobileMenu}>
       Join our network
     </Link>
   </motion.li>
