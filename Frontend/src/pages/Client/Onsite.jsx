@@ -297,7 +297,7 @@ export default function OnsiteServices() {
       {selectedServices.length > 0 && (
         <div
          className="position-fixed bottom-0 start-50 translate-middle-x bg-danger text-white py-3 px-4 d-flex justify-content-between align-items-center rounded-top shadow"
-          style={{ width: "90%", maxWidth: "600px" }} >
+          style={{ width: "35%", maxWidth: "100%" }} >
           <span className="text-center text-sm-start">
             ✅ You have selected <b>{selectedServices.length}</b> service(s)
           </span>

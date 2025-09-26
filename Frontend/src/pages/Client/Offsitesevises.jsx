@@ -11,6 +11,8 @@ import {
   faMedal,
 } from "@fortawesome/free-solid-svg-icons";
 import onsiteVideo from "../../assets/onsite.mp4";
+import LoginModal from "../../components/LoginModal"
+import AfterloginDetailsModal from "../../components/aferloginDetailsModal"
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import BrandModelDialog from "../../components/BrandModelDialog";
@@ -59,8 +61,33 @@ export default function OffsiteServices() {
         alert("you are already in service page")
       };
     
+      // data trnfer from hero section to this component 
       const location = useLocation();
       const [searchParams] = useSearchParams();
+
+      // login model open 
+      // const [isLoginOpen, setIsLoginOpen] = useState(false);
+
+      // servises list 
+      const [vehicles, setVehicles] = useState([]); // global vehicle list
+
+      // after login model open 
+
+      const [isLoginOpen, setIsLoginOpen] = useState(false);
+const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+// User object localStorage se
+const [user, setUser] = useState(null);
+
+useEffect(() => {
+  const token = localStorage.getItem("accessToken");
+  const email = localStorage.getItem("email"); // agar save kar rahe ho
+  const name = localStorage.getItem("fullName"); // agar save kar rahe ho
+  if (token) {
+    setUser({ name, email });
+  }
+}, []);
+
 
 React.useEffect(() => {
   const service = searchParams.get("service");
@@ -318,17 +345,27 @@ React.useEffect(() => {
       </div>
 
      {/* Sticky Quote Bar */}
+
 {selectedServices.length > 0 && (
   <div
-    className="position-fixed bottom-0 start-50 translate-middle-x bg-danger text-white py-3 px-3 px-sm-4 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 rounded-top shadow"
-    style={{ width: "90%", maxWidth: "600%", borderRadius: "12px 12px 0 0" }}
+    className="position-fixed bottom-0 start-50 translate-middle-x bg-danger text-white py-3 px-4 d-flex justify-content-between align-items-center rounded-top shadow "
+    style={{ width: "60%", maxWidth: "100%", borderRadius: "12px 12px 0 0" }}
   >
     <span className="text-center text-sm-start">
       ✅ You have selected <b>{selectedServices.length}</b> service(s)
     </span>
-    <button className="btn btn-light fw-semibold ">
-      Request a Quote
-    </button>
+   <button
+  className="btn btn-light fw-semibold"
+  onClick={() => {
+    if (user) {
+      setIsDetailsOpen(true); // already logged in → details modal
+    } else {
+      setIsLoginOpen(true);   // not logged in → login modal
+    }
+  }}
+>
+  Request a Quote
+</button>
   </div>
 )}
        {/* Popup Include */}
@@ -350,15 +387,45 @@ React.useEffect(() => {
 
       {/* Popup */}
       {activeService && (
-        <ServiceDetailsPopup
-          service={servicesList.find((s) => s.id === activeService)}
-          details={serviceDetails[activeService] || []}
-          onClose={() => setActiveService(null)}
-          onSave={(list) =>
-            setServiceDetails((prev) => ({ ...prev, [activeService]: list }))
-          }
-        />
+       <ServiceDetailsPopup
+  service={servicesList.find((s) => s.id === activeService)}
+  details={vehicles} // same list sabko pass ho rahi hai
+  onClose={() => setActiveService(null)}
+  onSave={(list) => setVehicles(list)} // global update
+/>
       )}
+      {/* Bootstrap Modal */}
+{/* Login Modal */}
+{isLoginOpen && (
+  <div
+    className="modal fade show d-block"
+    tabIndex="-1"
+    role="dialog"
+    style={{ backgroundColor: "rgba(0,0,0,0.5)", marginTop: "5rem" }}
+  >
+    <div className="modal-dialog modal-dialog-centered" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Login</h5>
+          <button type="button" className="btn-close" onClick={() => setIsLoginOpen(false)}></button>
+        </div>
+        <div className="modal-body">
+          <LoginModal />
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* After Login Details Modal */}
+{isDetailsOpen && (
+  <AfterloginDetailsModal
+    form={form}
+    selectedCar={selectedCar}
+    user={user}
+    onClose={() => setIsDetailsOpen(false)}
+  />
+)}
     </div>
   );
 }
